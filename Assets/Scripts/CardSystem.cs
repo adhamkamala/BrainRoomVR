@@ -21,10 +21,13 @@ public class CardSystem : MonoBehaviour
             initCardObj();
         }
     }
-    void initCardObj() {
+    void initCardObj(string mainTxt ="Main", string subTxt = "Some Text written in small size font for description") {
         if (boardObj.GetComponent<BoardSystem>().CanCreate())
         {
-            boardObj.GetComponent<BoardSystem>().CardLocator(Instantiate(cardsPrf, new Vector3(0f, 0f, 0f), Quaternion.identity));
+            GameObject cardTmp = Instantiate(cardsPrf, new Vector3(0f, 0f, 0f), Quaternion.identity);
+            cardTmp.GetComponent<CardScript>().ChangeMainTxt(mainTxt);
+            cardTmp.GetComponent<CardScript>().ChangeSubTxt(subTxt);
+            boardObj.GetComponent<BoardSystem>().CardLocator(cardTmp);
         }
     }
 }

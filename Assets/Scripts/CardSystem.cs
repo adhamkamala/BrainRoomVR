@@ -25,6 +25,7 @@ public class CardSystem : MonoBehaviour
         if (boardObj.GetComponent<BoardSystem>().CanCreate())
         {
             GameObject cardTmp = Instantiate(cardsPrf, new Vector3(0f, 0f, 0f), Quaternion.identity);
+            cardTmp.layer = LayerMask.NameToLayer("CardsLayer");
             cardTmp.GetComponent<CardScript>().ChangeMainTxt(mainTxt);
             cardTmp.GetComponent<CardScript>().ChangeSubTxt(subTxt);
             boardObj.GetComponent<BoardSystem>().CardLocator(cardTmp);

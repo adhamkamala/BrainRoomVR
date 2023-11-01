@@ -23,7 +23,7 @@ public class BoardSystem : MonoBehaviour
             LocationHighlighter locHigh = g.GetComponent<LocationHighlighter>();
             if (locHigh.isAvailable())
             {
-                card.transform.position = g.transform.position;
+                card.transform.position = new Vector3(g.transform.position.x+0.005f, g.transform.position.y, g.transform.position.z);
                 locHigh.changeAvailable(false);
                 break;
             }

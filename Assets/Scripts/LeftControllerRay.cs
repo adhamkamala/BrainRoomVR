@@ -7,6 +7,7 @@ public class LeftControllerRay : MonoBehaviour
 {
     public LayerMask layerCard;
     public LayerMask layerPosition;
+    public LayerMask layerCardOptions;
     public float distance = 5f;
     private bool cardHit = false;
     private LayerMask layerSelected;
@@ -28,13 +29,13 @@ public class LeftControllerRay : MonoBehaviour
             {
             cardHit= true;
             cardHitObj = hit.collider.gameObject;
-            Debug.Log(cardHitObj.name);
-            pokeMat.GetComponent<TestScript>().ChangeColorToGreen();
+           // Debug.Log(cardHitObj.name);
+            pokeMat.GetComponent<PokeScript>().ChangeColorToGreen();
        
             } else
         {
             cardHit = false;
-            pokeMat.GetComponent<TestScript>().ChangeColorToWhite();
+            pokeMat.GetComponent<PokeScript>().ChangeColorToWhite();
         }
 
     }
@@ -57,6 +58,12 @@ public class LeftControllerRay : MonoBehaviour
 
     }
 
+    public void ChangeLayerToCardOptions()
+    {
+        layerSelected = layerCardOptions;
+
+    }
+
     public bool IsLayerCard()
     {
         return layerSelected == layerCard;
@@ -65,5 +72,10 @@ public class LeftControllerRay : MonoBehaviour
     public bool IsLayerPosition()
     {
         return layerSelected == layerPosition;
+    }
+
+    public bool IsLayerCardOption()
+    {
+        return layerSelected == layerCardOptions;
     }
 }

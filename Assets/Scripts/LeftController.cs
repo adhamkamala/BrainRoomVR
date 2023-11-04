@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
+using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -22,6 +24,7 @@ public class LeftController : MonoBehaviour
     private bool restBool = false;
     private GameObject cardTmp;
     private GameObject locationTmp;
+    private bool optionsPressed = false;
 
     void Start()
     {
@@ -43,7 +46,7 @@ public class LeftController : MonoBehaviour
 
     private void Update()
     {
-        if (grabBool == true)
+        if (grabBool == true & !optionsPressed)
         {
             cardTmp.transform.position = holdPosition.transform.position;
         }
@@ -55,7 +58,25 @@ public class LeftController : MonoBehaviour
 
     void OnLeftMainPressed(InputAction.CallbackContext context)
     {
+        GameObject tmp;
         Debug.Log("Left Main button pressed!");
+        if (leftPoke.GetComponent<LeftControllerRay>().IsLayerCardOption())
+        {
+           tmp =  leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
+            switch (tmp.gameObject.name)
+            {
+                case "RedDeleteButton":
+                    Debug.Log("Delete");
+                    break;
+                case "GreenExpandButton":
+                    Debug.Log("Expand");
+                    break;
+                default:
+                    Debug.Log("nun");
+                    break;
+            }
+
+        }
     }
     void OnLeftSecondaryPressed(InputAction.CallbackContext context)
     {
@@ -111,6 +132,18 @@ public class LeftController : MonoBehaviour
     void OnLeftYPressed(InputAction.CallbackContext context)
     {
         Debug.Log("Left Y button pressed!");
+        if (cardTmp!= null & optionsPressed)
+        {
+            optionsPressed = false;
+            cardTmp.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
+            leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+        } else if (cardTmp != null & !optionsPressed)
+        {
+            optionsPressed = true;
+            cardTmp.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
+            cardTmp.transform.position = holdPosition.transform.position;
+            leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCardOptions();
+        }
     }
     void OnLeftMenuPressed(InputAction.CallbackContext context)
     {

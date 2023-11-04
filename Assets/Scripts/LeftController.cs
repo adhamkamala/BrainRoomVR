@@ -67,6 +67,13 @@ public class LeftController : MonoBehaviour
             {
                 case "RedDeleteButton":
                     Debug.Log("Delete");
+                    if (cardTmp != null) {
+                        Destroy(cardTmp.gameObject);
+                        grabBool = false;
+                        restBool = false;
+                        optionsPressed = false;
+                        leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                    }
                     break;
                 case "GreenExpandButton":
                     Debug.Log("Expand");

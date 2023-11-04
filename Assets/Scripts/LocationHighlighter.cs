@@ -5,6 +5,7 @@ using UnityEngine;
 public class LocationHighlighter : MonoBehaviour
 {
     private bool isAvailableBool = true;
+    private GameObject cardHolding;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,5 +23,14 @@ public class LocationHighlighter : MonoBehaviour
     public void changeAvailable(bool passBool)
     {
         isAvailableBool = passBool;
+    }
+
+    public void SetCardHolding(GameObject tmp)
+    {
+        cardHolding= tmp;
+    }
+    public GameObject GetCardHolding()
+    {
+        return cardHolding;
     }
 }

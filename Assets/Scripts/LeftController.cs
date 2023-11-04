@@ -99,6 +99,7 @@ public class LeftController : MonoBehaviour
         if (cardTmp != null && leftPoke.GetComponent<LeftControllerRay>().IsLayerCard())
         {   
             grabBool = true;
+            cardTmp.GetComponent<CardScript>().GetLocationHolding().GetComponent<LocationHighlighter>().changeAvailable(true);
             
         } else
         {

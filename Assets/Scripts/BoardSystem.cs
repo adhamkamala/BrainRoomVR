@@ -25,6 +25,8 @@ public class BoardSystem : MonoBehaviour
             {
                 card.transform.position = new Vector3(g.transform.position.x+0.005f, g.transform.position.y, g.transform.position.z);
                 locHigh.changeAvailable(false);
+                locHigh.SetCardHolding(card);
+                card.GetComponent<CardScript>().SetLocationHolding(g);
                 break;
             }
         }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Networking;
 
 public class AIScript : MonoBehaviour
@@ -11,7 +12,16 @@ public class AIScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(GetChatResponse("Hello, how can I help you?"));
+       
+    }
+
+    void Update()
+    {
+        if (Keyboard.current.pKey.wasPressedThisFrame)
+        {
+
+            StartCoroutine(GetChatResponse("Hello, how can I help you?"));
+        }
     }
 
     IEnumerator GetChatResponse(string inputText)

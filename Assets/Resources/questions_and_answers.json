@@ -1,0 +1,71 @@
+{
+    "questions": [
+        {
+            "question": "Wie wirkt sich autonomes Fahren auf den Verkehr aus?",
+            "answers": [
+                { "HeadLine": "Unfallreduktion", "Text": "Autonomes Fahren kann die Anzahl der Verkehrsunfälle durch menschliche Fehler reduzieren." },
+                { "HeadLine": "Datenschutz", "Text": "Autonome Fahrzeuge sammeln viele Daten, was Datenschutzbedenken aufwirft." },
+                { "HeadLine": "Infrastruktur", "Text": "Die Integration autonomer Fahrzeuge erfordert eine angepasste Infrastruktur." },
+                { "HeadLine": "Arbeitsplatzverluste", "Text": "Die Automatisierung kann zu Arbeitsplatzverlusten für Fahrer führen." },
+                { "HeadLine": "Kosten", "Text": "Die Einführung autonomer Fahrzeuge kann hohe Anfangsinvestitionen erfordern." },
+                { "HeadLine": "Verkehrseffizienz", "Text": "Autonome Fahrzeuge könnten den Verkehr effizienter gestalten." }
+            ]
+        },
+
+        {
+            "question": "Was ist ICE?",
+            "answers": [
+                { "HeadLine": "ICE (InterCityExpress)", "Text": "Ein Hochgeschwindigkeitszug in Deutschland." },
+                { "HeadLine": "Betreibergesellschaft", "Text": "Die Deutsche Bahn AG betreibt den ICE." },
+                { "HeadLine": "Erste Inbetriebnahme", "Text": "Der erste ICE wurde 1991 in Betrieb genommen." },
+                { "HeadLine": "Hochgeschwindigkeitsstrecken", "Text": "Die Züge verkehren auf speziellen Hochgeschwindigkeitsstrecken." },
+                { "HeadLine": "Geschwindigkeiten", "Text": "ICE-Züge erreichen Geschwindigkeiten von bis zu 300 km/h." },
+                { "HeadLine": "Modelle", "Text": "Es gibt verschiedene Modelle von ICE-Zügen." }
+            ]
+        },
+        {
+            "question": "Was weißt du Über den Attentat auf JFK?",
+            "answers": [
+                { "HeadLine": "Datum des Attentats", "Text": "22. November 1963" },
+                { "HeadLine": "Ort des Attentats", "Text": "Dealey Plaza, Dallas, Texas" },
+                { "HeadLine": "Täter", "Text": "Lee Harvey Oswald wird beschuldigt, das Attentat begangen zu haben." },
+                { "HeadLine": "Zeugenaussagen", "Text": "Es gibt verschiedene widersprüchliche Zeugenaussagen zum Tathergang." },
+                { "HeadLine": "Anzahl der Schüsse", "Text": "Es wurden drei Schüsse abgefeuert, laut offizieller Untersuchung." },
+                { "HeadLine": "Fun Facts", "Text": "Jackie Kennedy trug ihren blutverschmierten Anzug noch während der Vereidigung von Lyndon B. Johnson." }
+            ]
+        },
+        {
+            "question": "Wer war Jack the Ripper?",
+            "answers": [
+                { "HeadLine": "Identität von Jack the Ripper", "Text": "Die wahre Identität von Jack the Ripper ist bis heute unbekannt." },
+                { "HeadLine": "Aktivitätszeitraum", "Text": "Die Morde von Jack the Ripper ereigneten sich im späten 19. Jahrhundert, hauptsächlich in den Jahren 1888-1889." },
+                { "HeadLine": "Opfer", "Text": "Jack the Ripper wird mit mindestens fünf Morden in Verbindung gebracht." },
+                { "HeadLine": "Modus Operandi", "Text": "Die Morde zeichneten sich durch extreme Brutalität und Grausamkeit aus." },
+                { "HeadLine": "Nicht aufgeklärte Morde", "Text": "Die meisten Morde von Jack the Ripper blieben offiziell ungelöst." },
+                { "HeadLine": "Historische Bedeutung", "Text": "Die Jack-the-Ripper-Morde haben einen dauerhaften Platz in der Kriminalgeschichte und sind Gegenstand intensiver Forschung und Spekulationen geblieben." }
+            ]
+        },
+        {
+            "question": "Gab es die Stadt Atlantas?",
+            "answers": [
+                { "HeadLine": "Atlantis in der Mythologie", "Text": "Atlantis ist eine legendäre Insel, die in den Dialogen des Philosophen Platon beschrieben wird." },
+                { "HeadLine": "Platons Beschreibung", "Text": "Platon beschrieb Atlantis als mächtige und fortgeschrittene Zivilisation, die vor langer Zeit versunken sei." },
+                { "HeadLine": "Historische Existenz", "Text": "Die historische Existenz von Atlantis ist umstritten, und es gibt keine eindeutigen archäologischen Beweise dafür." },
+                { "HeadLine": "Mögliche Standorte", "Text": "Es gibt verschiedene Theorien über mögliche Standorte von Atlantis, aber keiner wurde wissenschaftlich bestätigt." },
+                { "HeadLine": "Verlorene Stadt", "Text": "Atlantis wird oft als eine verlorene Stadt oder Zivilisation betrachtet, deren genauer Standort unbekannt ist." },
+                { "HeadLine": "Spekulationen und Forschung", "Text": "Das Thema Atlantis hat weiterhin das Interesse von Forschern, Archäologen und Verschwörungstheoretikern geweckt." }
+            ]
+        },
+        {
+            "question": "Wie beeinflusst Zugverkehr den Autoverkehr?",
+            "answers": [
+                { "HeadLine": "Verkehrsentlastung", "Text": "Zugverkehr kann dazu beitragen, den Autoverkehr zu entlasten, indem er eine alternative Transportoption bietet." },
+                { "HeadLine": "Umweltfreundlichkeit", "Text": "Zugverkehr ist oft umweltfreundlicher als Autoverkehr, da er weniger Emissionen pro Passagierkilometer verursacht." },
+                { "HeadLine": "Verkehrsstaus", "Text": "Effizienter Zugverkehr kann dazu beitragen, Verkehrsstaus auf Autobahnen zu reduzieren." },
+                { "HeadLine": "Entlastung von Ballungsräumen", "Text": "Der Zugverkehr kann dazu beitragen, den Verkehr in stark frequentierten Ballungsräumen zu entlasten." }
+            ]
+        }
+
+
+    ]
+}

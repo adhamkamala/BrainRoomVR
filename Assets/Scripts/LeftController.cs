@@ -165,6 +165,7 @@ public class LeftController : MonoBehaviour
     void OnRightSecondaryPressed(InputAction.CallbackContext context)
     {
         Debug.Log("Right Secondary button pressed!");
+        aiSystem.GetComponent<OpenAIController>().testTrans();
     }
     void OnRightBPressed(InputAction.CallbackContext context)
     {

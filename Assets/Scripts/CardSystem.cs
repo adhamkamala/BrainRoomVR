@@ -21,7 +21,7 @@ public class CardSystem : MonoBehaviour
             initCardObj();
         }
     }
-    void initCardObj(string mainTxt ="Main", string subTxt = "Some Text written in small size font for description") {
+   public void initCardObj(string mainTxt ="Main", string subTxt = "Some Text written in small size font for description") {
         if (boardObj.GetComponent<BoardSystem>().CanCreate())
         {
             GameObject cardTmp = Instantiate(cardsPrf, new Vector3(0f, 0f, 0f), Quaternion.identity);

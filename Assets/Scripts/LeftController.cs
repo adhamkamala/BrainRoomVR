@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -21,6 +22,8 @@ public class LeftController : MonoBehaviour
     public GameObject aiSystem;
     public GameObject holdPosition;
     public GameObject restPosition;
+    public GameObject board;
+
     private bool grabBool = false;
     private bool restBool = false;
     private GameObject cardTmp;
@@ -64,6 +67,7 @@ public class LeftController : MonoBehaviour
         if (leftPoke.GetComponent<LeftControllerRay>().IsLayerCardOption())
         {
            tmp =  leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
+            Debug.Log(tmp.gameObject.name);
             switch (tmp.gameObject.name)
             {
                 case "RedDeleteButton":
@@ -78,12 +82,24 @@ public class LeftController : MonoBehaviour
                     break;
                 case "GreenExpandButton":
                     Debug.Log("Expand");
+                    // take the question and the answers and ask chat gpt for more answers.. will mehr wissen...
+                    aiSystem.GetComponent<OpenAIController>().SendMessageMore(board.GetComponent<BoardScript>().GetTopicTxt(), board.GetComponent<BoardScript>().GetAnswerTxt());
                     break;
                 default:
                     Debug.Log("nun");
                     break;
             }
 
+        }
+
+        if (leftPoke.GetComponent<LeftControllerRay>().IsLayerCard())
+        {
+            tmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
+            switch (tmp.gameObject.name) {
+                case "DeleteBoardBtn":
+                    Destroy(tmp.gameObject.transform.parent.gameObject);
+                    break;
+            }
         }
     }
     void OnLeftSecondaryPressed(InputAction.CallbackContext context)

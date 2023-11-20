@@ -20,6 +20,7 @@ public class OpenAIController : MonoBehaviour
     private Conversation chat;
     private OpenAIApi openai = new OpenAIApi("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");
     public GameObject cardSystem;
+    public GameObject board;
 
     // Start is called before the first frame update
     void Start()
@@ -83,6 +84,17 @@ public class OpenAIController : MonoBehaviour
       
     }
 
+    async public Task SendMessageMore(string strQues, string strAnswer) // 
+    {
+        // Question was... ur answer was... --> now give me more...
+        string str = "Die Frage wurde dir gestellt: " + strQues + ". und du hast so beantwortert: " + strAnswer + ". kannst du noch zu der frage andere antworte geben?";
+        chat.AppendUserInput(str);
+        string response = await chat.GetResponseFromChatbotAsync();
+        Debug.Log(response);
+        OpenAIToBoardTranslator(response);
+    }
+
+
     async Task tsk1Async()
     {
         chat.AppendUserInput("as weiﬂt du ‹ber Eyes Wide Shut?");
@@ -135,6 +147,7 @@ public class OpenAIController : MonoBehaviour
             };
             var res = await openai.CreateAudioTranscription(req);
             Debug.Log(res.Text);
+            board.GetComponent<BoardScript>().ChangeTopicTxt(res.Text);
             await SendMessage(res.Text);
         }
 

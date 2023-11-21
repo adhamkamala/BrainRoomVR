@@ -1155,6 +1155,7 @@ GameObject:
   - component: {fileID: 1286253809243892281}
   - component: {fileID: 1653609735302016045}
   - component: {fileID: 6467235120878976368}
+  - component: {fileID: 8134313895148070050}
   m_Layer: 0
   m_Name: BoardMainPanel
   m_TagString: Untagged
@@ -1264,6 +1265,34 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8134313895148070050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4149744013287122674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 978c9f016a6cf964a9d137bf826ffa61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boardLocations:
+  - {fileID: 8056252749455796740}
+  - {fileID: 6491314062675284010}
+  - {fileID: 4262888514221250295}
+  - {fileID: 5499919529826291961}
+  - {fileID: 7971731313878666428}
+  - {fileID: 812388033152938439}
+  - {fileID: 3425864383976086974}
+  - {fileID: 1615652312320989997}
+  - {fileID: 7294562163111268852}
+  - {fileID: 7392498845604754260}
+  - {fileID: 3304237908970220648}
+  - {fileID: 3520234854013280873}
+  - {fileID: 8892838671219950971}
+  - {fileID: 2822672907119639485}
+  - {fileID: 7271550203514749970}
 --- !u!1 &4254798709079835654
 GameObject:
   m_ObjectHideFlags: 0

@@ -46,4 +46,17 @@ public class SpawnSystem : MonoBehaviour
     {
         return isLocationFree;
     }
+
+    public void RemoveFromListPoints(Transform t)
+    {
+
+        for (int i = 0; i < occupiedSpawnLocations.Count; i++)
+        {
+            if (occupiedSpawnLocations[i].position == t.position)
+            {
+                occupiedSpawnLocations.RemoveAt(i);
+                break;
+            }
+        }
+    }
 }

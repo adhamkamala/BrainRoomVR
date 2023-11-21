@@ -23,6 +23,7 @@ public class LeftController : MonoBehaviour
     public GameObject holdPosition;
     public GameObject restPosition;
     public GameObject board;
+    public GameObject spawnSystem;
 
     private bool grabBool = false;
     private bool restBool = false;
@@ -83,7 +84,7 @@ public class LeftController : MonoBehaviour
                 case "GreenExpandButton":
                     Debug.Log("Expand");
                     // take the question and the answers and ask chat gpt for more answers.. will mehr wissen...
-                    aiSystem.GetComponent<OpenAIController>().SendMessageMore(board.GetComponent<BoardScript>().GetTopicTxt(), board.GetComponent<BoardScript>().GetAnswerTxt());
+                    aiSystem.GetComponent<OpenAIController>().SendMessageMore(board.GetComponent<BoardScript>().GetTopicTxt(), board.GetComponent<BoardScript>().GetAnswerTxt()); //pp
                     break;
                 default:
                     Debug.Log("nun");
@@ -97,6 +98,7 @@ public class LeftController : MonoBehaviour
             tmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
             switch (tmp.gameObject.name) {
                 case "DeleteBoardBtn":
+                    spawnSystem.GetComponent<SpawnSystem>().RemoveFromListPoints(tmp.gameObject.transform.parent.gameObject.transform);
                     Destroy(tmp.gameObject.transform.parent.gameObject);
                     break;
             }

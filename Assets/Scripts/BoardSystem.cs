@@ -23,10 +23,28 @@ public class BoardSystem : MonoBehaviour
             LocationHighlighter locHigh = g.GetComponent<LocationHighlighter>();
             if (locHigh.isAvailable())
             {
-                card.transform.position = new Vector3(g.transform.position.x+0.005f, g.transform.position.y, g.transform.position.z);
+               // card.transform.SetParent(g.transform);
+                //card.transform.parent= g.transform;
+                Debug.Log(card.transform.position);
+                Debug.Log(g.transform.position.x);
+                Debug.Log(g.transform.position.x + 0.1f);
+                //card.transform.position = new Vector3(g.transform.position.x, g.transform.position.y, g.transform.position.z);
+
+
+                card.transform.position = new Vector3(0.1f,0f,0f);
+                Vector3 localPos = card.transform.localPosition;
+                Quaternion localRot = card.transform.localRotation;
+                Vector3 localSca = card.transform.localScale;
                 locHigh.changeAvailable(false);
                 locHigh.SetCardHolding(card);
                 card.GetComponent<CardScript>().SetLocationHolding(g);
+                card.transform.position += new Vector3(0.1f, 0f, 0f);
+                card.transform.parent = g.transform;
+                card.transform.localPosition = localPos;
+                card.transform.localRotation = localRot;
+                //card.transform.localScale= localSca;
+                card.transform.localScale = new Vector3(1f, 1f, 1f);
+                Debug.Log(card.transform.position);
                 break;
             }
         }

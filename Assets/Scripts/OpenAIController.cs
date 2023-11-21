@@ -20,7 +20,8 @@ public class OpenAIController : MonoBehaviour
     private Conversation chat;
     private OpenAIApi openai = new OpenAIApi("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");
     public GameObject cardSystem;
-    public GameObject boardGameObject;
+    public GameObject boardsSystem;
+    public GameObject spawnSystem;
 
     // Start is called before the first frame update
     void Start()
@@ -147,7 +148,8 @@ public class OpenAIController : MonoBehaviour
             };
             var res = await openai.CreateAudioTranscription(req);
             Debug.Log(res.Text);
-            boardGameObject.GetComponent<BoardScript>().ChangeTopicTxt(res.Text); //PP
+            spawnSystem.GetComponent<SpawnSystem>().SpawnBoard();
+            boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().ChangeTopicTxt(res.Text);
             await SendMessage(res.Text);
         }
 

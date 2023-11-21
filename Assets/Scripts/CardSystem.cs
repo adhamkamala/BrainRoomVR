@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 public class CardSystem : MonoBehaviour
 {
     public GameObject cardsPrf;
-    public GameObject boardObj;
+    public GameObject boardsSystem;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,13 +22,13 @@ public class CardSystem : MonoBehaviour
         }
     }
    public void initCardObj(string mainTxt ="Main", string subTxt = "Some Text written in small size font for description") {
-        if (boardObj.GetComponent<BoardSystem>().CanCreate())
+        if (boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponentInChildren<BoardSystem>().CanCreate())
         {
-            GameObject cardTmp = Instantiate(cardsPrf, new Vector3(0f, 0f, 0f), Quaternion.identity);
+            GameObject cardTmp = Instantiate(cardsPrf); // , new Vector3(0f, 0f, 0f), Quaternion.identity)
             cardTmp.layer = LayerMask.NameToLayer("CardsLayer");
             cardTmp.GetComponent<CardScript>().ChangeMainTxt(mainTxt);
             cardTmp.GetComponent<CardScript>().ChangeSubTxt(subTxt);
-            boardObj.GetComponent<BoardSystem>().CardLocator(cardTmp);
+            boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponentInChildren<BoardSystem>().CardLocator(cardTmp);
         }
     }
 }

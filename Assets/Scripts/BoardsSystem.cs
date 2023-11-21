@@ -21,4 +21,10 @@ public class BoardsSystem : MonoBehaviour
     {
         return selectedBoard;
     }
+
+    public void SetSelectedBoard(GameObject board)
+    {
+        selectedBoard = board;
+    }
+
 }

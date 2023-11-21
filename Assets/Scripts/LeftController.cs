@@ -22,7 +22,7 @@ public class LeftController : MonoBehaviour
     public GameObject aiSystem;
     public GameObject holdPosition;
     public GameObject restPosition;
-    public GameObject board;
+    public GameObject boardsSystem;
     public GameObject spawnSystem;
 
     private bool grabBool = false;
@@ -84,7 +84,7 @@ public class LeftController : MonoBehaviour
                 case "GreenExpandButton":
                     Debug.Log("Expand");
                     // take the question and the answers and ask chat gpt for more answers.. will mehr wissen...
-                    aiSystem.GetComponent<OpenAIController>().SendMessageMore(board.GetComponent<BoardScript>().GetTopicTxt(), board.GetComponent<BoardScript>().GetAnswerTxt()); //pp
+                    aiSystem.GetComponent<OpenAIController>().SendMessageMore(boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().GetTopicTxt(), boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().GetAnswerTxt());
                     break;
                 default:
                     Debug.Log("nun");

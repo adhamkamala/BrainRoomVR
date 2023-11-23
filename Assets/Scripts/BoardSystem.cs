@@ -42,9 +42,7 @@ public class BoardSystem : MonoBehaviour
                 card.transform.parent = g.transform;
                 card.transform.localPosition = localPos;
                 card.transform.localRotation = localRot;
-                //card.transform.localScale= localSca;
                 card.transform.localScale = new Vector3(1f, 1f, 1f);
-                Debug.Log(card.transform.position);
                 break;
             }
         }

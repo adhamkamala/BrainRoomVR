@@ -27,7 +27,8 @@ public class OpenAIController : MonoBehaviour
     void Start()
     {
        chat = api.Chat.CreateConversation();
-       SetupModel();
+        chat.Model = "gpt-3.5-turbo-1106";
+        SetupModel();
     }
 
     void Update()
@@ -66,7 +67,7 @@ public class OpenAIController : MonoBehaviour
         // chat.AppendExampleChatbotOutput("{ \"answers\": [ { \"MainTitel\": \"Datum\", \"Untertitel\": \"22. November 1963\" },{ \"MainTitel\": \"Ort\", \"Untertitel\": \"Dealey Plaza, Dallas, Texas, USA\" },{ \"MainTitel\": \"Opfer\", \"Untertitel\": \"Präsident John F. Kennedy\" }] }");
     }
 
-    async Task SendMessage(string str)
+    public async Task SendMessage(string str)
     {
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();

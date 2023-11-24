@@ -24,6 +24,7 @@ public class LeftController : MonoBehaviour
     public GameObject restPosition;
     public GameObject boardsSystem;
     public GameObject spawnSystem;
+    public GameObject recordSystem;
 
     private bool grabBool = false;
     private bool restBool = false;
@@ -188,12 +189,15 @@ public class LeftController : MonoBehaviour
     void OnRightBPressed(InputAction.CallbackContext context)
     {
         Debug.Log("Right B button pressed!");
-        aiSystem.GetComponent<OpenAIController>().EndRecording();
+       // aiSystem.GetComponent<OpenAIController>().EndRecording();
+       recordSystem.GetComponent<RecordSystem>().EndRecording();
     }
     void OnRightAPressed(InputAction.CallbackContext context)
     {
         Debug.Log("Right A button pressed!");
         Debug.Log("Start Recording...");
-        aiSystem.GetComponent<OpenAIController>().StartRecording();
+        //aiSystem.GetComponent<OpenAIController>().StartRecording();
+        recordSystem.GetComponent<RecordSystem>().StartRecording();
     }
+
 }

@@ -1553,6 +1553,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Primary Action",
+                    "type": "Button",
+                    "id": "7709646d-e59b-4da0-9880-9c008ee7b9d2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1740,6 +1749,17 @@
                     "processors": "",
                     "groups": "Generic XR Controller",
                     "action": "Secondary Press",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "eb831183-7ef0-4f1c-bc8b-57b58eb49121",
+                    "path": "<XRController>{RightHand}/{PrimaryAction}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Generic XR Controller",
+                    "action": "Primary Action",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

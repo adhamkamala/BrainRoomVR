@@ -6,11 +6,10 @@ using UnityEngine;
 public class RightControllerRay : MonoBehaviour
 {
     public LayerMask layer;
-    public Transform gameObj;
     public float distance = 5f;
-    public Material leftHandMaterial;
-    private string rightPadName = "RightHandIndicator";
-    private string leftPadName = "LeftHandIndicator";
+    private bool cardHit = false;
+    private GameObject cardHitObj;
+    public GameObject pokeMat;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,8 +24,25 @@ public class RightControllerRay : MonoBehaviour
         Debug.DrawRay(ray.origin, ray.direction * distance, Color.blue);
             if (Physics.Raycast(transform.position, transform.forward * distance, out hit, distance, layer))
             {
-       
-            }
+            cardHit = true;
+            cardHitObj = hit.collider.gameObject;
+            pokeMat.GetComponent<PokeScript>().ChangeColorToGreen();
 
+        }
+        else
+        {
+            cardHit = false;
+            pokeMat.GetComponent<PokeScript>().ChangeColorToWhite();
+        }
+
+    }
+
+    public GameObject IsRayHit()
+    {
+        if (cardHit)
+        {
+            return cardHitObj;
+        }
+        else { return null; }
     }
 }

@@ -354,7 +354,7 @@ GameObject:
   - component: {fileID: 6309288232892520942}
   - component: {fileID: 2291632283478462704}
   - component: {fileID: 4281960630079875371}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: CancelBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -677,6 +677,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d46ba16aa858a149b94184a8b821642, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hintTxt: {fileID: 3119541437028647791}
+  mainTxt: {fileID: 3054822734027268704}
 --- !u!1 &8564663750378504066
 GameObject:
   m_ObjectHideFlags: 0
@@ -689,7 +691,7 @@ GameObject:
   - component: {fileID: 4386372252530785252}
   - component: {fileID: 7723992344065089872}
   - component: {fileID: 5439182241648585982}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: ConfirmBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}

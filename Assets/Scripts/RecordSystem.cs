@@ -13,7 +13,7 @@ public class RecordSystem : MonoBehaviour
     public GameObject boardsSystem;
     public GameObject spawnSystem;
     public GameObject aiSystem;
-    private GameObject tmp;
+    private GameObject tmp = null;
     private readonly string fileName = "output.wav";
     private AudioClip clip;
     private OpenAIApi openai = new OpenAIApi("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");
@@ -33,14 +33,22 @@ public class RecordSystem : MonoBehaviour
     }
 
     public void SpawnRecordPanel() {
-    
+
+        if (tmp != null) { 
+        DestroyRecordPanel();
+        }
        tmp = Instantiate(recordPanelPrefab);
-       recordPanelPrefab.transform.parent = spawnLocationRecordPanel.transform;
+       tmp.transform.parent = spawnLocationRecordPanel.transform;
+        tmp.transform.localPosition = Vector3.zero;
+        tmp.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+        // tmp.transform.localRotation = Quaternion.identity;
+
     }
 
     public void DestroyRecordPanel()
     {
         Destroy(tmp);
+        tmp = null;
     }
 
     public void OnConfirmClick()
@@ -48,6 +56,7 @@ public class RecordSystem : MonoBehaviour
         spawnSystem.GetComponent<SpawnSystem>().SpawnBoard();
         boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().ChangeTopicTxt(convertedAudio);
         aiSystem.GetComponent<OpenAIController>().SendMessage(convertedAudio);
+        DestroyRecordPanel();
     }
 
     public void OnCancelClick()

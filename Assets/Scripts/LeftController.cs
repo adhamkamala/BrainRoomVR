@@ -6,6 +6,7 @@ using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
+using static Unity.Burst.Intrinsics.X86.Avx;
 
 public class LeftController : MonoBehaviour
 {
@@ -19,6 +20,7 @@ public class LeftController : MonoBehaviour
     public InputActionReference rightBButton;
     public InputActionReference rightAButton;
     public GameObject leftPoke;
+    public GameObject rightPoke;
     public GameObject aiSystem;
     public GameObject holdPosition;
     public GameObject restPosition;
@@ -180,6 +182,25 @@ public class LeftController : MonoBehaviour
     void OnRightMainPressed(InputAction.CallbackContext context)
     {
         Debug.Log("Right Main button pressed!");
+        var tmp = rightPoke.GetComponent<RightControllerRay>().IsRayHit();
+        if (tmp) {
+            switch (tmp.gameObject.name)
+            {
+                case "ConfirmBtn":
+                    Debug.Log("Confirm");
+                    recordSystem.GetComponent<RecordSystem>().OnConfirmClick();
+                    break;
+                case "CancelBtn":
+                    Debug.Log("Delete");
+                    // take the question and the answers and ask chat gpt for more answers.. will mehr wissen...
+                    recordSystem.GetComponent<RecordSystem>().OnCancelClick();
+                    break;
+                default:
+                    Debug.Log("nun");
+                    break;
+            }
+        }
+      
     }
     void OnRightSecondaryPressed(InputAction.CallbackContext context)
     {

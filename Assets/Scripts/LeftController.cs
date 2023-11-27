@@ -115,31 +115,47 @@ public class LeftController : MonoBehaviour
         {
             grabBool= false;
         }
-   
+
         if (locationTmp != null && leftPoke.GetComponent<LeftControllerRay>().IsLayerPosition())
         {
-          
+
             restBool = false;
-            cardTmp.transform.Rotate(Vector3.up, 90f);
-            cardTmp.transform.position = new Vector3(locationTmp.transform.position.x + 0.005f, locationTmp.transform.position.y, locationTmp.transform.position.z);
+            cardTmp.transform.parent = null;
+            // cardTmp.transform.Rotate(Vector3.up, 90f);
+            // cardTmp.transform.position = new Vector3(locationTmp.transform.position.x + 0.005f, locationTmp.transform.position.y, locationTmp.transform.position.z);
+            cardTmp.transform.parent = locationTmp.transform;
+            cardTmp.transform.localPosition = new Vector3(0.1f, 0f, 0f);
+            cardTmp.transform.localRotation = Quaternion.identity;
+            cardTmp.transform.localScale = new Vector3(1f, 1f, 1f);
             leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
         }
 
     }
     void OnLeftXPressed(InputAction.CallbackContext context)
     {
+        Debug.Log("Left X button pressed!");
         if (grabBool == true)
         {
-            
+
+            // cardTmp.transform.Rotate(Vector3.up, -90f);
+            // cardTmp.transform.localRotation = Quaternion.Euler(0f, 90f, 0f);
+            Transform parentObject = cardTmp.transform.parent;
+            cardTmp.transform.parent = null;
             cardTmp.transform.Rotate(Vector3.up, -90f);
+            cardTmp.transform.parent = parentObject;
             leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToPostion();
             grabBool = false;
             restBool = true;
-        } else
+        }
+        else
         {
             if (cardTmp.transform.rotation.y != 0f)
             {
+                Transform parentObject = cardTmp.transform.parent;
+                cardTmp.transform.parent = null;
                 cardTmp.transform.Rotate(Vector3.up, 90f);
+                cardTmp.transform.parent = parentObject;
+
             }
             leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
             grabBool = true;

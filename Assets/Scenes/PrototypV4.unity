@@ -2997,11 +2997,13 @@ MonoBehaviour:
   rightBButton: {fileID: -576270613786633531, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   rightAButton: {fileID: -3193666799499870678, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   leftPoke: {fileID: 392695795}
+  rightPoke: {fileID: 0}
   aiSystem: {fileID: 1737657686}
   holdPosition: {fileID: 35160334}
   restPosition: {fileID: 1476434897}
   boardsSystem: {fileID: 1844484430}
   spawnSystem: {fileID: 105400586}
+  recordSystem: {fileID: 0}
 --- !u!4 &530618794 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2871854917430088270, guid: 65eb6b98091a5734ba9d9ca871cef69a, type: 3}
@@ -3614,9 +3616,8 @@ MonoBehaviour:
   layer:
     serializedVersion: 2
     m_Bits: 0
-  gameObj: {fileID: 0}
   distance: 5
-  leftHandMaterial: {fileID: 0}
+  pokeMat: {fileID: 1053814304}
 --- !u!1 &780157276
 GameObject:
   m_ObjectHideFlags: 0
@@ -4464,6 +4465,11 @@ MeshFilter:
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7294562163111268852, guid: 4760ff0e8d9a67240bfaf32e10b8fd24, type: 3}
   m_PrefabInstance: {fileID: 7748715693828692121}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1053814304 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6197882812993913195, guid: 65eb6b98091a5734ba9d9ca871cef69a, type: 3}
+  m_PrefabInstance: {fileID: 924116579}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1054335365 stripped
 GameObject:

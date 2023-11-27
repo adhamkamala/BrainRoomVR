@@ -7,9 +7,11 @@ public class SpawnSystem : MonoBehaviour
 {
     public GameObject boardPrefab;
     public Transform[] spawnLocations;
+    public GameObject boardsSystem;
+
     private List<Transform> occupiedSpawnLocations = new List<Transform>();
     private bool isLocationFree = false;
-    public GameObject boardsSystem;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -19,7 +21,7 @@ public class SpawnSystem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Keyboard.current.rKey.wasPressedThisFrame)
+        if (Keyboard.current.rKey.wasPressedThisFrame) // for testing purposes
         {
             SpawnBoard();
         }
@@ -35,10 +37,9 @@ public class SpawnSystem : MonoBehaviour
                 {
                     boardsSystem.GetComponent<BoardsSystem>().SetSelectedBoard(Instantiate(boardPrefab, spawnPoint.position, spawnPoint.rotation));
                     occupiedSpawnLocations.Add(spawnPoint);
-                    return; // Spawned an object, exit the function
+                    return;
                 }
             }
-            Debug.Log("All spawn points are assigned.");
             isLocationFree = false;
         }
     }

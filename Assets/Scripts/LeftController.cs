@@ -121,8 +121,6 @@ public class LeftController : MonoBehaviour
 
             restBool = false;
             cardTmp.transform.parent = null;
-            // cardTmp.transform.Rotate(Vector3.up, 90f);
-            // cardTmp.transform.position = new Vector3(locationTmp.transform.position.x + 0.005f, locationTmp.transform.position.y, locationTmp.transform.position.z);
             cardTmp.transform.parent = locationTmp.transform;
             cardTmp.transform.localPosition = new Vector3(0.1f, 0f, 0f);
             cardTmp.transform.localRotation = Quaternion.identity;
@@ -136,9 +134,6 @@ public class LeftController : MonoBehaviour
         Debug.Log("Left X button pressed!");
         if (grabBool == true)
         {
-
-            // cardTmp.transform.Rotate(Vector3.up, -90f);
-            // cardTmp.transform.localRotation = Quaternion.Euler(0f, 90f, 0f);
             Transform parentObject = cardTmp.transform.parent;
             cardTmp.transform.parent = null;
             cardTmp.transform.Rotate(Vector3.up, -90f);

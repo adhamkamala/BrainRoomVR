@@ -26,8 +26,8 @@ public class RecordSystem : MonoBehaviour
         }
        tmp = Instantiate(recordPanelPrefab);
        tmp.transform.parent = spawnLocationRecordPanel.transform;
-        tmp.transform.localPosition = Vector3.zero;
-        tmp.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+       tmp.transform.localPosition = Vector3.zero;
+       tmp.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
 
     }
 

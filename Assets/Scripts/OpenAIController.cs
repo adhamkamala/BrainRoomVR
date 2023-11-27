@@ -57,7 +57,6 @@ public class OpenAIController : MonoBehaviour
     }
 
     void OpenAIToBoardTranslator(string str) { // translate answer from OPENAI to Cards on Board<<<<<<<
-        //Debug.Log(str);
         OpenAIResopnse openAIResponse = JsonConvert.DeserializeObject<OpenAIResopnse>(str);
         List<Card> kartenList = openAIResponse.Answers;
         foreach (Card card in kartenList)

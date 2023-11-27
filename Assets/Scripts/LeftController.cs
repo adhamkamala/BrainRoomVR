@@ -129,8 +129,13 @@ public class LeftController : MonoBehaviour
         {
           
             restBool = false;
-            cardTmp.transform.Rotate(Vector3.up, 90f);
-            cardTmp.transform.position = new Vector3(locationTmp.transform.position.x + 0.005f, locationTmp.transform.position.y, locationTmp.transform.position.z);
+            cardTmp.transform.parent = null;
+           // cardTmp.transform.Rotate(Vector3.up, 90f);
+           // cardTmp.transform.position = new Vector3(locationTmp.transform.position.x + 0.005f, locationTmp.transform.position.y, locationTmp.transform.position.z);
+            cardTmp.transform.parent = locationTmp.transform;
+            cardTmp.transform.localPosition = new Vector3(0.1f, 0f, 0f);
+            cardTmp.transform.localRotation = Quaternion.identity;
+            cardTmp.transform.localScale = new Vector3(1f, 1f, 1f);
             leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
         }
 

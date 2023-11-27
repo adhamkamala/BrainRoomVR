@@ -125,7 +125,7 @@ public class OpenAIController : MonoBehaviour
 
         for (int i = 0; i < Microphone.devices.Length; i++) {
             Debug.Log("Available Microphone: " + Microphone.devices[i]);
-            if (Microphone.devices[i].Contains("Realtek")) { // Oculus
+            if (Microphone.devices[i].Contains("Oculus")) { // Oculus
                 Debug.Log("Found VR: " + Microphone.devices[i]);
                 micName = Microphone.devices[i];
             }

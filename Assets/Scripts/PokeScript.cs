@@ -13,13 +13,6 @@ public class PokeScript : MonoBehaviour
         renderer = GetComponent<Renderer>();
         material = renderer.material;
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void ChangeColorToGreen()
     {
         material.color= Color.green;

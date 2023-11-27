@@ -7,14 +7,11 @@ public class RightControllerRay : MonoBehaviour
 {
     public LayerMask layer;
     public float distance = 5f;
+    public GameObject pokeMat;
+
     private bool cardHit = false;
     private GameObject cardHitObj;
-    public GameObject pokeMat;
-    // Start is called before the first frame update
-    void Start()
-    {
-      
-    }
+
 
     // Update is called once per frame
     void Update()

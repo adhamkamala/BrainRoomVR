@@ -13,25 +13,12 @@ public class RecordSystem : MonoBehaviour
     public GameObject boardsSystem;
     public GameObject spawnSystem;
     public GameObject aiSystem;
+
     private GameObject tmp = null;
     private readonly string fileName = "output.wav";
     private AudioClip clip;
     private OpenAIApi openai = new OpenAIApi("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");
     private string convertedAudio;
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void SpawnRecordPanel() {
 
         if (tmp != null) { 
@@ -41,7 +28,6 @@ public class RecordSystem : MonoBehaviour
        tmp.transform.parent = spawnLocationRecordPanel.transform;
         tmp.transform.localPosition = Vector3.zero;
         tmp.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
-        // tmp.transform.localRotation = Quaternion.identity;
 
     }
 
@@ -68,27 +54,21 @@ public class RecordSystem : MonoBehaviour
     {
         SpawnRecordPanel();
         string micName = "";
-       // ChangeHintTxt("Recording...");
         tmp.GetComponent<RecordPanelScript>().ChangeHintTxt("Recording...");
         tmp.GetComponent<RecordPanelScript>().ChangeMainTxt("");
-        //ChangeMainTxt("");
         for (int i = 0; i < Microphone.devices.Length; i++)
         {
-            Debug.Log("Available Microphone: " + Microphone.devices[i]);
-            if (Microphone.devices[i].Contains("Realtek"))
-            { // Oculus
-                Debug.Log("Found VR: " + Microphone.devices[i]);
+            if (Microphone.devices[i].Contains("Oculus")) // Oculus
+            { 
                 micName = Microphone.devices[i];
             }
 
         }
-        Debug.Log("Talk...");
         clip = Microphone.Start(micName, false, 10, 44100); // sekunden
     }
 
     public async void EndRecording()
     {
-       // ChangeHintTxt("Recorded");
         tmp.GetComponent<RecordPanelScript>().ChangeHintTxt("Recorded");
         Microphone.End(null);
         byte[] data = SaveWav.Save(fileName, clip);
@@ -99,8 +79,6 @@ public class RecordSystem : MonoBehaviour
             Language = "de"
         };
         var res = await openai.CreateAudioTranscription(req);
-        Debug.Log(res.Text);
-       // ChangeMainTxt(res.Text);
         tmp.GetComponent<RecordPanelScript>().ChangeMainTxt(res.Text);
         convertedAudio = res.Text;
     }

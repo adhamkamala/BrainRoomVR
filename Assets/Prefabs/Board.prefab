@@ -248,7 +248,7 @@ GameObject:
   - component: {fileID: 2021690113189605644}
   - component: {fileID: 4708611159919465902}
   m_Layer: 0
-  m_Name: TopixTxt
+  m_Name: TopicTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

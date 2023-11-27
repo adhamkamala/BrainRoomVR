@@ -7,18 +7,6 @@ public class BoardScript : MonoBehaviour
 {
     public TextMeshPro topicTxt;
     private string boardAnswer;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void ChangeTopicTxt(string txt)
     {
         topicTxt.text = txt;
@@ -28,7 +16,6 @@ public class BoardScript : MonoBehaviour
     {
         boardAnswer = txt;
     }
-
     public string GetAnswerTxt()
     {
         return boardAnswer;

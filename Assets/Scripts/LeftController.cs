@@ -10,8 +10,8 @@ using static Unity.Burst.Intrinsics.X86.Avx;
 
 public class LeftController : MonoBehaviour
 {
-    public InputActionReference leftMainButton; // Main
-    public InputActionReference leftSecondaryButton; // Secondary 
+    public InputActionReference leftMainButton;
+    public InputActionReference leftSecondaryButton;
     public InputActionReference leftXbutton;
     public InputActionReference leftYButton;
     public InputActionReference leftMenuButton;
@@ -28,10 +28,10 @@ public class LeftController : MonoBehaviour
     public GameObject spawnSystem;
     public GameObject recordSystem;
 
-    private bool grabBool = false;
-    private bool restBool = false;
     private GameObject cardTmp;
     private GameObject locationTmp;
+    private bool grabBool = false;
+    private bool restBool = false;
     private bool optionsPressed = false;
 
     void Start()
@@ -46,12 +46,6 @@ public class LeftController : MonoBehaviour
         rightBButton.action.performed += OnRightBPressed;
         rightAButton.action.performed += OnRightAPressed;
     }
-
-    //  void OnMainButtonPressed(InputAction.CallbackContext context)
-    //  {
-    //     Debug.Log("Main button pressed!");
-    //  }
-
     private void Update()
     {
         if (grabBool == true & !optionsPressed)
@@ -67,32 +61,28 @@ public class LeftController : MonoBehaviour
     void OnLeftMainPressed(InputAction.CallbackContext context)
     {
         GameObject tmp;
-        Debug.Log("Left Main button pressed!");
         if (leftPoke.GetComponent<LeftControllerRay>().IsLayerCardOption())
         {
            tmp =  leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
-            Debug.Log(tmp.gameObject.name);
-            switch (tmp.gameObject.name)
-            {
-                case "RedDeleteButton":
-                    Debug.Log("Delete");
-                    if (cardTmp != null) {
-                        Destroy(cardTmp.gameObject);
-                        grabBool = false;
-                        restBool = false;
-                        optionsPressed = false;
-                        leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
-                    }
-                    break;
-                case "GreenExpandButton":
-                    Debug.Log("Expand");
-                    // take the question and the answers and ask chat gpt for more answers.. will mehr wissen...
-                    aiSystem.GetComponent<OpenAIController>().SendMessageMore(boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().GetTopicTxt(), boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().GetAnswerTxt());
-                    break;
-                default:
-                    Debug.Log("nun");
-                    break;
+            if (tmp != null) {
+                switch (tmp.gameObject.name)
+                {
+                    case "RedDeleteButton":
+                        if (cardTmp != null)
+                        {
+                            Destroy(cardTmp.gameObject);
+                            grabBool = false;
+                            restBool = false;
+                            optionsPressed = false;
+                            leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                        }
+                        break;
+                    case "GreenExpandButton":
+                        _ = aiSystem.GetComponent<OpenAIController>().SendMessageMore(boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().GetTopicTxt(), boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().GetAnswerTxt());
+                        break;
+                }
             }
+          
 
         }
 
@@ -109,8 +99,6 @@ public class LeftController : MonoBehaviour
     }
     void OnLeftSecondaryPressed(InputAction.CallbackContext context)
     {
-        Debug.Log("Left Secondary button pressed!");
-    
         if (leftPoke.GetComponent<LeftControllerRay>().IsLayerCard())
         {
             cardTmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
@@ -140,7 +128,6 @@ public class LeftController : MonoBehaviour
     }
     void OnLeftXPressed(InputAction.CallbackContext context)
     {
-        Debug.Log("Left X button pressed!");
         if (grabBool == true)
         {
             
@@ -161,7 +148,6 @@ public class LeftController : MonoBehaviour
     }
     void OnLeftYPressed(InputAction.CallbackContext context)
     {
-        Debug.Log("Left Y button pressed!");
         if (cardTmp!= null & optionsPressed)
         {
             optionsPressed = false;
@@ -177,26 +163,20 @@ public class LeftController : MonoBehaviour
     }
     void OnLeftMenuPressed(InputAction.CallbackContext context)
     {
-        Debug.Log("Left Menu button pressed!");
+
     }
     void OnRightMainPressed(InputAction.CallbackContext context)
     {
-        Debug.Log("Right Main button pressed!");
+
         var tmp = rightPoke.GetComponent<RightControllerRay>().IsRayHit();
         if (tmp) {
             switch (tmp.gameObject.name)
             {
                 case "ConfirmBtn":
-                    Debug.Log("Confirm");
                     recordSystem.GetComponent<RecordSystem>().OnConfirmClick();
                     break;
                 case "CancelBtn":
-                    Debug.Log("Delete");
-                    // take the question and the answers and ask chat gpt for more answers.. will mehr wissen...
                     recordSystem.GetComponent<RecordSystem>().OnCancelClick();
-                    break;
-                default:
-                    Debug.Log("nun");
                     break;
             }
         }
@@ -204,20 +184,14 @@ public class LeftController : MonoBehaviour
     }
     void OnRightSecondaryPressed(InputAction.CallbackContext context)
     {
-        Debug.Log("Right Secondary button pressed!");
-        aiSystem.GetComponent<OpenAIController>().testTrans();
+      
     }
     void OnRightBPressed(InputAction.CallbackContext context)
     {
-        Debug.Log("Right B button pressed!");
-       // aiSystem.GetComponent<OpenAIController>().EndRecording();
        recordSystem.GetComponent<RecordSystem>().EndRecording();
     }
     void OnRightAPressed(InputAction.CallbackContext context)
     {
-        Debug.Log("Right A button pressed!");
-        Debug.Log("Start Recording...");
-        //aiSystem.GetComponent<OpenAIController>().StartRecording();
         recordSystem.GetComponent<RecordSystem>().StartRecording();
     }
 

@@ -9,11 +9,12 @@ public class LeftControllerRay : MonoBehaviour
     public LayerMask layerPosition;
     public LayerMask layerCardOptions;
     public float distance = 5f;
+    public GameObject pokeMat;
+
+    private GameObject cardHitObj;
     private bool cardHit = false;
     private LayerMask layerSelected;
-    private GameObject cardHitObj;
-    public GameObject pokeMat;
-    // Start is called before the first frame update
+
     void Start()
     {
         layerSelected = layerCard;
@@ -29,7 +30,6 @@ public class LeftControllerRay : MonoBehaviour
             {
             cardHit= true;
             cardHitObj = hit.collider.gameObject;
-           // Debug.Log(cardHitObj.name);
             pokeMat.GetComponent<PokeScript>().ChangeColorToGreen();
        
             } else

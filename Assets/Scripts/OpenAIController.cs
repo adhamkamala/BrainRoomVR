@@ -14,37 +14,23 @@ using System.Xml.Schema;
 
 public class OpenAIController : MonoBehaviour
 {
+    public GameObject cardSystem;
+    public GameObject boardsSystem;
+    public GameObject spawnSystem;
+
     private readonly string fileName = "output.wav";
     private AudioClip clip;
     private OpenAI_API.OpenAIAPI api = new OpenAI_API.OpenAIAPI("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");
     private Conversation chat;
     private OpenAIApi openai = new OpenAIApi("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");
-    public GameObject cardSystem;
-    public GameObject boardsSystem;
-    public GameObject spawnSystem;
+
 
     // Start is called before the first frame update
     void Start()
     {
        chat = api.Chat.CreateConversation();
-        chat.Model = "gpt-3.5-turbo-1106";
-        SetupModel();
-    }
-
-    void Update()
-    {
-        if (Keyboard.current.pKey.wasPressedThisFrame)
-        {
-            Debug.Log("pressed");
-            tsk1Async();
-        }
-    }
-
-    public void testTrans()
-    {
-        string serverResponse = "{ \"answers\": [ { \"MainTitel\": \"Datum\", \"Untertitel\": \"22. November 1963\" },{ \"MainTitel\": \"Ort\", \"Untertitel\": \"Dealey Plaza, Dallas, Texas, USA\" },{ \"MainTitel\": \"Opfer\", \"Untertitel\": \"Pr‰sident John F. Kennedy\" }] }";
-        Debug.Log(serverResponse);
-
+       chat.Model = "gpt-3.5-turbo-1106";
+        _ = SetupModel();
     }
 
     async Task SetupModel()
@@ -60,11 +46,6 @@ public class OpenAIController : MonoBehaviour
             string answersJson = JsonConvert.SerializeObject(new { answers = questionData.answers });
             chat.AppendExampleChatbotOutput(answersJson);
         }
-        // chat.AppendUserInput("Was ist ICE?");
-        //chat.AppendExampleChatbotOutput("[{MainTitel: Transport ; Untertitel: Ist ein Zug in Deutschland}] Anzahl Antworte: 1");
-        // chat.AppendExampleChatbotOutput("{ \"answers\": [ { \"MainTitel\": \"Transport\", \"Untertitel\": \"Ist ein Zug in Deutschland\" }] }");
-        // chat.AppendUserInput("Was weiﬂt du ‹ber den Attentat auf JFK?");
-        // chat.AppendExampleChatbotOutput("{ \"answers\": [ { \"MainTitel\": \"Datum\", \"Untertitel\": \"22. November 1963\" },{ \"MainTitel\": \"Ort\", \"Untertitel\": \"Dealey Plaza, Dallas, Texas, USA\" },{ \"MainTitel\": \"Opfer\", \"Untertitel\": \"Pr‰sident John F. Kennedy\" }] }");
     }
 
     public async Task SendMessage(string str)
@@ -92,32 +73,7 @@ public class OpenAIController : MonoBehaviour
         string str = "Die Frage wurde dir gestellt: " + strQues + ". und du hast so beantwortert: " + strAnswer + ". kannst du noch zu der frage andere antworte geben?";
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
-        Debug.Log(response);
         OpenAIToBoardTranslator(response);
-    }
-
-
-    async Task tsk1Async()
-    {
-        chat.AppendUserInput("as weiﬂt du ‹ber Eyes Wide Shut?");
-        // and get the response
-        string response = await chat.GetResponseFromChatbotAsync();
-        Console.WriteLine(response); // "Yes"
-        //debug.log(response);
-        //debug.log("3");
-        //// and continue the conversation by asking another
-        //chat.appenduserinput("is this an animal? chair");
-        //// and get another response
-        //response = await chat.getresponsefromchatbotasync();
-        //console.writeline(response); // "no"
-        //debug.log(response);
-        //debug.log("4");
-        //// the entire chat history is available in chat.messages
-        foreach (OpenAI_API.Chat.ChatMessage msg in chat.Messages)
-        {
-            Console.WriteLine($"{msg.Role}: {msg.Content}");
-            Debug.Log($"{msg.Role}: {msg.Content}");
-        }
     }
 
         public void StartRecording()
@@ -125,9 +81,7 @@ public class OpenAIController : MonoBehaviour
         string micName ="";
 
         for (int i = 0; i < Microphone.devices.Length; i++) {
-            Debug.Log("Available Microphone: " + Microphone.devices[i]);
-            if (Microphone.devices[i].Contains("Realtek")) { // Oculus
-                Debug.Log("Found VR: " + Microphone.devices[i]);
+            if (Microphone.devices[i].Contains("Oculus")) { // Oculus
                 micName = Microphone.devices[i];
             }
 
@@ -148,7 +102,6 @@ public class OpenAIController : MonoBehaviour
                 Language = "de"
             };
             var res = await openai.CreateAudioTranscription(req);
-            Debug.Log(res.Text);
             spawnSystem.GetComponent<SpawnSystem>().SpawnBoard();
             boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().ChangeTopicTxt(res.Text);
             await SendMessage(res.Text);

@@ -141,7 +141,12 @@ public class LeftController : MonoBehaviour
         if (grabBool == true)
         {
             
+           // cardTmp.transform.Rotate(Vector3.up, -90f);
+           // cardTmp.transform.localRotation = Quaternion.Euler(0f, 90f, 0f);
+            Transform parentObject = cardTmp.transform.parent;
+            cardTmp.transform.parent = null;
             cardTmp.transform.Rotate(Vector3.up, -90f);
+            cardTmp.transform.parent = parentObject;
             leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToPostion();
             grabBool = false;
             restBool = true;
@@ -149,7 +154,11 @@ public class LeftController : MonoBehaviour
         {
             if (cardTmp.transform.rotation.y != 0f)
             {
+                Transform parentObject = cardTmp.transform.parent;
+                cardTmp.transform.parent = null;
                 cardTmp.transform.Rotate(Vector3.up, 90f);
+                cardTmp.transform.parent = parentObject;
+          
             }
             leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
             grabBool = true;

@@ -13,6 +13,9 @@ public class RecordSystem : MonoBehaviour
     public GameObject boardsSystem;
     public GameObject spawnSystem;
     public GameObject aiSystem;
+    public GameObject mainSystem;
+    public GameObject leftController;
+    public GameObject cardSystem;
 
     private GameObject tmp = null;
     private readonly string fileName = "output.wav";
@@ -39,10 +42,24 @@ public class RecordSystem : MonoBehaviour
 
     public void OnConfirmClick()
     {
-        spawnSystem.GetComponent<SpawnSystem>().SpawnBoard();
-        boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().ChangeTopicTxt(convertedAudio);
-        aiSystem.GetComponent<OpenAIController>().SendMessage(convertedAudio);
-        DestroyRecordPanel();
+        if (mainSystem.GetComponent <MainSystem>().WhatMode() ==0) {
+            spawnSystem.GetComponent<SpawnSystem>().SpawnBoard();
+            boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().ChangeTopicTxt(convertedAudio);
+            aiSystem.GetComponent<OpenAIController>().ModeWhiteBoardSendMessage(convertedAudio);
+            DestroyRecordPanel();
+        } else if (mainSystem.GetComponent<MainSystem>().WhatMode() == 1) {
+            if (cardSystem.GetComponent<CardSystem>().IsRootNodeCreated())
+            {
+                leftController.GetComponent<LeftController>().AttachCard(cardSystem.GetComponent<CardSystem>().initMindMapCardObj(convertedAudio));
+            } else
+            {
+                aiSystem.GetComponent<OpenAIController>().ModeMindMapSendMessage(convertedAudio);
+            }
+           
+          
+            DestroyRecordPanel();
+        }
+       
     }
 
     public void OnCancelClick()

@@ -1,0 +1,112 @@
+{
+    "questions": [
+      {
+        "question": "Wie kann eine Hochschule umweltfreundlich sein?",
+        "answers": [
+          {
+            "Hauptwurzel": "Umweltfreundliche Hochschule",
+            "Unterwurzeln": [
+              {
+                "Wurzel": "Energieeffizienz",
+                "Knoten": [
+                  "Erneuerbare Energiequellen",
+                  "Energieeffiziente Beleuchtung und Geräte",
+                  "Sensibilisierung für sparsamen Energieverbrauch"
+                ]
+              },
+              {
+                "Wurzel": "Abfallmanagement",
+                "Knoten": [
+                  "Recyclingprogramme",
+                  "Reduzierung von Einwegprodukten",
+                  "Upcycling und Wiederverwendung fördern"
+                ]
+              },
+              {
+                "Wurzel": "Nachhaltige Mobilität",
+                "Knoten": [
+                  "Fahrradwege und Gehwege ausbauen",
+                  "Öffentliche Verkehrsmittel fördern",
+                  "Elektrofahrzeuge oder Ladestationen bereitstellen"
+                ]
+              },
+              {
+                "Wurzel": "Grüne Infrastruktur",
+                "Knoten": [
+                  "Grüne Bereiche und Gärten schaffen",
+                  "Einheimische Pflanzen für Biodiversität",
+                  "Dachbegrünungen für Wärmeisolierung"
+                ]
+              },
+              {
+                "Wurzel": "Bildung und Sensibilisierung",
+                "Knoten": [
+                  "Umweltthemen in den Lehrplan integrieren",
+                  "Workshops und Vorträge organisieren",
+                  "Umweltbewusstsein fördern"
+                ]
+              },
+              {
+                "Wurzel": "Nachhaltige Beschaffung",
+                "Knoten": [
+                  "Umweltfreundliche Produkte bevorzugen",
+                  "Mit Lieferanten nachhaltige Praktiken fördern",
+                  "Reduzierung von Einwegverpackungen"
+                ]
+              },
+              {
+                "Wurzel": "Wasserressourcenmanagement",
+                "Knoten": [
+                  "Wassersparmaßnahmen implementieren",
+                  "Regenwasser für Bewässerung nutzen",
+                  "Sensibilisierung für bewussten Wasserverbrauch"
+                ]
+              },
+              {
+                "Wurzel": "Digitale Transformation",
+                "Knoten": [
+                  "Digitale Lehrmaterialien nutzen",
+                  "Technologien für Fernarbeit einführen"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "question": "Wie kann die lokale Gemeinschaft die Gesundheitsversorgung verbessern?",
+        "answers": [
+          {
+            "Hauptwurzel": "Gesundheitsfördernde Gemeinschaft",
+            "Unterwurzeln": [
+              {
+                "Wurzel": "Zugängliche Gesundheitsdienste",
+                "Knoten": [
+                  "Gesundheitszentren",
+                  "Mobile Kliniken",
+                  "Telemedizin"
+                ]
+              },
+              {
+                "Wurzel": "Gesundheitsprävention",
+                "Knoten": [
+                  "Gesunde Ernährung",
+                  "Präventionskampagnen",
+                  "Krankheits-Screening"
+                ]
+              },
+              {
+                "Wurzel": "Gesundheitsinfrastruktur",
+                "Knoten": [
+                  "Ausbau von Krankenhäusern",
+                  "Moderne Ausrüstung",
+                  "Forschungseinrichtungen"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  

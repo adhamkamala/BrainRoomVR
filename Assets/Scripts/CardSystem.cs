@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -43,7 +44,7 @@ public class CardSystem : MonoBehaviour
         return cardTmp;
     }
 
-    public Node CreateRootNood(string str)
+    public Node CreateRootNode(string str)
     {
         Node mainNode = CreateNode(spawnPoint.position,str);
         mainNode.parentNode = null;
@@ -62,12 +63,8 @@ public class CardSystem : MonoBehaviour
         {
             Node child = CreateNode(positions[i], strs[i]);
             child.parentNode = parentNode;
-            parentNode.children.Add(child);
-            Debug.Log(child.gameObject);
-            Debug.Log(child.parentNode.gameObject);
+                parentNode.children.Add(child);
             child.gameObject.GetComponent<CardScript>().SetCard(child.parentNode.gameObject);
-
-
         }
     }
     public bool IsRootNodeCreated()
@@ -78,26 +75,55 @@ public class CardSystem : MonoBehaviour
         }
         else return false;
     }
-    public void CreateChildNode(Node parentNode, string str, int countSpace)
-    {
-        CalculateHorizontalSpacing(countSpace);
-        List<Vector3> positions = CalculateChildNodePositions(parentNode, 1);
-        for (int i = 0; i < positions.Count; i++)
-        {
-            Node child = CreateNode(positions[i], str);
-            child.parentNode = parentNode;
-            parentNode.children.Add(child);
-            Debug.Log(child.gameObject);
-            Debug.Log(child.parentNode.gameObject);
-            child.gameObject.GetComponent<CardScript>().SetCard(child.parentNode.gameObject);
-
-
-        }
-    }
 
     public void UserAttachCardNode(string str, GameObject card)
     {
-        CreateChildNode(GetNodeByName(null,str), card.GetComponent<CardScript>().subTitleTxt.text,0);
+        Node2 root2 = ConvertToNode2(rootNode);
+        Node2 node2Tmp = new Node2();
+        node2Tmp.name = card.GetComponent<CardScript>().subTitleTxt.text;
+        node2Tmp.parentNode = GetNode2ByName(root2, str);
+        node2Tmp.parentNode.children.Add(node2Tmp);
+        rootNode.DeleteHierarchy();
+        CreateRootNode(root2.name);
+        ReconstructHierarchy(root2);
+    }
+
+    private void ReconstructHierarchy(Node2 currentNode, int depth = 0)
+    {
+    
+        if (currentNode == null)
+        {
+            return;
+        }
+
+
+        int count = 0;
+        if (currentNode.parentNode== null)
+        {
+            count = currentNode.children.Count;
+        } else
+        {
+            foreach (Node2 n in currentNode.parentNode.children)
+            {
+                count = count + n.children.Count;
+            }
+        }
+            List<string> childrenList = new List<string>();
+            currentNode.children.ForEach(child => childrenList.Add(child.name));
+            CreateChildrenNodes(GetNodeByName(null,currentNode.name), childrenList.Count, childrenList, count);
+       
+    
+
+        string indentation = new string(' ', depth * 2);
+        Debug.Log($"{indentation}Node: {currentNode.name}, Children Count: {currentNode.children.Count}");
+
+        Debug.Log($"{indentation}Children: {string.Join(", ", currentNode.children.Select(child => child.name))}");
+
+        // Recursively print information for each child
+        foreach (var childNode in currentNode.children)
+        {
+            ReconstructHierarchy(childNode, depth + 1);
+        }
     }
     List<Vector3> CalculateChildNodePositions(Node parentNode, int numberOfNodes)
     {
@@ -132,7 +158,25 @@ public class CardSystem : MonoBehaviour
         return node;
     }
 
+    private Node2 ConvertToNode2(Node node)
+    {
+        if (node == null)
+        {
+            return null;
+        }
 
+        Node2 node2 = new Node2();
+        node2.name = node.name;
+
+        foreach (Node childNode in node.children)
+        {
+            Node2 childNode2 = ConvertToNode2(childNode);
+            childNode2.parentNode = node2;
+            node2.children.Add(childNode2);
+        }
+
+        return node2;
+    }
     public Node GetNodeByName(Node currentNode,string name) {
         if (currentNode == null) { currentNode = rootNode; };
         if (currentNode.name == name)
@@ -143,6 +187,24 @@ public class CardSystem : MonoBehaviour
         foreach (var childNode in currentNode.children)
         {
             Node result = GetNodeByName(childNode, name);
+            if (result != null)
+            {
+                return result;
+            }
+        }
+
+        return null;
+    }
+    public static Node2 GetNode2ByName(Node2 currentNode, string name)
+    {
+        if (currentNode.name == name)
+        {
+            return currentNode;
+        }
+
+        foreach (var childNode in currentNode.children)
+        {
+            Node2 result = GetNode2ByName(childNode, name);
             if (result != null)
             {
                 return result;
@@ -164,6 +226,24 @@ public class CardSystem : MonoBehaviour
 public class Node : MonoBehaviour
 {
     string name;
- public Node parentNode; 
+    public Node parentNode; 
     public List<Node> children = new List<Node>();
+    public void DeleteHierarchy()
+    {
+        // Delete children first
+        foreach (var childNode in children)
+        {
+            childNode.DeleteHierarchy();
+        }
+
+        // Then delete the current node's GameObject
+        Destroy(gameObject);
+    }
+}
+
+public class Node2
+{
+    public string name;
+    public Node2 parentNode;
+    public List<Node2> children = new List<Node2>();
 }

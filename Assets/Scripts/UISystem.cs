@@ -5,7 +5,8 @@ using UnityEngine;
 public class UISystem : MonoBehaviour
 {
     public GameObject uiGameObject;
-    public GameObject uiSystem; 
+    public GameObject uiSystem;
+    public GameObject mainSystem;
     // Start is called before the first frame update
     void Start()
     {
@@ -28,8 +29,16 @@ public class UISystem : MonoBehaviour
         uiGameObject.SetActive(true);
     }
 
-    void ModeWhiteBoard()
+    public void ModeWhiteBoard()
     {
         uiSystem.GetComponent<OpenAIController>().ModeWhiteBoardSetupModel();
+        mainSystem.GetComponent<MainSystem>().ChangeMode(0);
+        HideUI();
+    }
+    public void ModeMindMap()
+    {
+        uiSystem.GetComponent<OpenAIController>().ModeMindMapSetupModel();
+        mainSystem.GetComponent<MainSystem>().ChangeMode(1);
+        HideUI();
     }
 }

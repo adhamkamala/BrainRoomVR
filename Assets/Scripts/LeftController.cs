@@ -29,6 +29,8 @@ public class LeftController : MonoBehaviour
     public GameObject recordSystem;
     public GameObject mainSystem;
     public GameObject cardSystem;
+    public GameObject uiSystem;
+
 
     private GameObject cardTmp;
     private GameObject locationTmp;
@@ -99,6 +101,12 @@ public class LeftController : MonoBehaviour
                     spawnSystem.GetComponent<SpawnSystem>().RemoveFromListPoints(tmp.gameObject.transform.parent.gameObject.transform);
                     Destroy(tmp.gameObject.transform.parent.gameObject);
                     break;
+                    case "ButtonMindMap":
+                        uiSystem.GetComponent<UISystem>().ModeMindMap();
+                    break;
+                    case "ButtonWhiteBoard":
+                        uiSystem.GetComponent<UISystem>().ModeWhiteBoard();
+                        break;
                     default:
                         cardSystem.GetComponent<CardSystem>().UserAttachCardNode(tmp.gameObject.name, cardTmp);
                         Destroy(cardTmp);

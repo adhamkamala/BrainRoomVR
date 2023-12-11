@@ -3386,6 +3386,7 @@ MonoBehaviour:
   recordSystem: {fileID: 1504987701}
   mainSystem: {fileID: 1943484336}
   cardSystem: {fileID: 1694910705}
+  uiSystem: {fileID: 1807772159}
 --- !u!4 &530618794 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2871854917430088270, guid: 65eb6b98091a5734ba9d9ca871cef69a, type: 3}
@@ -3861,7 +3862,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 661246973}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ButtonMindMap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5134,8 +5135,8 @@ GameObject:
   - component: {fileID: 1040648098}
   - component: {fileID: 1040648097}
   - component: {fileID: 1040648096}
-  m_Layer: 0
-  m_Name: Cube
+  m_Layer: 3
+  m_Name: ButtonMindMap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8176,8 +8177,8 @@ GameObject:
   - component: {fileID: 1626828098}
   - component: {fileID: 1626828100}
   - component: {fileID: 1626828099}
-  m_Layer: 0
-  m_Name: Text (TMP)
+  m_Layer: 3
+  m_Name: ButtonWhiteBoard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8345,7 +8346,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1644985012}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ButtonWhiteBoard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8381,8 +8382,8 @@ GameObject:
   - component: {fileID: 1680976480}
   - component: {fileID: 1680976479}
   - component: {fileID: 1680976478}
-  m_Layer: 0
-  m_Name: Cube
+  m_Layer: 3
+  m_Name: ButtonWhiteBoard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8843,6 +8844,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiGameObject: {fileID: 275482048}
   uiSystem: {fileID: 1737657686}
+  mainSystem: {fileID: 1943484336}
 --- !u!1 &1828783421
 GameObject:
   m_ObjectHideFlags: 0
@@ -9238,8 +9240,8 @@ GameObject:
   - component: {fileID: 1921964427}
   - component: {fileID: 1921964429}
   - component: {fileID: 1921964428}
-  m_Layer: 0
-  m_Name: Text (TMP)
+  m_Layer: 3
+  m_Name: ButtonMindMap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

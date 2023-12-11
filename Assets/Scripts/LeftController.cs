@@ -106,7 +106,7 @@ public class LeftController : MonoBehaviour
                         break;
 
                     case "ReplaceAI":
-                        _ = aiSystem.GetComponent<OpenAIController>().ModeMindMapReplaceAI(cardTmp.name);
+                        _ = aiSystem.GetComponent<OpenAIController>().ModeMindMapReplaceAI(cardTmp.name,cardTmp);
                         // gen 3 cards with title
                         break;
                     case "Relocate":

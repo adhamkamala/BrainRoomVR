@@ -268,7 +268,7 @@ public class CardSystem : MonoBehaviour
 
     public void RelocateCard(GameObject card)
     {
-        Node cardNode  = GetNodeByName(null, "c");
+        Node cardNode  = card.GetComponent<Node>();
         nodeTmp = ConvertToNode2(cardNode); 
         if (cardNode != null && cardNode.parentNode!=null)
         {
@@ -287,6 +287,9 @@ public class CardSystem : MonoBehaviour
     public void ReplaceCard(string str, GameObject card)
     {
         card.GetComponent<Node>().name= str;
+        card.GetComponent<Node>().gameObject.GetComponent<CardScript>().ChangeSubTxt(str);
+        // GetNodeByName(null,"c").name= str;
+        // GetNodeByName(null, str).gameObject.GetComponent<CardScript>().ChangeSubTxt(str);
         // manual or gpt --> gpt 3 alternative cards
     }
 }

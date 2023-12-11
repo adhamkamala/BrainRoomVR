@@ -45,7 +45,7 @@ public class OpenAIController : MonoBehaviour
             List<string> knotenlList2 = new List<string> { "4", "5", "6" };
             cardSystem.GetComponent<CardSystem>().CreateChildrenNodes(cardSystem.GetComponent<CardSystem>().GetNodeByName(null, "c"), knotenlList.Count, knotenlList, 6);
             cardSystem.GetComponent<CardSystem>().CreateChildrenNodes(cardSystem.GetComponent<CardSystem>().GetNodeByName(null, "b"), knotenlList2.Count, knotenlList2, 6);
-            cardSystem.GetComponent<CardSystem>().RelocateCard(null);
+            cardSystem.GetComponent<CardSystem>().ReplaceCard("ggez", null);
         }
     }
     public async Task ModeWhiteBoardSetupModel()
@@ -153,13 +153,14 @@ public class OpenAIController : MonoBehaviour
 
     }
 
-    public async Task ModeMindMapReplaceAI(string strQues)
+    public async Task ModeMindMapReplaceAI(string strQues, GameObject gmoRep)
     {
         // Question was... ur answer was... --> now give me more...
         string str = "Bei der vorherigen frage habe ich jetzt den punkt: " + strQues +". kannst du noch zu der frage 3 alternative punkte geben?";
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
         Debug.Log(response);
+        cardSystem.GetComponent<CardSystem>().ReplaceCard("ggez", gmoRep);
     }
 }
 

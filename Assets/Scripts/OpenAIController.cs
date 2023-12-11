@@ -38,13 +38,14 @@ public class OpenAIController : MonoBehaviour
         if (Keyboard.current.qKey.wasPressedThisFrame) // for testing purposes
         {
             //ModeMindMapSendMessage("Wie kann ich schneller zu punkt b kommen?");
-            //cardSystem.GetComponent<CardSystem>().CreateRootNode("main");
-            //List<string> wurzelList = new List<string> { "a", "b", "c" };
-            //cardSystem.GetComponent<CardSystem>().CreateChildrenNodes(null, 3, wurzelList, 3);
-            //List<string> knotenlList = new List<string> { "1", "2", "3" };
-            //List<string> knotenlList2 = new List<string> { "4", "5", "6" };
-            //cardSystem.GetComponent<CardSystem>().CreateChildrenNodes(cardSystem.GetComponent<CardSystem>().GetNodeByName(null, "c"), knotenlList.Count, knotenlList, 6);
-            //cardSystem.GetComponent<CardSystem>().CreateChildrenNodes(cardSystem.GetComponent<CardSystem>().GetNodeByName(null, "b"), knotenlList2.Count, knotenlList2, 6);
+            cardSystem.GetComponent<CardSystem>().CreateRootNode("main");
+            List<string> wurzelList = new List<string> { "a", "b", "c" };
+            cardSystem.GetComponent<CardSystem>().CreateChildrenNodes(null, 3, wurzelList, 3);
+            List<string> knotenlList = new List<string> { "1", "2", "3" };
+            List<string> knotenlList2 = new List<string> { "4", "5", "6" };
+            cardSystem.GetComponent<CardSystem>().CreateChildrenNodes(cardSystem.GetComponent<CardSystem>().GetNodeByName(null, "c"), knotenlList.Count, knotenlList, 6);
+            cardSystem.GetComponent<CardSystem>().CreateChildrenNodes(cardSystem.GetComponent<CardSystem>().GetNodeByName(null, "b"), knotenlList2.Count, knotenlList2, 6);
+            cardSystem.GetComponent<CardSystem>().RelocateCard(null);
         }
     }
     public async Task ModeWhiteBoardSetupModel()
@@ -150,6 +151,15 @@ public class OpenAIController : MonoBehaviour
     public async Task ModeMindMapExtend(string strQues, string strAnswer)
     {
 
+    }
+
+    public async Task ModeMindMapReplaceAI(string strQues)
+    {
+        // Question was... ur answer was... --> now give me more...
+        string str = "Bei der vorherigen frage habe ich jetzt den punkt: " + strQues +". kannst du noch zu der frage 3 alternative punkte geben?";
+        chat.AppendUserInput(str);
+        string response = await chat.GetResponseFromChatbotAsync();
+        Debug.Log(response);
     }
 }
 

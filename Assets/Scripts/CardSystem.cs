@@ -14,12 +14,14 @@ public class CardSystem : MonoBehaviour
     public GameObject cardsMindMapPrf;
     public GameObject boardsSystem;
     public Transform spawnPoint;
+    public GameObject leftController;
 
     private Node lastNode;
     private Node rootNode;
     private float horzSpacing = 2f;
     private GameObject parentCard;
     private GameObject childCard;
+    private Node2 nodeTmp;
 
     private void Start()
     {
@@ -36,11 +38,18 @@ public class CardSystem : MonoBehaviour
         }
     }
 
-    public GameObject initMindMapCardObj(string subTxt)
+    public GameObject initMindMapCardObj(string subTxt, Node node=null)
     {
         GameObject cardTmp = Instantiate(cardsMindMapPrf);
         cardTmp.layer = LayerMask.NameToLayer("CardsLayer");
         cardTmp.GetComponent<CardScript>().ChangeSubTxt(subTxt);
+        if (node != null)
+        {
+            Node nodeCard = cardTmp.AddComponent<Node>();
+            nodeCard.name = node.name;
+            nodeCard.parentNode = node.parentNode;
+            nodeCard.children= node.children;
+        }
         return cardTmp;
     }
 
@@ -76,10 +85,20 @@ public class CardSystem : MonoBehaviour
         else return false;
     }
 
-    public void UserAttachCardNode(string str, GameObject card)
+    public void UserAttachCardNode(string str, GameObject card, bool reconstruct = false)
     {
+        if (card.GetComponent<Node>().children.Count > 0) { reconstruct = true; }
         Node2 root2 = ConvertToNode2(rootNode);
-        Node2 node2Tmp = new Node2();
+        Node2 node2Tmp;
+        if (reconstruct)
+        {
+            Debug.Log("heresss: " + nodeTmp.children[1].name);
+            node2Tmp = nodeTmp;
+        }
+        else {
+            Debug.Log("heresss: " + nodeTmp.children[1].name);
+            node2Tmp = new Node2();
+        }
         node2Tmp.name = card.GetComponent<CardScript>().subTitleTxt.text;
         node2Tmp.parentNode = GetNode2ByName(root2, str);
         node2Tmp.parentNode.children.Add(node2Tmp);
@@ -87,7 +106,19 @@ public class CardSystem : MonoBehaviour
         CreateRootNode(root2.name);
         ReconstructHierarchy(root2);
     }
+    private void ReconstructHierarchyStructure(Node2 currentNode, int depth = 0)
+    {
 
+        if (currentNode == null)
+        {
+            return;
+        }
+        currentNode.children.ForEach(child => { child.parentNode=currentNode; });
+        foreach (var childNode in currentNode.children)
+        {
+            ReconstructHierarchy(childNode, depth + 1);
+        }
+    }
     private void ReconstructHierarchy(Node2 currentNode, int depth = 0)
     {
     
@@ -195,6 +226,19 @@ public class CardSystem : MonoBehaviour
 
         return null;
     }
+    public static void SelectiveDeleteRec(Node currentNode)
+    {
+        if (currentNode == null)
+        {
+            return;
+        }
+        foreach (var childNode in currentNode.children)
+        {
+            SelectiveDeleteRec(childNode);
+        }
+        Debug.Log($"Node: {currentNode.name}");
+        Destroy(currentNode.gameObject);
+    }
     public static Node2 GetNode2ByName(Node2 currentNode, string name)
     {
         if (currentNode.name == name)
@@ -220,6 +264,30 @@ public class CardSystem : MonoBehaviour
         horzSpacing = Mathf.Lerp(4f, 0.6f, Mathf.InverseLerp(1, 6, numberOfNodes));
         Debug.Log(horzSpacing);
 
+    }
+
+    public void RelocateCard(GameObject card)
+    {
+        Node cardNode  = GetNodeByName(null, "c");
+        nodeTmp = ConvertToNode2(cardNode); 
+        if (cardNode != null && cardNode.parentNode!=null)
+        {
+            leftController.GetComponent<LeftController>().AttachCard(initMindMapCardObj(cardNode.name,cardNode));
+            DeleteCard(cardNode.gameObject);
+        }
+    }
+
+    public void DeleteCard(GameObject card)
+    {
+        Node child = card.GetComponent<Node>();
+        Node parent = child.parentNode;
+        SelectiveDeleteRec(child);
+        parent.children.Remove(child);
+    }
+    public void ReplaceCard(string str, GameObject card)
+    {
+        card.GetComponent<Node>().name= str;
+        // manual or gpt --> gpt 3 alternative cards
     }
 }
 

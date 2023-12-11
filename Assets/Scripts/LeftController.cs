@@ -72,17 +72,44 @@ public class LeftController : MonoBehaviour
                 switch (tmp.gameObject.name)
                 {
                     case "RedDeleteButton":
-                        if (cardTmp != null)
+                        if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
                         {
-                            Destroy(cardTmp.gameObject);
-                            grabBool = false;
-                            restBool = false;
-                            optionsPressed = false;
-                            leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                            if (cardTmp != null)
+                            {
+                                Destroy(cardTmp.gameObject);
+                                grabBool = false;
+                                restBool = false;
+                                optionsPressed = false;
+                                leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                            }
+
+                        } else
+                        {
+                            if (cardTmp != null)
+                            {
+                                cardSystem.GetComponent<CardSystem>().DeleteCard(cardTmp);
+                            }
+
+
                         }
                         break;
                     case "GreenExpandButton":
-                        _ = aiSystem.GetComponent<OpenAIController>().ModeWhiteBoardExtend(boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().GetTopicTxt(), boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().GetAnswerTxt());
+                        if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
+                        {
+                            _ = aiSystem.GetComponent<OpenAIController>().ModeWhiteBoardExtend(boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().GetTopicTxt(), boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().GetAnswerTxt());
+                        }
+                        break;
+                    case "Replace":
+                        recordSystem.GetComponent<RecordSystem>().EnableReplace();
+                        recordSystem.GetComponent<RecordSystem>().SetGameObjectTmp(cardTmp);
+                        recordSystem.GetComponent<RecordSystem>().StartRecording();
+                        break;
+
+                    case "ReplaceAI":
+                        _ = aiSystem.GetComponent<OpenAIController>().ModeMindMapReplaceAI(cardTmp.name);
+                        // gen 3 cards with title
+                        break;
+                    case "Relocate":
                         break;
                 }
             }

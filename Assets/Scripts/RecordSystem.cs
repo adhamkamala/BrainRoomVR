@@ -22,6 +22,8 @@ public class RecordSystem : MonoBehaviour
     private AudioClip clip;
     private OpenAIApi openai = new OpenAIApi("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");
     private string convertedAudio;
+    private bool replaceOption = false;
+    private GameObject gameObjectTmp;
     public void SpawnRecordPanel() {
 
         if (tmp != null) { 
@@ -42,12 +44,12 @@ public class RecordSystem : MonoBehaviour
 
     public void OnConfirmClick()
     {
-        if (mainSystem.GetComponent <MainSystem>().WhatMode() ==0) {
+        if (mainSystem.GetComponent <MainSystem>().WhatMode() ==0 && !replaceOption) {
             spawnSystem.GetComponent<SpawnSystem>().SpawnBoard();
             boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().ChangeTopicTxt(convertedAudio);
             aiSystem.GetComponent<OpenAIController>().ModeWhiteBoardSendMessage(convertedAudio);
             DestroyRecordPanel();
-        } else if (mainSystem.GetComponent<MainSystem>().WhatMode() == 1) {
+        } else if (mainSystem.GetComponent<MainSystem>().WhatMode() == 1 && !replaceOption) {
             if (cardSystem.GetComponent<CardSystem>().IsRootNodeCreated())
             {
                 leftController.GetComponent<LeftController>().AttachCard(cardSystem.GetComponent<CardSystem>().initMindMapCardObj(convertedAudio));
@@ -55,8 +57,12 @@ public class RecordSystem : MonoBehaviour
             {
                 aiSystem.GetComponent<OpenAIController>().ModeMindMapSendMessage(convertedAudio);
             }
-           
-          
+            DestroyRecordPanel();
+        } else if (replaceOption)
+        {
+            cardSystem.GetComponent<CardSystem>().ReplaceCard(convertedAudio, gameObjectTmp);
+            replaceOption = false;
+            gameObjectTmp = null;
             DestroyRecordPanel();
         }
        
@@ -66,7 +72,14 @@ public class RecordSystem : MonoBehaviour
     {
         DestroyRecordPanel();
     }
-
+    public void EnableReplace()
+    {
+        replaceOption = true;
+    }
+    public void SetGameObjectTmp(GameObject gmo)
+    {
+        gameObjectTmp=gmo;
+    }
     public void StartRecording()
     {
         SpawnRecordPanel();

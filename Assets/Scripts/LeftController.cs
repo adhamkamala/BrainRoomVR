@@ -132,6 +132,7 @@ public class LeftController : MonoBehaviour
                     case "AutoSort":
                         aiSystem.GetComponent<OpenAIController>().ModeMindMapAutoSort(cardTmp.GetComponent<CardScript>().subTitleTxt.text);
                         leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                        Destroy(cardTmp);
                         break;
                 }
             }

@@ -60,7 +60,8 @@ public class RecordSystem : MonoBehaviour
             DestroyRecordPanel();
         } else if (replaceOption)
         {
-            cardSystem.GetComponent<CardSystem>().ReplaceCard(convertedAudio, gameObjectTmp);
+            cardSystem.GetComponent<CardSystem>().SetCardToReplace(gameObjectTmp);
+            cardSystem.GetComponent<CardSystem>().ReplaceCard(convertedAudio);
             replaceOption = false;
             gameObjectTmp = null;
             DestroyRecordPanel();

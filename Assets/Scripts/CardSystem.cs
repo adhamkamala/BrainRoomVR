@@ -15,6 +15,7 @@ public class CardSystem : MonoBehaviour
     public GameObject boardsSystem;
     public Transform spawnPoint;
     public GameObject leftController;
+    public GameObject spawnLocationReplaceAI;
 
     private Node lastNode;
     private Node rootNode;
@@ -22,6 +23,9 @@ public class CardSystem : MonoBehaviour
     private GameObject parentCard;
     private GameObject childCard;
     private Node2 nodeTmp;
+    private List<GameObject> cardsTmp;
+    private GameObject cardToReplace;
+
 
     private void Start()
     {
@@ -51,6 +55,29 @@ public class CardSystem : MonoBehaviour
             nodeCard.children= node.children;
         }
         return cardTmp;
+    }
+
+    public void CreateReplaceAICards(List<string> strs)
+    {
+        Vector3 startPoint = spawnLocationReplaceAI.transform.position;
+        cardsTmp = new List<GameObject>();
+        strs.ForEach(str =>
+        {
+            GameObject cardTmp = Instantiate(cardsMindMapPrf, startPoint, Quaternion.identity);
+            cardTmp.name = "ReplaceAICard";
+            cardTmp.layer = LayerMask.NameToLayer("CardsLayer");
+            cardTmp.GetComponent<CardScript>().ChangeSubTxt(str);
+            startPoint.y -= 0.45f;
+            cardsTmp.Add(cardTmp);
+        });
+    }
+
+    public void DestroyAICards()
+    {
+        cardsTmp.ForEach(gmo =>
+        {
+            Destroy(gmo);
+        });
     }
 
     public Node CreateRootNode(string str)
@@ -284,13 +311,28 @@ public class CardSystem : MonoBehaviour
         SelectiveDeleteRec(child);
         parent.children.Remove(child);
     }
-    public void ReplaceCard(string str, GameObject card)
+    public void ReplaceCard(string str)
     {
-        card.GetComponent<Node>().name= str;
-        card.GetComponent<Node>().gameObject.GetComponent<CardScript>().ChangeSubTxt(str);
+        cardToReplace.GetComponent<Node>().name= str;
+        cardToReplace.GetComponent<Node>().gameObject.GetComponent<CardScript>().ChangeSubTxt(str);
         // GetNodeByName(null,"c").name= str;
         // GetNodeByName(null, str).gameObject.GetComponent<CardScript>().ChangeSubTxt(str);
         // manual or gpt --> gpt 3 alternative cards
+    }
+    public void SetCardToReplace(GameObject card)
+    {
+        cardToReplace = card;
+    }
+    public void SetCardToReplaceByName(string str)
+    {
+        cardToReplace = GetNodeByName(null, str).gameObject;
+    }
+    public void DestroyAll()
+    {
+        if (rootNode != null)
+        {
+            rootNode.DeleteHierarchy();
+        }
     }
 }
 

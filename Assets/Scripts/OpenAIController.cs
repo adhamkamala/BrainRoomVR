@@ -23,6 +23,7 @@ public class OpenAIController : MonoBehaviour
     private OpenAI_API.OpenAIAPI api = new OpenAI_API.OpenAIAPI("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");
     private Conversation chat;
     private OpenAIApi openai = new OpenAIApi("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");
+    private string mindMapRespondTmp;
 
 
     // Start is called before the first frame update
@@ -38,14 +39,18 @@ public class OpenAIController : MonoBehaviour
         if (Keyboard.current.qKey.wasPressedThisFrame) // for testing purposes
         {
             //ModeMindMapSendMessage("Wie kann ich schneller zu punkt b kommen?");
-            cardSystem.GetComponent<CardSystem>().CreateRootNode("main");
-            List<string> wurzelList = new List<string> { "a", "b", "c" };
-            cardSystem.GetComponent<CardSystem>().CreateChildrenNodes(null, 3, wurzelList, 3);
-            List<string> knotenlList = new List<string> { "1", "2", "3" };
-            List<string> knotenlList2 = new List<string> { "4", "5", "6" };
-            cardSystem.GetComponent<CardSystem>().CreateChildrenNodes(cardSystem.GetComponent<CardSystem>().GetNodeByName(null, "c"), knotenlList.Count, knotenlList, 6);
-            cardSystem.GetComponent<CardSystem>().CreateChildrenNodes(cardSystem.GetComponent<CardSystem>().GetNodeByName(null, "b"), knotenlList2.Count, knotenlList2, 6);
-            cardSystem.GetComponent<CardSystem>().ReplaceCard("ggez", null);
+            //cardSystem.GetComponent<CardSystem>().CreateRootNode("main");
+            //List<string> wurzelList = new List<string> { "a", "b", "c" };
+            //cardSystem.GetComponent<CardSystem>().CreateChildrenNodes(null, 3, wurzelList, 3);
+            //List<string> knotenlList = new List<string> { "1", "2", "3" };
+            //List<string> knotenlList2 = new List<string> { "4", "5", "6" };
+            //cardSystem.GetComponent<CardSystem>().CreateChildrenNodes(cardSystem.GetComponent<CardSystem>().GetNodeByName(null, "c"), knotenlList.Count, knotenlList, 6);
+            //cardSystem.GetComponent<CardSystem>().CreateChildrenNodes(cardSystem.GetComponent<CardSystem>().GetNodeByName(null, "b"), knotenlList2.Count, knotenlList2, 6);
+            ModeMindMapReplaceAI("Betrieb");
+            //cardSystem.GetComponent<CardSystem>().CreateReplaceAICards(new List<string> { "x", "y", "z" });
+            //cardSystem.GetComponent<CardSystem>().DestroyAICards();
+            //cardSystem.GetComponent<CardSystem>().SetCardToReplaceByName("c");
+            //cardSystem.GetComponent<CardSystem>().ReplaceCard("x");
         }
     }
     public async Task ModeWhiteBoardSetupModel()
@@ -107,12 +112,14 @@ public class OpenAIController : MonoBehaviour
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
         Debug.Log(response);
+        mindMapRespondTmp = response;
         ModeMindMapTranslator(response);
 
     }
 
     public async Task ModeMindMapTranslator(string str)
     {
+        cardSystem.GetComponent<CardSystem>().DestroyAll();
         OpenAIResopnseMindMap openAIResponse = JsonConvert.DeserializeObject<OpenAIResopnseMindMap>(str);
         List<CardMindMap> kartenList = openAIResponse.Answers;
         List<string> wurzelList=new List<string>();
@@ -148,19 +155,40 @@ public class OpenAIController : MonoBehaviour
 
 
     }
+
+    public async Task ModeMindMapReplaceTranslator(string str)
+    {
+        MyData myData = JsonUtility.FromJson<MyData>(str);
+        List<string> list = new List<string>();
+        foreach (string point in myData.alternativePunkte)
+        {
+            Debug.Log(point);
+            list.Add(point);
+        }
+        cardSystem.GetComponent<CardSystem>().CreateReplaceAICards(list);
+    }
     public async Task ModeMindMapExtend(string strQues, string strAnswer)
     {
 
     }
 
-    public async Task ModeMindMapReplaceAI(string strQues, GameObject gmoRep)
+    public async Task ModeMindMapReplaceAI(string strQues)
     {
         // Question was... ur answer was... --> now give me more...
-        string str = "Bei der vorherigen frage habe ich jetzt den punkt: " + strQues +". kannst du noch zu der frage 3 alternative punkte geben?";
+        string str = "Bei der vorherigen frage: "+ mindMapRespondTmp + ". habe ich jetzt den punkt: " + strQues + ". kannst du noch zu der frage exakt nur 3 alternative punkte geben nur und nix anderes? Die antwort soll folgendes aussehen: JSON format mit array namens alternativePunkte und dadrunter die 3 punkte";
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
         Debug.Log(response);
-        cardSystem.GetComponent<CardSystem>().ReplaceCard("ggez", gmoRep);
+        ModeMindMapReplaceTranslator(response);
+    }
+    public async Task ModeMindMapAutoSort(string strQues)
+    {
+        // Question was... ur answer was... --> now give me more...
+        string str = "Bei der vorherigen frage: " + mindMapRespondTmp + ". habe ich jetzt den punkt: " + strQues + ". kannst du diesen punkt zuordnen? Die antwort soll folgendes aussehen: JSON format genau wie vorherige frage aber mit dem punkt drin zugeordnet";
+        chat.AppendUserInput(str);
+        string response = await chat.GetResponseFromChatbotAsync();
+        Debug.Log(response);
+        ModeMindMapTranslator(response);
     }
 }
 
@@ -215,4 +243,9 @@ public class AntwortKnoten
 public class QuestionsAndAnswersMindMap
 {
     public List<QuestionAndAnswersMindMap> questions;
+}
+
+public class MyData
+{
+    public string[] alternativePunkte;
 }

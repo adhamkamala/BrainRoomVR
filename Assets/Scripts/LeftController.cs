@@ -101,15 +101,20 @@ public class LeftController : MonoBehaviour
                         break;
                     case "Replace":
                         recordSystem.GetComponent<RecordSystem>().EnableReplace();
-                        recordSystem.GetComponent<RecordSystem>().SetGameObjectTmp(cardTmp);
+                        recordSystem.GetComponent<RecordSystem>().SetGameObjectTmp(cardTmp); // obsulete since SetCardToReplace does same
                         recordSystem.GetComponent<RecordSystem>().StartRecording();
                         break;
 
                     case "ReplaceAI":
-                        _ = aiSystem.GetComponent<OpenAIController>().ModeMindMapReplaceAI(cardTmp.name,cardTmp);
+                        cardSystem.GetComponent<CardSystem>().SetCardToReplace(cardTmp);
+                        _ = aiSystem.GetComponent<OpenAIController>().ModeMindMapReplaceAI(cardTmp.name);
                         // gen 3 cards with title
                         break;
                     case "Relocate":
+                        cardSystem.GetComponent<CardSystem>().RelocateCard(cardTmp);
+                        break;
+                    case "AutoSort":
+                        aiSystem.GetComponent<OpenAIController>().ModeMindMapAutoSort(tmp.gameObject.name);
                         break;
                 }
             }
@@ -133,6 +138,10 @@ public class LeftController : MonoBehaviour
                     break;
                     case "ButtonWhiteBoard":
                         uiSystem.GetComponent<UISystem>().ModeWhiteBoard();
+                        break;
+                    case var str when str.Contains("ReplaceAICard"):
+                        cardSystem.GetComponent<CardSystem>().ReplaceCard("tmp.gameObject.name");
+                        cardSystem.GetComponent<CardSystem>().DestroyAICards();
                         break;
                     default:
                         cardSystem.GetComponent<CardSystem>().UserAttachCardNode(tmp.gameObject.name, cardTmp);

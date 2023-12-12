@@ -130,7 +130,7 @@ public class LeftController : MonoBehaviour
                         leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
                         break;
                     case "AutoSort":
-                        aiSystem.GetComponent<OpenAIController>().ModeMindMapAutoSort(tmp.gameObject.name);
+                        aiSystem.GetComponent<OpenAIController>().ModeMindMapAutoSort(cardTmp.GetComponent<CardScript>().subTitleTxt.text);
                         leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
                         break;
                 }
@@ -265,7 +265,10 @@ public class LeftController : MonoBehaviour
         {
             optionsPressed = true;
             cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
-            leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCardOptions();
+            Transform upperBar = cardTmpMindMap.transform.Find("UpperBar");
+            Transform autoSort = upperBar.Find("AutoSort");
+            autoSort.gameObject.SetActive(!optionsPressed);
+                leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCardOptions();
         }
         else if (cardTmpMindMap != null & optionsPressed)
         {
@@ -316,6 +319,27 @@ public class LeftController : MonoBehaviour
         cardTmp = card;
         grabBool = true;
         optionsPressed = false;
+
+        Transform upperbar = card.transform.Find("UpperBar");
+        if (upperbar != null)
+        {
+            foreach (Transform child in upperbar)
+            {
+                GameObject childObject = child.gameObject;
+                if (childObject.name == "RedDeleteButton" || childObject.name == "AutoSort")
+                {
+                    childObject.SetActive(true);
+                }
+                else
+                {
+                    childObject.SetActive(false);
+                }
+            }
+        }
+        else
+        {
+            Debug.LogError("Upperbar not found among the children of the parent GameObject.");
+        }
     }
 
     public void SetCardTmpMindMap(GameObject gmo)

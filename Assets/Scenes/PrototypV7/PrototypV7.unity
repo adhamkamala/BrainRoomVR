@@ -2667,6 +2667,7 @@ MonoBehaviour:
     m_Bits: 128
   distance: 5
   pokeMat: {fileID: 298721577}
+  leftController: {fileID: 530618787}
 --- !u!4 &392695799 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3514238953395618379, guid: 65eb6b98091a5734ba9d9ca871cef69a, type: 3}

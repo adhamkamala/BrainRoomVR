@@ -33,6 +33,7 @@ public class LeftController : MonoBehaviour
 
 
     private GameObject cardTmp;
+    private GameObject cardTmpMindMap;
     private GameObject locationTmp;
     private bool grabBool = false;
     private bool restBool = false;
@@ -80,18 +81,26 @@ public class LeftController : MonoBehaviour
                                 grabBool = false;
                                 restBool = false;
                                 optionsPressed = false;
-                                leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                              
                             }
 
                         } else
                         {
                             if (cardTmp != null)
                             {
-                                cardSystem.GetComponent<CardSystem>().DeleteCard(cardTmp);
+                              //  cardSystem.GetComponent<CardSystem>().DeleteCard(cardTmp);
+                                Destroy(cardTmp.gameObject);
+                            } else if (cardTmpMindMap != null)
+                            {
+                                cardSystem.GetComponent<CardSystem>().DeleteCard(cardTmpMindMap);
+                            } else if (cardTmp == cardTmpMindMap)
+                            {
+                                Destroy(cardTmp.gameObject);
                             }
 
 
                         }
+                        leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
                         break;
                     case "GreenExpandButton":
                         if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
@@ -101,20 +110,28 @@ public class LeftController : MonoBehaviour
                         break;
                     case "Replace":
                         recordSystem.GetComponent<RecordSystem>().EnableReplace();
-                        recordSystem.GetComponent<RecordSystem>().SetGameObjectTmp(cardTmp); // obsulete since SetCardToReplace does same
+                        recordSystem.GetComponent<RecordSystem>().SetGameObjectTmp(cardTmpMindMap); // obsulete since SetCardToReplace does same
                         recordSystem.GetComponent<RecordSystem>().StartRecording();
                         break;
 
                     case "ReplaceAI":
-                        cardSystem.GetComponent<CardSystem>().SetCardToReplace(cardTmp);
-                        _ = aiSystem.GetComponent<OpenAIController>().ModeMindMapReplaceAI(cardTmp.name);
+                        cardSystem.GetComponent<CardSystem>().SetCardToReplace(cardTmpMindMap);
+                        Debug.Log(cardTmpMindMap);
+                        Debug.Log(cardTmpMindMap.name);
+                        Debug.Log(cardTmpMindMap.GetComponent<Node>().nodeName);
+                        _ = aiSystem.GetComponent<OpenAIController>().ModeMindMapReplaceAI(cardTmpMindMap.gameObject.GetComponent<Node>().nodeName);
+                        optionsPressed = false;
+                        cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
+                        leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
                         // gen 3 cards with title
                         break;
                     case "Relocate":
-                        cardSystem.GetComponent<CardSystem>().RelocateCard(cardTmp);
+                        cardSystem.GetComponent<CardSystem>().RelocateCard(cardTmpMindMap) ;
+                        leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
                         break;
                     case "AutoSort":
                         aiSystem.GetComponent<OpenAIController>().ModeMindMapAutoSort(tmp.gameObject.name);
+                        leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
                         break;
                 }
             }
@@ -139,18 +156,24 @@ public class LeftController : MonoBehaviour
                     case "ButtonWhiteBoard":
                         uiSystem.GetComponent<UISystem>().ModeWhiteBoard();
                         break;
-                    case var str when str.Contains("ReplaceAICard"):
-                        cardSystem.GetComponent<CardSystem>().ReplaceCard("tmp.gameObject.name");
+                    case var str when str.Contains("MindMap(ReplaceAICard)"):
+                        cardSystem.GetComponent<CardSystem>().ReplaceCard(tmp.gameObject.GetComponent<CardScript>().subTitleTxt.text);
                         cardSystem.GetComponent<CardSystem>().DestroyAICards();
                         break;
+                    case var str when str.Contains("MindMap(NormalCard)"):
+                        if (cardTmp != null) {
+                            cardSystem.GetComponent<CardSystem>().UserAttachCardNode(tmp.gameObject.GetComponent<Node>().nodeName, cardTmp);
+                            Destroy(cardTmp);
+                            grabBool = false;
+                            restBool = false;
+
+                        }
+                        break;
                     default:
-                        cardSystem.GetComponent<CardSystem>().UserAttachCardNode(tmp.gameObject.name, cardTmp);
-                        Destroy(cardTmp);
-                        grabBool = false;
-                        restBool= false;
                         break;
             }
             }
+            
         }
     
     }
@@ -189,36 +212,40 @@ public class LeftController : MonoBehaviour
     void OnLeftXPressed(InputAction.CallbackContext context)
     {
         Debug.Log("Left X button pressed!");
-        if (grabBool == true)
+        if (cardTmp!=null)
         {
-            Transform parentObject = cardTmp.transform.parent;
-            cardTmp.transform.parent = null;
-            cardTmp.transform.Rotate(Vector3.up, -90f);
-            cardTmp.transform.parent = parentObject;
-            if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
-            {
-                leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToPostion();
-
-            }
-          
-            grabBool = false;
-            restBool = true;
-        }
-        else
-        {
-            if (cardTmp.transform.rotation.y != 0f)
+            if (grabBool == true)
             {
                 Transform parentObject = cardTmp.transform.parent;
                 cardTmp.transform.parent = null;
-                cardTmp.transform.Rotate(Vector3.up, 90f);
+                cardTmp.transform.Rotate(Vector3.up, -90f);
                 cardTmp.transform.parent = parentObject;
+                if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
+                {
+                    leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToPostion();
 
+                }
+
+                grabBool = false;
+                restBool = true;
             }
-            
-            leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
-            grabBool = true;
-            restBool = false;
+            else
+            {
+                if (cardTmp.transform.rotation.y != 0f)
+                {
+                    Transform parentObject = cardTmp.transform.parent;
+                    cardTmp.transform.parent = null;
+                    cardTmp.transform.Rotate(Vector3.up, 90f);
+                    cardTmp.transform.parent = parentObject;
+
+                }
+
+                leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                grabBool = true;
+                restBool = false;
+            }
         }
+     
     }
     void OnLeftYPressed(InputAction.CallbackContext context)
     {
@@ -234,11 +261,26 @@ public class LeftController : MonoBehaviour
             cardTmp.transform.position = holdPosition.transform.position;
             leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCardOptions();
         }
+        else if (cardTmpMindMap != null & !optionsPressed)
+        {
+            optionsPressed = true;
+            cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
+            leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCardOptions();
+        }
+        else if (cardTmpMindMap != null & optionsPressed)
+        {
+            optionsPressed = false;
+            cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
+            leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+        }
     }
     void OnLeftMenuPressed(InputAction.CallbackContext context)
     {
-
+        // show modes
     }
+ 
+    
+    
     void OnRightMainPressed(InputAction.CallbackContext context)
     {
 
@@ -274,6 +316,11 @@ public class LeftController : MonoBehaviour
         cardTmp = card;
         grabBool = true;
         optionsPressed = false;
+    }
+
+    public void SetCardTmpMindMap(GameObject gmo)
+    {
+        cardTmpMindMap = gmo;
     }
 
 }

@@ -10,6 +10,7 @@ public class LeftControllerRay : MonoBehaviour
     public LayerMask layerCardOptions;
     public float distance = 5f;
     public GameObject pokeMat;
+    public GameObject leftController;
 
     private GameObject cardHitObj;
     private bool cardHit = false;
@@ -30,6 +31,9 @@ public class LeftControllerRay : MonoBehaviour
             {
             cardHit= true;
             cardHitObj = hit.collider.gameObject;
+            if (cardHitObj.name.Contains("MindMap")) {
+                leftController.GetComponent<LeftController>().SetCardTmpMindMap(cardHitObj);
+            }
             pokeMat.GetComponent<PokeScript>().ChangeColorToGreen();
        
             } else

@@ -47,10 +47,11 @@ public class CardSystem : MonoBehaviour
         GameObject cardTmp = Instantiate(cardsMindMapPrf);
         cardTmp.layer = LayerMask.NameToLayer("CardsLayer");
         cardTmp.GetComponent<CardScript>().ChangeSubTxt(subTxt);
+        cardTmp.name= "MindMap(UserMadeCard): " + subTxt;
         if (node != null)
         {
             Node nodeCard = cardTmp.AddComponent<Node>();
-            nodeCard.name = node.name;
+            nodeCard.nodeName = node.nodeName;
             nodeCard.parentNode = node.parentNode;
             nodeCard.children= node.children;
         }
@@ -64,7 +65,7 @@ public class CardSystem : MonoBehaviour
         strs.ForEach(str =>
         {
             GameObject cardTmp = Instantiate(cardsMindMapPrf, startPoint, Quaternion.identity);
-            cardTmp.name = "ReplaceAICard";
+            cardTmp.name = "MindMap(ReplaceAICard): "+ str;
             cardTmp.layer = LayerMask.NameToLayer("CardsLayer");
             cardTmp.GetComponent<CardScript>().ChangeSubTxt(str);
             startPoint.y -= 0.45f;
@@ -114,16 +115,14 @@ public class CardSystem : MonoBehaviour
 
     public void UserAttachCardNode(string str, GameObject card, bool reconstruct = false)
     {
-        if (card.GetComponent<Node>().children.Count > 0) { reconstruct = true; }
+        if (card.GetComponent<Node>()!=null && card.GetComponent<Node>().children.Count > 0) { reconstruct = true; }
         Node2 root2 = ConvertToNode2(rootNode);
         Node2 node2Tmp;
         if (reconstruct)
         {
-            Debug.Log("heresss: " + nodeTmp.children[1].name);
             node2Tmp = nodeTmp;
         }
         else {
-            Debug.Log("heresss: " + nodeTmp.children[1].name);
             node2Tmp = new Node2();
         }
         node2Tmp.name = card.GetComponent<CardScript>().subTitleTxt.text;
@@ -211,8 +210,10 @@ public class CardSystem : MonoBehaviour
         Node node = nodeObject.AddComponent<Node>();
         nodeObject.layer = LayerMask.NameToLayer("CardsLayer");
         nodeObject.GetComponent<CardScript>().ChangeSubTxt(subTxt);
-        node.name= subTxt;
+        node.nodeName= subTxt;
         lastNode = node;
+        nodeObject.gameObject.name = "MindMap(NormalCard): " + subTxt;
+        Debug.Log("Node Name: "+ node.nodeName);
         return node;
     }
 
@@ -224,7 +225,7 @@ public class CardSystem : MonoBehaviour
         }
 
         Node2 node2 = new Node2();
-        node2.name = node.name;
+        node2.name = node.nodeName;
 
         foreach (Node childNode in node.children)
         {
@@ -237,7 +238,7 @@ public class CardSystem : MonoBehaviour
     }
     public Node GetNodeByName(Node currentNode,string name) {
         if (currentNode == null) { currentNode = rootNode; };
-        if (currentNode.name == name)
+        if (currentNode.nodeName == name)
         {
             return currentNode;
         }
@@ -263,7 +264,7 @@ public class CardSystem : MonoBehaviour
         {
             SelectiveDeleteRec(childNode);
         }
-        Debug.Log($"Node: {currentNode.name}");
+        Debug.Log($"Node: {currentNode.nodeName}");
         Destroy(currentNode.gameObject);
     }
     public static Node2 GetNode2ByName(Node2 currentNode, string name)
@@ -299,7 +300,7 @@ public class CardSystem : MonoBehaviour
         nodeTmp = ConvertToNode2(cardNode); 
         if (cardNode != null && cardNode.parentNode!=null)
         {
-            leftController.GetComponent<LeftController>().AttachCard(initMindMapCardObj(cardNode.name,cardNode));
+            leftController.GetComponent<LeftController>().AttachCard(initMindMapCardObj(cardNode.nodeName,cardNode));
             DeleteCard(cardNode.gameObject);
         }
     }
@@ -313,7 +314,7 @@ public class CardSystem : MonoBehaviour
     }
     public void ReplaceCard(string str)
     {
-        cardToReplace.GetComponent<Node>().name= str;
+        cardToReplace.GetComponent<Node>().nodeName= str;
         cardToReplace.GetComponent<Node>().gameObject.GetComponent<CardScript>().ChangeSubTxt(str);
         // GetNodeByName(null,"c").name= str;
         // GetNodeByName(null, str).gameObject.GetComponent<CardScript>().ChangeSubTxt(str);
@@ -338,7 +339,7 @@ public class CardSystem : MonoBehaviour
 
 public class Node : MonoBehaviour
 {
-    string name;
+    public string nodeName;
     public Node parentNode; 
     public List<Node> children = new List<Node>();
     public void DeleteHierarchy()

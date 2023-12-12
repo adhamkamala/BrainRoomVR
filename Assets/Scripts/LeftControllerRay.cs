@@ -16,6 +16,7 @@ public class LeftControllerRay : MonoBehaviour
     private bool cardHit = false;
     private LayerMask layerSelected;
 
+
     void Start()
     {
         layerSelected = layerCard;
@@ -30,8 +31,9 @@ public class LeftControllerRay : MonoBehaviour
             if (Physics.Raycast(transform.position, transform.forward * distance, out hit, distance, layerSelected))
             {
             cardHit= true;
+            leftController.GetComponent<LeftController>().SetRayPosition(hit.point);
             cardHitObj = hit.collider.gameObject;
-            if (cardHitObj.name.Contains("MindMap")) {
+            if (cardHitObj.name.Contains("MindMap")&& !leftController.GetComponent<LeftController>().GetMovementBool()) {
                 leftController.GetComponent<LeftController>().SetCardTmpMindMap(cardHitObj);
             }
             pokeMat.GetComponent<PokeScript>().ChangeColorToGreen();
@@ -40,7 +42,9 @@ public class LeftControllerRay : MonoBehaviour
         {
             cardHit = false;
             pokeMat.GetComponent<PokeScript>().ChangeColorToWhite();
+            leftController.GetComponent<LeftController>().SetRayPosition(hit.point);
         }
+
 
     }
 
@@ -82,4 +86,5 @@ public class LeftControllerRay : MonoBehaviour
     {
         return layerSelected == layerCardOptions;
     }
+
 }

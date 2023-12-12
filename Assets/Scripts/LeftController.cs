@@ -38,6 +38,8 @@ public class LeftController : MonoBehaviour
     private bool grabBool = false;
     private bool restBool = false;
     private bool optionsPressed = false;
+    private bool mindMapMovement = false;
+    private Vector3 rayPosition;
 
     void Start()
     {
@@ -60,6 +62,10 @@ public class LeftController : MonoBehaviour
         if (restBool == true)
         {
             cardTmp.transform.position = restPosition.transform.position;
+        }
+        if (mindMapMovement == true)
+        {
+            cardTmpMindMap.transform.position = new Vector3(rayPosition.x, rayPosition.y, cardTmpMindMap.transform.position.z);
         }
     }
 
@@ -180,34 +186,43 @@ public class LeftController : MonoBehaviour
     }
     void OnLeftSecondaryPressed(InputAction.CallbackContext context)
     {
-        if (leftPoke.GetComponent<LeftControllerRay>().IsLayerCard())
-        {
-            cardTmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
-        }
-        else if (leftPoke.GetComponent<LeftControllerRay>().IsLayerPosition()) {
-            locationTmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
-        }
-        if (cardTmp != null && leftPoke.GetComponent<LeftControllerRay>().IsLayerCard())
-        {   
-            grabBool = true;
-            cardTmp.GetComponent<CardScript>().GetLocationHolding().GetComponent<LocationHighlighter>().changeAvailable(true);
-            
+        if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0) {
+            if (leftPoke.GetComponent<LeftControllerRay>().IsLayerCard())
+            {
+                cardTmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
+            }
+            else if (leftPoke.GetComponent<LeftControllerRay>().IsLayerPosition())
+            {
+                locationTmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
+            }
+            if (cardTmp != null && leftPoke.GetComponent<LeftControllerRay>().IsLayerCard())
+            {
+                grabBool = true;
+                cardTmp.GetComponent<CardScript>().GetLocationHolding().GetComponent<LocationHighlighter>().changeAvailable(true);
+
+            }
+            else
+            {
+                grabBool = false;
+            }
+
+            if (locationTmp != null && leftPoke.GetComponent<LeftControllerRay>().IsLayerPosition())
+            {
+
+                restBool = false;
+                cardTmp.transform.parent = null;
+                cardTmp.transform.parent = locationTmp.transform;
+                cardTmp.transform.localPosition = new Vector3(0.1f, 0f, 0f);
+                cardTmp.transform.localRotation = Quaternion.identity;
+                cardTmp.transform.localScale = new Vector3(1f, 1f, 1f);
+                leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+            }
         } else
         {
-            grabBool= false;
+            mindMapMovement = !mindMapMovement;
+
         }
 
-        if (locationTmp != null && leftPoke.GetComponent<LeftControllerRay>().IsLayerPosition())
-        {
-
-            restBool = false;
-            cardTmp.transform.parent = null;
-            cardTmp.transform.parent = locationTmp.transform;
-            cardTmp.transform.localPosition = new Vector3(0.1f, 0f, 0f);
-            cardTmp.transform.localRotation = Quaternion.identity;
-            cardTmp.transform.localScale = new Vector3(1f, 1f, 1f);
-            leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
-        }
 
     }
     void OnLeftXPressed(InputAction.CallbackContext context)
@@ -348,4 +363,12 @@ public class LeftController : MonoBehaviour
         cardTmpMindMap = gmo;
     }
 
+    public void SetRayPosition(Vector3 pos)
+    {
+        rayPosition = pos;
+    }
+    public bool GetMovementBool()
+    {
+        return mindMapMovement;
+    }
 }

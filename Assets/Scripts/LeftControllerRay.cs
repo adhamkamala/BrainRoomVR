@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using TMPro;
 using UnityEngine;
 
@@ -15,6 +16,10 @@ public class LeftControllerRay : MonoBehaviour
     private GameObject cardHitObj;
     private bool cardHit = false;
     private LayerMask layerSelected;
+    private Renderer renderer;
+    private bool isBlinking = false;
+    private float originalMetallic;
+    private float originalSmoothness;
 
 
     void Start()
@@ -27,11 +32,20 @@ public class LeftControllerRay : MonoBehaviour
     {
         RaycastHit hit;
         Ray ray = new Ray(transform.position, transform.forward);
-        Debug.DrawRay(ray.origin, ray.direction * distance, Color.red);
+        Debug.DrawRay(ray.origin, ray.direction * distance, UnityEngine.Color.red);
             if (Physics.Raycast(transform.position, transform.forward * distance, out hit, distance, layerSelected))
             {
             cardHit= true;
             cardHitObj = hit.collider.gameObject;
+            //renderer = cardHitObj.GetComponent<Renderer>();
+            // renderer.material.color = UnityEngine.Color.green;
+            if (!isBlinking)
+            {
+                SetRenderer();
+                isBlinking = true;
+                StartCoroutine(Blink());
+            }
+
             if (cardHitObj.name.Contains("MindMap")&& !leftController.GetComponent<LeftController>().GetMovementBool()) {
                 leftController.GetComponent<LeftController>().SetCardTmpMindMap(cardHitObj);
             }
@@ -39,9 +53,10 @@ public class LeftControllerRay : MonoBehaviour
        
             } else
         {
+            StopBlinking();
             cardHit = false;
             pokeMat.GetComponent<PokeScript>().ChangeColorToWhite();
-          //  leftController.GetComponent<LeftController>().SetRayPosition(hit.point);
+            //  leftController.GetComponent<LeftController>().SetRayPosition(hit.point);
         }
 
         if (Physics.Raycast(transform.position, transform.forward * distance, out hit, distance))
@@ -49,6 +64,38 @@ public class LeftControllerRay : MonoBehaviour
             leftController.GetComponent<LeftController>().SetRayPosition(hit.point);
         }
 
+
+    }
+    private void StopBlinking()
+    {
+        if (cardHitObj!=null) {
+            isBlinking = false;
+            StopCoroutine(Blink());
+            renderer.material.SetFloat("_Metallic", originalMetallic); // Reset the metallic value when blinking stops
+            renderer.material.SetFloat("_Smoothness", 0.5f); // Set the smoothness value to 0.5 when blinking stops
+
+        }
+
+    }
+
+    private IEnumerator Blink()
+    {
+        while (isBlinking)
+        {
+            float newMetallic = Mathf.PingPong(Time.time, 1f);
+            renderer.material.SetFloat("_Metallic", newMetallic);
+            float newSmoothness = Mathf.PingPong(Time.time, 0.5f) + 0.5f;
+            renderer.material.SetFloat("_Smoothness", newSmoothness);
+            yield return null;
+        }
+    }
+
+    private void SetRenderer()
+    {
+
+        renderer = cardHitObj.GetComponent<Renderer>();
+        originalMetallic = renderer.material.GetFloat("_Metallic");
+        originalSmoothness = renderer.material.GetFloat("_Smoothness");
 
     }
 

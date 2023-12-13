@@ -30,6 +30,8 @@ public class LeftController : MonoBehaviour
     public GameObject mainSystem;
     public GameObject cardSystem;
     public GameObject uiSystem;
+    public GameObject audioSystem;
+    public GameObject vibrationSystem;
 
 
     private GameObject cardTmp;
@@ -71,6 +73,7 @@ public class LeftController : MonoBehaviour
 
     void OnLeftMainPressed(InputAction.CallbackContext context)
     {
+        audioSystem.GetComponent<AudioSystem>().PlayNormalClickAudio();
         GameObject tmp;
         if (leftPoke.GetComponent<LeftControllerRay>().IsLayerCardOption())
         {   
@@ -176,60 +179,146 @@ public class LeftController : MonoBehaviour
                             grabBool = false;
                             restBool = false;
 
+                        }else
+                        {
+                            mindMapMovement = !mindMapMovement;
                         }
                         break;
+                    case var str when str.Contains("Whiteboard(NormalCard)"):
+                        if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
+                        {
+                                cardTmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
+                            if (cardTmp != null)
+                            {
+                                grabBool = true;
+                                cardTmp.GetComponent<CardScript>().GetLocationHolding().GetComponent<LocationHighlighter>().changeAvailable(true);
+
+                            }
+                            else
+                            {
+                                grabBool = false;
+                            }
+                            mindMapMovement = !mindMapMovement;
+                        }
+                        break;
+
                     default:
                         break;
             }
             }
             
         }
-    
+
+        if (leftPoke.GetComponent<LeftControllerRay>().IsLayerPosition())
+        {
+            Debug.Log(leftPoke.GetComponent<LeftControllerRay>().IsRayHit());
+            tmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
+            if (tmp != null)
+            {
+                switch (tmp.gameObject.name)
+                {
+                    case var str when str.Contains("Whiteboard(NormalCard)"):
+                        if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
+                        {
+
+                                locationTmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
+                            if (cardTmp != null)
+                            {
+                                grabBool = true;
+                                cardTmp.GetComponent<CardScript>().GetLocationHolding().GetComponent<LocationHighlighter>().changeAvailable(true);
+
+                            }
+                            else
+                            {
+                                grabBool = false;
+                            }
+
+                            if (locationTmp != null && leftPoke.GetComponent<LeftControllerRay>().IsLayerPosition())
+                            {
+
+                                restBool = false;
+                                cardTmp.transform.parent = null;
+                                cardTmp.transform.parent = locationTmp.transform;
+                                cardTmp.transform.localPosition = new Vector3(0.1f, 0f, 0f);
+                                cardTmp.transform.localRotation = Quaternion.identity;
+                                cardTmp.transform.localScale = new Vector3(1f, 1f, 1f);
+                                leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                            }
+                        }
+                        break;
+                    case var str when str.Contains("OnBoardLocations"):
+                        
+                        if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
+                        {
+
+                            locationTmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
+                            if (locationTmp != null && leftPoke.GetComponent<LeftControllerRay>().IsLayerPosition())
+                            {
+
+                                restBool = false;
+                                cardTmp.transform.parent = null;
+                                cardTmp.transform.parent = locationTmp.transform;
+                                cardTmp.transform.localPosition = new Vector3(0.1f, 0f, 0f);
+                                cardTmp.transform.localRotation = Quaternion.identity;
+                                cardTmp.transform.localScale = new Vector3(1f, 1f, 1f);
+                                leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                                cardTmp = null;
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+        }
     }
     void OnLeftSecondaryPressed(InputAction.CallbackContext context)
     {
-        if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0) {
-            if (leftPoke.GetComponent<LeftControllerRay>().IsLayerCard())
-            {
-                cardTmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
-            }
-            else if (leftPoke.GetComponent<LeftControllerRay>().IsLayerPosition())
-            {
-                locationTmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
-            }
-            if (cardTmp != null && leftPoke.GetComponent<LeftControllerRay>().IsLayerCard())
-            {
-                grabBool = true;
-                cardTmp.GetComponent<CardScript>().GetLocationHolding().GetComponent<LocationHighlighter>().changeAvailable(true);
+        //audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
+        //if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0) {
+        //    if (leftPoke.GetComponent<LeftControllerRay>().IsLayerCard())
+        //    {
+        //        cardTmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
+        //    }
+        //    else if (leftPoke.GetComponent<LeftControllerRay>().IsLayerPosition())
+        //    {
+        //        locationTmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
+        //    }
+        //    if (cardTmp != null && leftPoke.GetComponent<LeftControllerRay>().IsLayerCard())
+        //    {
+        //        grabBool = true;
+        //        cardTmp.GetComponent<CardScript>().GetLocationHolding().GetComponent<LocationHighlighter>().changeAvailable(true);
 
-            }
-            else
-            {
-                grabBool = false;
-            }
+        //    }
+        //    else
+        //    {
+        //        grabBool = false;
+        //    }
 
-            if (locationTmp != null && leftPoke.GetComponent<LeftControllerRay>().IsLayerPosition())
-            {
+        //    if (locationTmp != null && leftPoke.GetComponent<LeftControllerRay>().IsLayerPosition())
+        //    {
 
-                restBool = false;
-                cardTmp.transform.parent = null;
-                cardTmp.transform.parent = locationTmp.transform;
-                cardTmp.transform.localPosition = new Vector3(0.1f, 0f, 0f);
-                cardTmp.transform.localRotation = Quaternion.identity;
-                cardTmp.transform.localScale = new Vector3(1f, 1f, 1f);
-                leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
-            }
-        } else
-        {
-            mindMapMovement = !mindMapMovement;
+        //        restBool = false;
+        //        cardTmp.transform.parent = null;
+        //        cardTmp.transform.parent = locationTmp.transform;
+        //        cardTmp.transform.localPosition = new Vector3(0.1f, 0f, 0f);
+        //        cardTmp.transform.localRotation = Quaternion.identity;
+        //        cardTmp.transform.localScale = new Vector3(1f, 1f, 1f);
+        //        leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+        //    }
+        //} else
+        //{
+        //    mindMapMovement = !mindMapMovement;
 
-        }
+        //}
 
 
     }
     void OnLeftXPressed(InputAction.CallbackContext context)
     {
         Debug.Log("Left X button pressed!");
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
         if (cardTmp!=null)
         {
             if (grabBool == true)
@@ -270,6 +359,7 @@ public class LeftController : MonoBehaviour
     }
     void OnLeftYPressed(InputAction.CallbackContext context)
     {
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
         if (cardTmp!= null & optionsPressed)
         {
             optionsPressed = false;
@@ -300,14 +390,16 @@ public class LeftController : MonoBehaviour
     }
     void OnLeftMenuPressed(InputAction.CallbackContext context)
     {
-        // show modes
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
+        uiSystem.GetComponent<UISystem>().ToggleUI();
+
     }
  
     
     
     void OnRightMainPressed(InputAction.CallbackContext context)
     {
-
+        audioSystem.GetComponent<AudioSystem>().PlayNormalClickAudio();
         var tmp = rightPoke.GetComponent<RightControllerRay>().IsRayHit();
         if (tmp) {
             switch (tmp.gameObject.name)
@@ -328,19 +420,21 @@ public class LeftController : MonoBehaviour
     }
     void OnRightBPressed(InputAction.CallbackContext context)
     {
-       recordSystem.GetComponent<RecordSystem>().EndRecording();
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
+        recordSystem.GetComponent<RecordSystem>().EndRecording();
     }
     void OnRightAPressed(InputAction.CallbackContext context)
     {
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
         recordSystem.GetComponent<RecordSystem>().StartRecording();
     }
 
     public void AttachCard(GameObject card)
     {
+        vibrationSystem.GetComponent<VibrationSystem>().HapticLeft();
         cardTmp = card;
         grabBool = true;
         optionsPressed = false;
-
         Transform upperbar = card.transform.Find("UpperBar");
         if (upperbar != null)
         {

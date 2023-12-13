@@ -5,6 +5,8 @@ using TMPro;
 using UnityEngine;
 using OpenAI;
 using System.Security.Cryptography;
+using Newtonsoft.Json.Linq;
+using System.IO;
 
 public class RecordSystem : MonoBehaviour
 {
@@ -16,16 +18,17 @@ public class RecordSystem : MonoBehaviour
     public GameObject mainSystem;
     public GameObject leftController;
     public GameObject cardSystem;
+    public GameObject vibrationSystem;
 
     private GameObject tmp = null;
     private readonly string fileName = "output.wav";
     private AudioClip clip;
-    private OpenAIApi openai = new OpenAIApi("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");
+    private OpenAIApi openai = new OpenAIApi(JObject.Parse(File.ReadAllText(Path.Combine(Application.dataPath, "Resources/config.json")))["openai"]["api"].ToString());
     private string convertedAudio;
     private bool replaceOption = false;
     private GameObject gameObjectTmp;
     public void SpawnRecordPanel() {
-
+        vibrationSystem.GetComponent<VibrationSystem>().HapticRight();
         if (tmp != null) { 
         DestroyRecordPanel();
         }
@@ -106,9 +109,9 @@ public class RecordSystem : MonoBehaviour
         var req = new CreateAudioTranscriptionsRequest
         {
             FileData = new FileData() { Data = data, Name = "audio.wav" },
-            Model = "whisper-1",
-            Language = "de"
-        };
+            Model = JObject.Parse(File.ReadAllText(Path.Combine(Application.dataPath, "Resources/config.json")))["openai"]["model_voice"].ToString(),
+            Language = JObject.Parse(File.ReadAllText(Path.Combine(Application.dataPath, "Resources/config.json")))["openai"]["model_voice_language"].ToString()
+    };
         var res = await openai.CreateAudioTranscription(req);
         tmp.GetComponent<RecordPanelScript>().ChangeMainTxt(res.Text);
         convertedAudio = res.Text;

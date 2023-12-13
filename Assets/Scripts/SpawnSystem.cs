@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -35,7 +37,9 @@ public class SpawnSystem : MonoBehaviour
             {
                 if (!occupiedSpawnLocations.Contains(spawnPoint))
                 {
-                    boardsSystem.GetComponent<BoardsSystem>().SetSelectedBoard(Instantiate(boardPrefab, spawnPoint.position, spawnPoint.rotation));
+                    GameObject gmo = Instantiate(boardPrefab, spawnPoint.position, spawnPoint.rotation);
+                    gmo.name = "Whiteboard(NormalBoard)";
+                    boardsSystem.GetComponent<BoardsSystem>().SetSelectedBoard(gmo);
                     occupiedSpawnLocations.Add(spawnPoint);
                     return;
                 }
@@ -60,5 +64,17 @@ public class SpawnSystem : MonoBehaviour
                 break;
             }
         }
+    }
+
+    public void DestoryAll()
+    {
+        GameObject[] objects = GameObject.FindObjectsOfType<GameObject>()
+            .Where(go => go.name == "Whiteboard(NormalBoard)").ToArray();
+        foreach (GameObject obj in objects)
+        {
+            Destroy(obj);
+        }
+        occupiedSpawnLocations = new List<Transform>();
+
     }
 }

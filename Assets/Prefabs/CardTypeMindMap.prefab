@@ -1386,7 +1386,7 @@ GameObject:
   - component: {fileID: 7640521131859103575}
   - component: {fileID: 8575608952682139522}
   m_Layer: 0
-  m_Name: CardType2
+  m_Name: CardTypeMindMap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

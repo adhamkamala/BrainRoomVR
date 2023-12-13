@@ -5,9 +5,13 @@ using UnityEngine;
 public class UISystem : MonoBehaviour
 {
     public GameObject uiGameObject;
-    public GameObject uiSystem;
+    public GameObject aiSystem;
     public GameObject mainSystem;
     public GameObject cardSystem;
+    public GameObject spawnSystem;
+    public GameObject recordSystem;
+
+    private bool uiBool = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,27 +24,37 @@ public class UISystem : MonoBehaviour
         
     }
     
-    void HideUI()
+    private void HideUI()
     {
         uiGameObject.SetActive(false);
     }
 
-    void ShowUI()
+    private void ShowUI()
     {
         uiGameObject.SetActive(true);
     }
 
     public void ModeWhiteBoard()
     {
-        uiSystem.GetComponent<OpenAIController>().ModeWhiteBoardSetupModel();
+        aiSystem.GetComponent<OpenAIController>().ModeWhiteBoardSetupModel();
         mainSystem.GetComponent<MainSystem>().ChangeMode(0);
+        cardSystem.GetComponent<CardSystem>().DestroyAll();
+        spawnSystem.GetComponent<SpawnSystem>().DestoryAll();
+        recordSystem.GetComponent<RecordSystem>().StartRecording();
         HideUI();
     }
     public void ModeMindMap()
     {
-        uiSystem.GetComponent<OpenAIController>().ModeMindMapSetupModel();
+        aiSystem.GetComponent<OpenAIController>().ModeMindMapSetupModel();
         mainSystem.GetComponent<MainSystem>().ChangeMode(1);
-        HideUI();
         cardSystem.GetComponent<CardSystem>().DestroyAll();
+        spawnSystem.GetComponent<SpawnSystem>().DestoryAll();
+        recordSystem.GetComponent<RecordSystem>().StartRecording();
+        HideUI();
+    }
+    public void ToggleUI()
+    {
+        uiBool = !uiBool;
+        uiGameObject.SetActive(uiBool);
     }
 }

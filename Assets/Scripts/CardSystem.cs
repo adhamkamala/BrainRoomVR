@@ -38,6 +38,7 @@ public class CardSystem : MonoBehaviour
             cardTmp.layer = LayerMask.NameToLayer("CardsLayer");
             cardTmp.GetComponent<CardScript>().ChangeMainTxt(mainTxt);
             cardTmp.GetComponent<CardScript>().ChangeSubTxt(subTxt);
+            cardTmp.name = "Whiteboard(NormalCard): " + subTxt;
             boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponentInChildren<BoardSystem>().CardLocator(cardTmp);
         }
     }

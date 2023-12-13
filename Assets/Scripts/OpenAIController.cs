@@ -17,20 +17,20 @@ public class OpenAIController : MonoBehaviour
     public GameObject cardSystem;
     public GameObject boardsSystem;
     public GameObject spawnSystem;
+    public GameObject audioSystem;
+    public GameObject vibrationSystem;
 
-    private readonly string fileName = "output.wav";
-    private AudioClip clip;
-    private OpenAI_API.OpenAIAPI api = new OpenAI_API.OpenAIAPI("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");
+    private OpenAI_API.OpenAIAPI api = new OpenAI_API.OpenAIAPI(JObject.Parse(File.ReadAllText(Path.Combine(Application.dataPath, "Resources/config.json")))["openai"]["api"].ToString());
     private Conversation chat;
-    private OpenAIApi openai = new OpenAIApi("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");
     private string mindMapRespondTmp;
 
 
     // Start is called before the first frame update
     void Start()
     {
-       chat = api.Chat.CreateConversation();
-       chat.Model = "gpt-3.5-turbo-1106";
+        chat = api.Chat.CreateConversation();
+        chat.Model = JObject.Parse(File.ReadAllText(Path.Combine(Application.dataPath, "Resources/config.json")))["openai"]["model_chat"].ToString();
+
         //  _ = ModeWhiteBoardSetupModel();
         // ModeMindMapSetupModel();
     }
@@ -71,6 +71,7 @@ public class OpenAIController : MonoBehaviour
     {
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
         Debug.Log(response);
         ModeWhiteBoardTranslator(response);
     }
@@ -81,7 +82,10 @@ public class OpenAIController : MonoBehaviour
         {
             cardSystem.GetComponent<CardSystem>().initCardObj(card.HeadLine, card.Text);
         }
-      
+
+        vibrationSystem.GetComponent<VibrationSystem>().HapticLeft();
+        vibrationSystem.GetComponent<VibrationSystem>().HapticRight();
+
     }
     async public Task ModeWhiteBoardExtend(string strQues, string strAnswer) // 
     {
@@ -89,6 +93,7 @@ public class OpenAIController : MonoBehaviour
         string str = "Die Frage wurde dir gestellt: " + strQues + ". und du hast so beantwortert: " + strAnswer + ". kannst du noch zu der frage andere antworte geben?";
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
         ModeWhiteBoardTranslator(response);
     }
 
@@ -111,6 +116,7 @@ public class OpenAIController : MonoBehaviour
     {
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
         Debug.Log(response);
         mindMapRespondTmp = response;
         ModeMindMapTranslator(response);
@@ -150,10 +156,11 @@ public class OpenAIController : MonoBehaviour
             knotenMap[key].ForEach(x => Debug.Log(x));
             cardSystem.GetComponent<CardSystem>().CreateChildrenNodes(cardSystem.GetComponent<CardSystem>().GetNodeByName(null,key), knotenMap[key].Count, knotenMap[key],count);
         }
-   
+
         //map with main and under list
 
-
+        vibrationSystem.GetComponent<VibrationSystem>().HapticLeft();
+        vibrationSystem.GetComponent<VibrationSystem>().HapticRight();
     }
 
     public async Task ModeMindMapReplaceTranslator(string str)
@@ -166,6 +173,7 @@ public class OpenAIController : MonoBehaviour
             list.Add(point);
         }
         cardSystem.GetComponent<CardSystem>().CreateReplaceAICards(list);
+        vibrationSystem.GetComponent<VibrationSystem>().HapticLeft();
     }
     public async Task ModeMindMapExtend(string strQues, string strAnswer)
     {
@@ -178,6 +186,7 @@ public class OpenAIController : MonoBehaviour
         string str = "Bei der vorherigen frage: "+ mindMapRespondTmp + ". habe ich jetzt den punkt: " + strQues + ". kannst du noch zu der frage exakt nur 3 alternative punkte geben nur und nix anderes? Die antwort soll folgendes aussehen: JSON format mit array namens alternativePunkte und dadrunter die 3 punkte";
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
         Debug.Log(response);
         ModeMindMapReplaceTranslator(response);
     }
@@ -187,6 +196,7 @@ public class OpenAIController : MonoBehaviour
         string str = "Bei der vorherigen frage: " + mindMapRespondTmp + ". habe ich jetzt den punkt: " + strQues + ". kannst du diesen punkt zuordnen? Die antwort soll folgendes aussehen: JSON format genau wie vorherige frage aber mit dem punkt drin zugeordnet";
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
         Debug.Log(response);
         ModeMindMapTranslator(response);
     }

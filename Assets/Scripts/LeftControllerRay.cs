@@ -12,6 +12,7 @@ public class LeftControllerRay : MonoBehaviour
     public float distance = 5f;
     public GameObject pokeMat;
     public GameObject leftController;
+    public GameObject mainSystem;
 
     private GameObject cardHitObj;
     private bool cardHit = false;
@@ -20,6 +21,7 @@ public class LeftControllerRay : MonoBehaviour
     private bool isBlinking = false;
     private float originalMetallic;
     private float originalSmoothness;
+    
 
 
     void Start()
@@ -46,7 +48,7 @@ public class LeftControllerRay : MonoBehaviour
                 StartCoroutine(Blink());
             }
 
-            if (cardHitObj.name.Contains("MindMap")&& !leftController.GetComponent<LeftController>().GetMovementBool()) {
+            if (cardHitObj.name.Contains("MindMap")&& !leftController.GetComponent<LeftController>().GetMovementBool() && mainSystem.GetComponent<MainSystem>().WhatMode() == 1) {
                 leftController.GetComponent<LeftController>().SetCardTmpMindMap(cardHitObj);
             }
             pokeMat.GetComponent<PokeScript>().ChangeColorToGreen();
@@ -86,11 +88,20 @@ public class LeftControllerRay : MonoBehaviour
     {
         while (isBlinking)
         {
-            float newMetallic = Mathf.PingPong(Time.time, 1f);
-            renderer.material.SetFloat("_Metallic", newMetallic);
-            float newSmoothness = Mathf.PingPong(Time.time, 0.5f) + 0.5f;
-            renderer.material.SetFloat("_Smoothness", newSmoothness);
+            try
+            {
+                float newMetallic = Mathf.PingPong(Time.time, 1f);
+                renderer.material.SetFloat("_Metallic", newMetallic);
+                float newSmoothness = Mathf.PingPong(Time.time, 0.5f) + 0.5f;
+                renderer.material.SetFloat("_Smoothness", newSmoothness);
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
             yield return null;
+
         }
     }
 

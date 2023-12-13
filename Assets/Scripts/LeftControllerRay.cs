@@ -53,7 +53,11 @@ public class LeftControllerRay : MonoBehaviour
        
             } else
         {
-            StopBlinking();
+            if (isBlinking)
+            {
+                StopBlinking();
+            }
+            
             cardHit = false;
             pokeMat.GetComponent<PokeScript>().ChangeColorToWhite();
             //  leftController.GetComponent<LeftController>().SetRayPosition(hit.point);
@@ -66,7 +70,7 @@ public class LeftControllerRay : MonoBehaviour
 
 
     }
-    private void StopBlinking()
+    public void StopBlinking()
     {
         if (cardHitObj!=null) {
             isBlinking = false;

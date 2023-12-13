@@ -132,6 +132,7 @@ public class LeftController : MonoBehaviour
                         // gen 3 cards with title
                         break;
                     case "Relocate":
+                        leftPoke.GetComponent<LeftControllerRay>().StopBlinking();
                         cardSystem.GetComponent<CardSystem>().RelocateCard(cardTmpMindMap) ;
                         leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
                         break;
@@ -169,6 +170,7 @@ public class LeftController : MonoBehaviour
                         break;
                     case var str when str.Contains("MindMap(NormalCard)"):
                         if (cardTmp != null) {
+                            leftPoke.GetComponent<LeftControllerRay>().StopBlinking();
                             cardSystem.GetComponent<CardSystem>().UserAttachCardNode(tmp.gameObject.GetComponent<Node>().nodeName, cardTmp);
                             Destroy(cardTmp);
                             grabBool = false;
@@ -240,6 +242,9 @@ public class LeftController : MonoBehaviour
                 {
                     leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToPostion();
 
+                } else
+                {
+                    leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
                 }
 
                 grabBool = false;

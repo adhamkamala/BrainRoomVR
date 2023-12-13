@@ -7,6 +7,7 @@ public class UISystem : MonoBehaviour
     public GameObject uiGameObject;
     public GameObject uiSystem;
     public GameObject mainSystem;
+    public GameObject cardSystem;
     // Start is called before the first frame update
     void Start()
     {
@@ -40,5 +41,6 @@ public class UISystem : MonoBehaviour
         uiSystem.GetComponent<OpenAIController>().ModeMindMapSetupModel();
         mainSystem.GetComponent<MainSystem>().ChangeMode(1);
         HideUI();
+        cardSystem.GetComponent<CardSystem>().DestroyAll();
     }
 }

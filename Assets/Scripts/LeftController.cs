@@ -59,11 +59,17 @@ public class LeftController : MonoBehaviour
     {
         if (grabBool == true & !optionsPressed)
         {
-            cardTmp.transform.position = holdPosition.transform.position;
+          //  cardTmp.transform.position = holdPosition.transform.position;
+            cardTmp.transform.SetParent(holdPosition.transform);
+            cardTmp.transform.localPosition = Vector3.zero;
+            cardTmp.transform.localRotation = Quaternion.Euler(0f, 90f, 0f);
         }
         if (restBool == true)
         {
-            cardTmp.transform.position = restPosition.transform.position;
+            //cardTmp.transform.position = restPosition.transform.position;
+            cardTmp.transform.SetParent(restPosition.transform);
+            cardTmp.transform.localPosition = Vector3.zero;
+            cardTmp.transform.localRotation = Quaternion.Euler(0f, -90f, 0f);
         }
         if (mindMapMovement == true)
         {
@@ -369,6 +375,7 @@ public class LeftController : MonoBehaviour
         {
             optionsPressed = true;
             cardTmp.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
+            cardTmp.transform.SetParent(null);
             cardTmp.transform.position = holdPosition.transform.position;
             leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCardOptions();
         }

@@ -61,14 +61,20 @@ public class CardSystem : MonoBehaviour
 
     public void CreateReplaceAICards(List<string> strs)
     {
-        Vector3 startPoint = spawnLocationReplaceAI.transform.position;
+        // Vector3 startPoint = spawnLocationReplaceAI.transform.position;
+        Vector3 startPoint = Vector3.zero;
         cardsTmp = new List<GameObject>();
         strs.ForEach(str =>
         {
             GameObject cardTmp = Instantiate(cardsMindMapPrf, startPoint, Quaternion.identity);
-            cardTmp.name = "MindMap(ReplaceAICard): "+ str;
+            cardTmp.name = "MindMap(ReplaceAICard): " + str;
             cardTmp.layer = LayerMask.NameToLayer("CardsLayer");
             cardTmp.GetComponent<CardScript>().ChangeSubTxt(str);
+
+            cardTmp.transform.SetParent(spawnLocationReplaceAI.transform);
+            cardTmp.transform.localPosition = Vector3.zero;
+            cardTmp.transform.localRotation = Quaternion.Euler(0f, 90f, 0f);
+            cardTmp.transform.localPosition = new Vector3(cardTmp.transform.localPosition.x, startPoint.y, cardTmp.transform.localPosition.z);
             startPoint.y -= 0.45f;
             cardsTmp.Add(cardTmp);
         });

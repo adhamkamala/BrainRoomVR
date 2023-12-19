@@ -126,6 +126,8 @@ public class LeftController : MonoBehaviour
                             cardSystem.GetComponent<CardSystem>().Node2ToJson();
                             aiSystem.GetComponent<OpenAIController>().ModeMindMapExtend(cardTmpMindMap.GetComponent<Node>().nodeName);
                             leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                            optionsPressed = false;
+                            cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
                         }
                         break;
                     case "Replace":
@@ -154,6 +156,8 @@ public class LeftController : MonoBehaviour
                         cardSystem.GetComponent<CardSystem>().Node2ToJson();
                         aiSystem.GetComponent<OpenAIController>().ModeMindMapAutoSort(cardTmp.GetComponent<CardScript>().subTitleTxt.text);
                         leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                        optionsPressed = false;
+                        cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
                         Destroy(cardTmp);
                         break;
                 }

@@ -11,6 +11,7 @@ using Unity.VisualScripting;
 using Newtonsoft.Json.Linq;
 using System.IO;
 using System.Xml.Schema;
+using UnityEditor.Experimental.GraphView;
 
 public class OpenAIController : MonoBehaviour
 {
@@ -24,36 +25,13 @@ public class OpenAIController : MonoBehaviour
     private Conversation chat;
     private string mindMapRespondTmp;
 
-
-    // Start is called before the first frame update
     void Start()
     {
         chat = api.Chat.CreateConversation();
         chat.Model = JObject.Parse(File.ReadAllText(Path.Combine(Application.dataPath, "Resources/config.json")))["openai"]["model_chat"].ToString();
+    }
 
-        //  _ = ModeWhiteBoardSetupModel();
-        // ModeMindMapSetupModel();
-    }
-    private void Update()
-    {
-        if (Keyboard.current.qKey.wasPressedThisFrame) // for testing purposes
-        {
-            //ModeMindMapSendMessage("Wie kann ich schneller zu punkt b kommen?");
-            cardSystem.GetComponent<CardSystem>().CreateRootNode("main");
-            List<string> wurzelList = new List<string> { "a", "b", "c" };
-            cardSystem.GetComponent<CardSystem>().CreateChildrenNodes(null, 3, wurzelList, 3);
-            List<string> knotenlList = new List<string> { "1", "2", "3" };
-            List<string> knotenlList2 = new List<string> { "4", "5", "6" };
-            cardSystem.GetComponent<CardSystem>().CreateChildrenNodes(cardSystem.GetComponent<CardSystem>().GetNodeByName(null, "c"), knotenlList.Count, knotenlList, 6);
-            cardSystem.GetComponent<CardSystem>().CreateChildrenNodes(cardSystem.GetComponent<CardSystem>().GetNodeByName(null, "b"), knotenlList2.Count, knotenlList2, 6);
-            // ModeMindMapReplaceAI("Betrieb");
-            //cardSystem.GetComponent<CardSystem>().CreateReplaceAICards(new List<string> { "x", "y", "z" });
-            //cardSystem.GetComponent<CardSystem>().DestroyAICards();
-            //cardSystem.GetComponent<CardSystem>().SetCardToReplaceByName("c");
-            //cardSystem.GetComponent<CardSystem>().ReplaceCard("x");
-        }
-    }
-    public async Task ModeWhiteBoardSetupModel()
+    public Task ModeWhiteBoardSetupModel()
     {
         string filePath = Path.Combine(Application.dataPath, "Resources/questions_and_answers_whiteboard.json");
         string json = File.ReadAllText(filePath);
@@ -63,10 +41,13 @@ public class OpenAIController : MonoBehaviour
         {
             string question = questionData.question;
             chat.AppendUserInput(question);
-            string answersJson = JsonConvert.SerializeObject(new { answers = questionData.answers });
+            string answersJson = JsonConvert.SerializeObject(new { questionData.answers });
             chat.AppendExampleChatbotOutput(answersJson);
         }
+
+        return Task.CompletedTask;
     }
+
     public async Task ModeWhiteBoardSendMessage(string str)
     {
         chat.AppendUserInput(str);
@@ -87,7 +68,7 @@ public class OpenAIController : MonoBehaviour
         vibrationSystem.GetComponent<VibrationSystem>().HapticRight();
 
     }
-    async public Task ModeWhiteBoardExtend(string strQues, string strAnswer) // 
+    async public Task ModeWhiteBoardExtend(string strQues, string strAnswer)  
     {
         // Question was... ur answer was... --> now give me more...
         string str = "Die Frage wurde dir gestellt: " + strQues + ". und du hast so beantwortert: " + strAnswer + ". kannst du noch zu der frage andere antworte geben?";
@@ -97,19 +78,23 @@ public class OpenAIController : MonoBehaviour
         ModeWhiteBoardTranslator(response);
     }
 
-    public async Task ModeMindMapSetupModel()
+    public Task ModeMindMapSetupModel()
     {
         string filePath = Path.Combine(Application.dataPath, "Resources/questions_and_answers_mindmap.json");
         string json = File.ReadAllText(filePath);
-        QuestionsAndAnswersMindMap data = JsonConvert.DeserializeObject<QuestionsAndAnswersMindMap>(json);
-        chat.AppendSystemMessage("Du bist ein Brainstorming-Assistent für MindMaps. Hauptwurzel ist ein wort oder begriff aus der frage; Unterwurzeln sind die main begriffe und knoten beinhalten in weenigen worten mehr über unterwurzeln. Benutze so wenige worte wie möglich. Antwort bitte wie ein JSON respond.");
-        foreach (var questionData in data.questions)
+        QuestionsContainer questionsContainer = JsonUtility.FromJson<QuestionsContainer>(json);
+        chat.AppendSystemMessage("Du bist ein Brainstorming-Assistent für MindMaps. Erste Wurzel soll ein wort oder begriff aus der frage beinhalten; Knoten sind die main begriffe und knoten beinhalten in wenigen worten mehr über Würzeln. Bei Knoten gibts wiederrum wurzeln die knoten haben usw usw. Benutze so wenige worte wie möglich. Antwort bitte wie ein JSON respond.");
+        foreach (var questionData in questionsContainer.questions)
         {
             string question = questionData.question;
+ 
             chat.AppendUserInput(question);
-            string answersJson = JsonConvert.SerializeObject(new { answers = questionData.answers });
+            string answersJson = JsonConvert.SerializeObject(new { questionData.answers });
+          
             chat.AppendExampleChatbotOutput(answersJson);
         }
+        Debug.Log("Done Training");
+        return Task.CompletedTask;
     }
 
     public async Task ModeMindMapSendMessage(string str)
@@ -123,46 +108,23 @@ public class OpenAIController : MonoBehaviour
 
     }
 
-    public async Task ModeMindMapTranslator(string str)
+    public void SetCurrentJson(NodeStorage rootNode)
     {
+        AnswersContainer reversedContainer = ConvertNodeToAnswersContainer(rootNode);
+        mindMapRespondTmp = JsonUtility.ToJson(reversedContainer, true);
+    }
+    public async Task ModeMindMapTranslator(string str)
+    {  
         cardSystem.GetComponent<CardSystem>().DestroyAll();
-        OpenAIResopnseMindMap openAIResponse = JsonConvert.DeserializeObject<OpenAIResopnseMindMap>(str);
-        List<CardMindMap> kartenList = openAIResponse.Answers;
-        List<string> wurzelList=new List<string>();
-        List<string> knotenList = new List<string>();
-        int count = 0;
-        Dictionary<string, List<string>> knotenMap = new Dictionary<string, List<string>>();
-        foreach (CardMindMap card in kartenList)
+        AnswersContainer answersContainer = JsonUtility.FromJson<AnswersContainer>(str);
+        foreach (var answer in answersContainer.answers)
         {
-            cardSystem.GetComponent<CardSystem>().CreateRootNode(card.Hauptwurzel);
-            foreach (AntwortKnoten undercard in card.Unterwurzeln)
-            {
-                wurzelList.Add(undercard.Wurzel);
-                foreach(string strn in undercard.Knoten)
-                {
-                   
-                    knotenList.Add(strn);
-                    count++;
-                }
-                knotenMap.Add(undercard.Wurzel, knotenList);
-                knotenList = new List<string>();
-            }
+            NodeStorage rootNode = CreateNodeFromAnswerNode(answer, null);
+            cardSystem.GetComponent<CardSystem>().InitMindMap(rootNode);
         }
-        cardSystem.GetComponent<CardSystem>().CreateChildrenNodes(null, wurzelList.Count, wurzelList, wurzelList.Count);
-    
-        foreach (var key in knotenMap.Keys)
-        {
-            Debug.Log(key);
-            knotenMap[key].ForEach(x => Debug.Log(x));
-            cardSystem.GetComponent<CardSystem>().CreateChildrenNodes(cardSystem.GetComponent<CardSystem>().GetNodeByName(null,key), knotenMap[key].Count, knotenMap[key],count);
-        }
-
-        //map with main and under list
-
         vibrationSystem.GetComponent<VibrationSystem>().HapticLeft();
         vibrationSystem.GetComponent<VibrationSystem>().HapticRight();
     }
-
     public async Task ModeMindMapReplaceTranslator(string str)
     {
         MyData myData = JsonUtility.FromJson<MyData>(str);
@@ -175,9 +137,15 @@ public class OpenAIController : MonoBehaviour
         cardSystem.GetComponent<CardSystem>().CreateReplaceAICards(list);
         vibrationSystem.GetComponent<VibrationSystem>().HapticLeft();
     }
-    public async Task ModeMindMapExtend(string strQues, string strAnswer)
+    public async Task ModeMindMapExtend(string strQues)
     {
-
+        // Question was... ur answer was... --> now give me more...
+        string str = "Kannst du bei der Vorherigen antwort von dir: " + mindMapRespondTmp + " ein paar punkte unter dem Punkt " + strQues + " sameln. also 2 oder 3 punkte dadrunter tun nix anderes? Ergänze deine antwort also";
+        chat.AppendUserInput(str);
+        string response = await chat.GetResponseFromChatbotAsync();
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
+        Debug.Log(response);
+        ModeMindMapTranslator(response);
     }
 
     public async Task ModeMindMapReplaceAI(string strQues)
@@ -200,24 +168,69 @@ public class OpenAIController : MonoBehaviour
         Debug.Log(response);
         ModeMindMapTranslator(response);
     }
+    private NodeStorage CreateNodeFromAnswerNode(AnswerNode answerNode, NodeStorage parentNode)
+    {
+        NodeStorage newNode = new NodeStorage
+        {
+            name = answerNode.Wurzel,
+            parentNode = parentNode
+        };
+
+        if (answerNode.Knoten != null)
+        {
+            foreach (var subNode in answerNode.Knoten)
+            {
+                NodeStorage childNode = CreateNodeFromAnswerNode(subNode, newNode);
+                newNode.children.Add(childNode);
+            }
+        }
+
+        return newNode;
+    }
+    private AnswersContainer ConvertNodeToAnswersContainer(NodeStorage rootNode)
+    {
+        AnswersContainer reversedContainer = new AnswersContainer
+        {
+            answers = new List<AnswerNode>
+            {
+                new AnswerNode
+                {
+                    Wurzel = rootNode.name,
+                    Knoten = ConvertNodeToAnswerList(rootNode.children)
+                }
+            }
+        };
+
+        return reversedContainer;
+    }
+
+    private List<AnswerNode> ConvertNodeToAnswerList(List<NodeStorage> nodes)
+    {
+        List<AnswerNode> answerNodes = new List<AnswerNode>();
+
+        foreach (var node in nodes)
+        {
+            AnswerNode answerNode = new AnswerNode
+            {
+                Wurzel = node.name,
+                Knoten = ConvertNodeToAnswerList(node.children)
+            };
+
+            answerNodes.Add(answerNode);
+        }
+
+        return answerNodes;
+    }
 }
 
 class Card {
     public string HeadLine { get; set; }
     public string Text { get; set; }
 }
-class CardMindMap
-{
-    public string Hauptwurzel { get; set; }
-    public List<AntwortKnoten> Unterwurzeln { get; set; }
-}
+
 class OpenAIResopnse
 {
     public List<Card> Answers { get; set; }
-}
-class OpenAIResopnseMindMap
-{
-    public List<CardMindMap> Answers { get; set; }
 }
 public class QuestionAndAnswers
 {
@@ -235,27 +248,36 @@ public class QuestionsAndAnswers
     public List<QuestionAndAnswers> questions;
 }
 
-public class QuestionAndAnswersMindMap
-{
-    public string question;
-    public List<AnswerMindMap> answers;
-}
-public class AnswerMindMap
-{
-    public string Hauptwurzel;
-    public List<AntwortKnoten> Unterwurzeln;
-}
-public class AntwortKnoten
-{
-    public string Wurzel;
-    public List<string> Knoten;
-}
-public class QuestionsAndAnswersMindMap
-{
-    public List<QuestionAndAnswersMindMap> questions;
-}
-
 public class MyData
 {
     public string[] alternativePunkte;
+}
+
+
+
+///NEU
+[System.Serializable]
+public class AnswerNode
+{
+    public string Wurzel;
+    public List<AnswerNode> Knoten;
+}
+
+[System.Serializable]
+public class AnswerClass
+{
+    public string question;
+    public List<AnswerNode> answers;
+}
+
+[System.Serializable]
+public class QuestionsContainer
+{
+    public List<AnswerClass> questions;
+}
+
+[System.Serializable]
+public class AnswersContainer
+{
+    public List<AnswerNode> answers;
 }

@@ -4,103 +4,112 @@
         "question": "Wie kann eine Hochschule umweltfreundlich sein?",
         "answers": [
           {
-            "Hauptwurzel": "Umweltfreundliche Hochschule",
-            "Unterwurzeln": [
+            "Wurzel": "Umweltfreundliche Hochschule",
+            "Knoten": [
               {
                 "Wurzel": "Energieeffizienz",
                 "Knoten": [
-                  "Erneuerbare Energiequellen",
-                  "Energieeffiziente Beleuchtung und Geräte",
-                  "Sensibilisierung für sparsamen Energieverbrauch"
+                  {
+                    "Wurzel": "Erneuerbare Energiequellen",
+                    "Knoten": [
+                      {
+                        "Wurzel": "Verzicht auf Ausstöße",
+                        "Knoten": []
+                      },
+                      {
+                        "Wurzel": "Solarenergie",
+                        "Knoten": []
+                      },
+                      {
+                        "Wurzel": "Windenergie",
+                        "Knoten": []
+                      }
+                    ]
+                  },
+                  {
+                    "Wurzel": "Energieeffiziente Beleuchtung und Geräte",
+                    "Knoten": []
+                  }
                 ]
               },
               {
                 "Wurzel": "Abfallmanagement",
                 "Knoten": [
-                  "Recyclingprogramme",
-                  "Reduzierung von Einwegprodukten",
-                  "Upcycling und Wiederverwendung fördern"
+                  {
+                    "Wurzel": "Recyclingprogramme",
+                    "Knoten": []
+                  },
+                  {
+                    "Wurzel": "Reduzierung von Einwegprodukten",
+                    "Knoten": []
+                  },
+                  {
+                    "Wurzel": "Upcycling und Wiederverwendung fördern",
+                    "Knoten": []
+                  }
                 ]
               },
               {
                 "Wurzel": "Nachhaltige Mobilität",
                 "Knoten": [
-                  "Fahrradwege und Gehwege ausbauen",
-                  "Öffentliche Verkehrsmittel fördern",
-                  "Elektrofahrzeuge oder Ladestationen bereitstellen"
-                ]
-              },
-              {
-                "Wurzel": "Grüne Infrastruktur",
-                "Knoten": [
-                  "Grüne Bereiche und Gärten schaffen",
-                  "Einheimische Pflanzen für Biodiversität",
-                  "Dachbegrünungen für Wärmeisolierung"
-                ]
-              },
-              {
-                "Wurzel": "Bildung und Sensibilisierung",
-                "Knoten": [
-                  "Umweltthemen in den Lehrplan integrieren",
-                  "Workshops und Vorträge organisieren",
-                  "Umweltbewusstsein fördern"
-                ]
-              },
-              {
-                "Wurzel": "Nachhaltige Beschaffung",
-                "Knoten": [
-                  "Umweltfreundliche Produkte bevorzugen",
-                  "Mit Lieferanten nachhaltige Praktiken fördern",
-                  "Reduzierung von Einwegverpackungen"
-                ]
-              },
-              {
-                "Wurzel": "Wasserressourcenmanagement",
-                "Knoten": [
-                  "Wassersparmaßnahmen implementieren",
-                  "Regenwasser für Bewässerung nutzen",
-                  "Sensibilisierung für bewussten Wasserverbrauch"
+                  {
+                    "Wurzel": "Fahrradwege und Gehwege ausbauen",
+                    "Knoten": []
+                  },
+                  {
+                    "Wurzel": "Öffentliche Verkehrsmittel fördern",
+                    "Knoten": []
+                  },
+                  {
+                    "Wurzel": "Elektrofahrzeuge oder Ladestationen bereitstellen",
+                    "Knoten": []
+                  }
                 ]
               },
               {
                 "Wurzel": "Digitale Transformation",
-                "Knoten": [
-                  "Digitale Lehrmaterialien nutzen",
-                  "Technologien für Fernarbeit einführen"
-                ]
+                "Knoten": []
               }
             ]
-          }
+          }       
         ]
       },
       {
         "question": "Wie kann die lokale Gemeinschaft die Gesundheitsversorgung verbessern?",
         "answers": [
           {
-            "Hauptwurzel": "Gesundheitsfördernde Gemeinschaft",
-            "Unterwurzeln": [
+            "Wurzel": "Gesundheitsförderung",
+            "Knoten": [
               {
-                "Wurzel": "Zugängliche Gesundheitsdienste",
+                "Wurzel": "Zugang zu Gesundheitsdiensten",
                 "Knoten": [
-                  "Gesundheitszentren",
-                  "Mobile Kliniken",
-                  "Telemedizin"
+                  {"Wurzel": "Ausbau von Gesundheitszentren", "Knoten": []},
+                  {"Wurzel": "Förderung von Telemedizin", "Knoten": []},
+                  {"Wurzel": "Bereitstellung mobiler Gesundheitskliniken", "Knoten": []}
                 ]
               },
               {
-                "Wurzel": "Gesundheitsprävention",
+                "Wurzel": "Gesundheitsaufklärung",
                 "Knoten": [
-                  "Gesunde Ernährung",
-                  "Präventionskampagnen",
-                  "Krankheits-Screening"
+                  {"Wurzel": "Workshops und Schulungen", "Knoten": []},
+                  {"Wurzel": "Initiierung von Informationskampagnen", "Knoten": []},
+                  {"Wurzel": "Verbesserung des Zugangs zu Gesundheitsinformationen", "Knoten": []}
                 ]
               },
               {
-                "Wurzel": "Gesundheitsinfrastruktur",
+                "Wurzel": "Förderung gesunder Lebensweisen",
                 "Knoten": [
-                  "Ausbau von Krankenhäusern",
-                  "Moderne Ausrüstung",
-                  "Forschungseinrichtungen"
+                  {"Wurzel": "Schaffung von Sport- und Freizeitmöglichkeiten", "Knoten": []},
+                  {"Wurzel": "Förderung gesunder Ernährung", "Knoten": []},
+                  {"Wurzel": "Prävention von Rauchen und Alkoholkonsum", "Knoten": []}
+                ]
+              },
+              {
+                "Wurzel": "Gemeinschaftliche Unterstützungssysteme",
+                "Knoten": [
+                  {"Wurzel": "Förderung von Nachbarschaftshilfe", "Knoten": []},
+                  {"Wurzel": "Bereitstellung von Unterstützung für vulnerable Gruppen", "Knoten": []},
+                  {"Wurzel": "Aufbau von Netzwerken für psychosoziale Unterstützung", "Knoten": []}
                 ]
               }
             ]

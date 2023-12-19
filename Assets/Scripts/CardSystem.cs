@@ -16,13 +16,14 @@ public class CardSystem : MonoBehaviour
     public Transform spawnPoint;
     public GameObject leftController;
     public GameObject spawnLocationReplaceAI;
+    public GameObject openAIController;
 
     private Node lastNode;
     private Node rootNode;
     private float horzSpacing = 2f;
     private GameObject parentCard;
     private GameObject childCard;
-    private Node2 nodeTmp;
+    private NodeStorage nodeTmp;
     private List<GameObject> cardsTmp;
     private GameObject cardToReplace;
 
@@ -123,14 +124,14 @@ public class CardSystem : MonoBehaviour
     public void UserAttachCardNode(string str, GameObject card, bool reconstruct = false)
     {
         if (card.GetComponent<Node>()!=null && card.GetComponent<Node>().children.Count > 0) { reconstruct = true; }
-        Node2 root2 = ConvertToNode2(rootNode);
-        Node2 node2Tmp;
+        NodeStorage root2 = ConvertToNode2(rootNode);
+        NodeStorage node2Tmp;
         if (reconstruct)
         {
             node2Tmp = nodeTmp;
         }
         else {
-            node2Tmp = new Node2();
+            node2Tmp = new NodeStorage();
         }
         node2Tmp.name = card.GetComponent<CardScript>().subTitleTxt.text;
         node2Tmp.parentNode = GetNode2ByName(root2, str);
@@ -139,7 +140,20 @@ public class CardSystem : MonoBehaviour
         CreateRootNode(root2.name);
         ReconstructHierarchy(root2);
     }
-    private void ReconstructHierarchyStructure(Node2 currentNode, int depth = 0)
+
+    public void InitMindMap(NodeStorage node)
+    {
+        CreateRootNode(node.name);
+        ReconstructHierarchy(node);
+      
+    }
+
+    public void Node2ToJson()
+    {
+        NodeStorage node = ConvertToNode2(rootNode);
+        openAIController.GetComponent<OpenAIController>().SetCurrentJson(node);
+    }
+    private void ReconstructHierarchyStructure(NodeStorage currentNode, int depth = 0)
     {
 
         if (currentNode == null)
@@ -152,7 +166,7 @@ public class CardSystem : MonoBehaviour
             ReconstructHierarchy(childNode, depth + 1);
         }
     }
-    private void ReconstructHierarchy(Node2 currentNode, int depth = 0)
+    private void ReconstructHierarchy(NodeStorage currentNode, int depth = 0)
     {
     
         if (currentNode == null)
@@ -167,7 +181,7 @@ public class CardSystem : MonoBehaviour
             count = currentNode.children.Count;
         } else
         {
-            foreach (Node2 n in currentNode.parentNode.children)
+            foreach (NodeStorage n in currentNode.parentNode.children)
             {
                 count = count + n.children.Count;
             }
@@ -179,9 +193,9 @@ public class CardSystem : MonoBehaviour
     
 
         string indentation = new string(' ', depth * 2);
-        Debug.Log($"{indentation}Node: {currentNode.name}, Children Count: {currentNode.children.Count}");
+        //Debug.Log($"{indentation}Node: {currentNode.name}, Children Count: {currentNode.children.Count}");
 
-        Debug.Log($"{indentation}Children: {string.Join(", ", currentNode.children.Select(child => child.name))}");
+        //Debug.Log($"{indentation}Children: {string.Join(", ", currentNode.children.Select(child => child.name))}");
 
         // Recursively print information for each child
         foreach (var childNode in currentNode.children)
@@ -192,7 +206,7 @@ public class CardSystem : MonoBehaviour
     List<Vector3> CalculateChildNodePositions(Node parentNode, int numberOfNodes)
     {
         List<Vector3> positions = new List<Vector3>();
-        Debug.Log(horzSpacing);
+        //Debug.Log(horzSpacing);
         for (int i = 0; i < numberOfNodes; i++)
         {
             float yOffset = (i - (numberOfNodes - 1) * 0.5f) * horzSpacing;
@@ -220,23 +234,23 @@ public class CardSystem : MonoBehaviour
         node.nodeName= subTxt;
         lastNode = node;
         nodeObject.gameObject.name = "MindMap(NormalCard): " + subTxt;
-        Debug.Log("Node Name: "+ node.nodeName);
+       // Debug.Log("Node Name: "+ node.nodeName);
         return node;
     }
 
-    private Node2 ConvertToNode2(Node node)
+    private NodeStorage ConvertToNode2(Node node)
     {
         if (node == null)
         {
             return null;
         }
 
-        Node2 node2 = new Node2();
+        NodeStorage node2 = new NodeStorage();
         node2.name = node.nodeName;
 
         foreach (Node childNode in node.children)
         {
-            Node2 childNode2 = ConvertToNode2(childNode);
+            NodeStorage childNode2 = ConvertToNode2(childNode);
             childNode2.parentNode = node2;
             node2.children.Add(childNode2);
         }
@@ -271,10 +285,10 @@ public class CardSystem : MonoBehaviour
         {
             SelectiveDeleteRec(childNode);
         }
-        Debug.Log($"Node: {currentNode.nodeName}");
+       // Debug.Log($"Node: {currentNode.nodeName}");
         Destroy(currentNode.gameObject);
     }
-    public static Node2 GetNode2ByName(Node2 currentNode, string name)
+    public static NodeStorage GetNode2ByName(NodeStorage currentNode, string name)
     {
         if (currentNode.name == name)
         {
@@ -283,7 +297,7 @@ public class CardSystem : MonoBehaviour
 
         foreach (var childNode in currentNode.children)
         {
-            Node2 result = GetNode2ByName(childNode, name);
+            NodeStorage result = GetNode2ByName(childNode, name);
             if (result != null)
             {
                 return result;
@@ -295,9 +309,9 @@ public class CardSystem : MonoBehaviour
 
     void CalculateHorizontalSpacing(int numberOfNodes)
     {
-        Debug.Log(numberOfNodes);
+       // Debug.Log(numberOfNodes);
         horzSpacing = Mathf.Lerp(4f, 0.6f, Mathf.InverseLerp(1, 6, numberOfNodes));
-        Debug.Log(horzSpacing);
+      //  Debug.Log(horzSpacing);
 
     }
 
@@ -363,9 +377,9 @@ public class Node : MonoBehaviour
     }
 }
 
-public class Node2
+public class NodeStorage
 {
     public string name;
-    public Node2 parentNode;
-    public List<Node2> children = new List<Node2>();
+    public NodeStorage parentNode;
+    public List<NodeStorage> children = new List<NodeStorage>();
 }

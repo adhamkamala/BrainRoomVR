@@ -121,6 +121,11 @@ public class LeftController : MonoBehaviour
                         if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
                         {
                             _ = aiSystem.GetComponent<OpenAIController>().ModeWhiteBoardExtend(boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().GetTopicTxt(), boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().GetAnswerTxt());
+                        } else
+                        {
+                            cardSystem.GetComponent<CardSystem>().Node2ToJson();
+                            aiSystem.GetComponent<OpenAIController>().ModeMindMapExtend(cardTmpMindMap.GetComponent<Node>().nodeName);
+                            leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
                         }
                         break;
                     case "Replace":
@@ -146,6 +151,7 @@ public class LeftController : MonoBehaviour
                         leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
                         break;
                     case "AutoSort":
+                        cardSystem.GetComponent<CardSystem>().Node2ToJson();
                         aiSystem.GetComponent<OpenAIController>().ModeMindMapAutoSort(cardTmp.GetComponent<CardScript>().subTitleTxt.text);
                         leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
                         Destroy(cardTmp);

@@ -55,7 +55,6 @@ public class CardScript : MonoBehaviour
     }
     public void SetCard(GameObject cardObj)
     {
-        Debug.Log("Hereee");
         card = cardObj;
     }
 }

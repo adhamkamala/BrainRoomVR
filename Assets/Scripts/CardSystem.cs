@@ -8,6 +8,31 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.HID;
 using UnityEngine.UIElements;
 
+
+public class Node : MonoBehaviour
+{
+    public string nodeName;
+    public Node parentNode;
+    public List<Node> children = new List<Node>();
+    public void DeleteHierarchy()
+    {
+        // Delete children first
+        foreach (var childNode in children)
+        {
+            childNode.DeleteHierarchy();
+        }
+
+        // Then delete the current node's GameObject
+        Destroy(gameObject);
+    }
+}
+public class NodeStorage
+{
+    public string name;
+    public NodeStorage parentNode;
+    public List<NodeStorage> children = new List<NodeStorage>();
+}
+
 public class CardSystem : MonoBehaviour
 {
     public GameObject cardsPrf;
@@ -20,20 +45,13 @@ public class CardSystem : MonoBehaviour
 
     private Node lastNode;
     private Node rootNode;
-    private float horzSpacing = 2f;
-    private GameObject parentCard;
-    private GameObject childCard;
     private NodeStorage nodeTmp;
     private List<GameObject> cardsTmp;
     private GameObject cardToReplace;
+    private float horzSpacing = 2f;
 
-
-    private void Start()
-    {
- 
-    }
-    public void initCardObj(string mainTxt ="Main", string subTxt = "Some Text written in small size font for description") {
-        if (boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponentInChildren<BoardSystem>().CanCreate())
+    public void CreateCardObj(string mainTxt ="Main", string subTxt = "Sub Text") {
+        if (boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponentInChildren<BoardSystem>().CanCreateBoard())
         {
             GameObject cardTmp = Instantiate(cardsPrf);
             cardTmp.layer = LayerMask.NameToLayer("CardsLayer");
@@ -43,8 +61,7 @@ public class CardSystem : MonoBehaviour
             boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponentInChildren<BoardSystem>().CardLocator(cardTmp);
         }
     }
-
-    public GameObject initMindMapCardObj(string subTxt, Node node=null)
+    public void CreateMindMapCardObj(string subTxt, Node node=null)
     {
         GameObject cardTmp = Instantiate(cardsMindMapPrf);
         cardTmp.layer = LayerMask.NameToLayer("CardsLayer");
@@ -57,9 +74,7 @@ public class CardSystem : MonoBehaviour
             nodeCard.parentNode = node.parentNode;
             nodeCard.children= node.children;
         }
-        return cardTmp;
     }
-
     public void CreateReplaceAICards(List<string> strs)
     {
         // Vector3 startPoint = spawnLocationReplaceAI.transform.position;
@@ -80,21 +95,10 @@ public class CardSystem : MonoBehaviour
             cardsTmp.Add(cardTmp);
         });
     }
-
-    public void DestroyAICards()
+    public void CreateRootNode(string str)
     {
-        cardsTmp.ForEach(gmo =>
-        {
-            Destroy(gmo);
-        });
-    }
-
-    public Node CreateRootNode(string str)
-    {
-        Node mainNode = CreateNode(spawnPoint.position,str);
-        mainNode.parentNode = null;
-        rootNode = mainNode;
-        return rootNode;
+        rootNode = CreateNode(spawnPoint.position,str);
+        rootNode.parentNode = null;
     }
     public void CreateChildrenNodes(Node parentNode,int count, List<string> strs,int countSpace)
     {
@@ -112,6 +116,12 @@ public class CardSystem : MonoBehaviour
             child.gameObject.GetComponent<CardScript>().SetCard(child.parentNode.gameObject);
         }
     }
+    public void CreateMindMap(NodeStorage node)
+    {
+        CreateRootNode(node.name);
+        ReconstructHierarchy(node);
+
+    }
     public bool IsRootNodeCreated()
     {
         if (rootNode != null)
@@ -120,7 +130,6 @@ public class CardSystem : MonoBehaviour
         }
         else return false;
     }
-
     public void UserAttachCardNode(string str, GameObject card, bool reconstruct = false)
     {
         if (card.GetComponent<Node>()!=null && card.GetComponent<Node>().children.Count > 0) { reconstruct = true; }
@@ -134,128 +143,16 @@ public class CardSystem : MonoBehaviour
             node2Tmp = new NodeStorage();
         }
         node2Tmp.name = card.GetComponent<CardScript>().subTitleTxt.text;
-        node2Tmp.parentNode = GetNode2ByName(root2, str);
+        node2Tmp.parentNode = GetNodeStorageByName(root2, str);
         node2Tmp.parentNode.children.Add(node2Tmp);
         rootNode.DeleteHierarchy();
         CreateRootNode(root2.name);
         ReconstructHierarchy(root2);
     }
-
-    public void InitMindMap(NodeStorage node)
-    {
-        CreateRootNode(node.name);
-        ReconstructHierarchy(node);
-      
-    }
-
-    public void Node2ToJson()
+    public void NodeStorageToJson()
     {
         NodeStorage node = ConvertToNode2(rootNode);
         openAIController.GetComponent<OpenAIController>().SetCurrentJson(node);
-    }
-    private void ReconstructHierarchyStructure(NodeStorage currentNode, int depth = 0)
-    {
-
-        if (currentNode == null)
-        {
-            return;
-        }
-        currentNode.children.ForEach(child => { child.parentNode=currentNode; });
-        foreach (var childNode in currentNode.children)
-        {
-            ReconstructHierarchy(childNode, depth + 1);
-        }
-    }
-    private void ReconstructHierarchy(NodeStorage currentNode, int depth = 0)
-    {
-    
-        if (currentNode == null)
-        {
-            return;
-        }
-
-
-        int count = 0;
-        if (currentNode.parentNode== null)
-        {
-            count = currentNode.children.Count;
-        } else
-        {
-            foreach (NodeStorage n in currentNode.parentNode.children)
-            {
-                count = count + n.children.Count;
-            }
-        }
-            List<string> childrenList = new List<string>();
-            currentNode.children.ForEach(child => childrenList.Add(child.name));
-            CreateChildrenNodes(GetNodeByName(null,currentNode.name), childrenList.Count, childrenList, count);
-       
-    
-
-        string indentation = new string(' ', depth * 2);
-        //Debug.Log($"{indentation}Node: {currentNode.name}, Children Count: {currentNode.children.Count}");
-
-        //Debug.Log($"{indentation}Children: {string.Join(", ", currentNode.children.Select(child => child.name))}");
-
-        // Recursively print information for each child
-        foreach (var childNode in currentNode.children)
-        {
-            ReconstructHierarchy(childNode, depth + 1);
-        }
-    }
-    List<Vector3> CalculateChildNodePositions(Node parentNode, int numberOfNodes)
-    {
-        List<Vector3> positions = new List<Vector3>();
-        //Debug.Log(horzSpacing);
-        for (int i = 0; i < numberOfNodes; i++)
-        {
-            float yOffset = (i - (numberOfNodes - 1) * 0.5f) * horzSpacing;
-            ;
-
-            Vector3 childPosition = new Vector3(
-               // parentNode.transform.position.x - 1f,
-               // parentNode.transform.position.y  + yOffset,
-                parentNode.transform.position.x + yOffset,
-                parentNode.transform.position.y - 0.7f,   
-                parentNode.transform.position.z);
-
-            positions.Add(childPosition);
-        }
-
-        return positions;
-    }
-    Node CreateNode(Vector3 position, string subTxt = "Main")
-    {
-        GameObject nodeObject = Instantiate(cardsMindMapPrf, position, Quaternion.identity);
-        nodeObject.transform.Rotate(0f, -90f, 0f);
-        Node node = nodeObject.AddComponent<Node>();
-        nodeObject.layer = LayerMask.NameToLayer("CardsLayer");
-        nodeObject.GetComponent<CardScript>().ChangeSubTxt(subTxt);
-        node.nodeName= subTxt;
-        lastNode = node;
-        nodeObject.gameObject.name = "MindMap(NormalCard): " + subTxt;
-       // Debug.Log("Node Name: "+ node.nodeName);
-        return node;
-    }
-
-    private NodeStorage ConvertToNode2(Node node)
-    {
-        if (node == null)
-        {
-            return null;
-        }
-
-        NodeStorage node2 = new NodeStorage();
-        node2.name = node.nodeName;
-
-        foreach (Node childNode in node.children)
-        {
-            NodeStorage childNode2 = ConvertToNode2(childNode);
-            childNode2.parentNode = node2;
-            node2.children.Add(childNode2);
-        }
-
-        return node2;
     }
     public Node GetNodeByName(Node currentNode,string name) {
         if (currentNode == null) { currentNode = rootNode; };
@@ -285,10 +182,9 @@ public class CardSystem : MonoBehaviour
         {
             SelectiveDeleteRec(childNode);
         }
-       // Debug.Log($"Node: {currentNode.nodeName}");
         Destroy(currentNode.gameObject);
     }
-    public static NodeStorage GetNode2ByName(NodeStorage currentNode, string name)
+    public static NodeStorage GetNodeStorageByName(NodeStorage currentNode, string name)
     {
         if (currentNode.name == name)
         {
@@ -297,7 +193,7 @@ public class CardSystem : MonoBehaviour
 
         foreach (var childNode in currentNode.children)
         {
-            NodeStorage result = GetNode2ByName(childNode, name);
+            NodeStorage result = GetNodeStorageByName(childNode, name);
             if (result != null)
             {
                 return result;
@@ -306,32 +202,15 @@ public class CardSystem : MonoBehaviour
 
         return null;
     }
-
-    void CalculateHorizontalSpacing(int numberOfNodes)
-    {
-       // Debug.Log(numberOfNodes);
-        horzSpacing = Mathf.Lerp(4f, 0.6f, Mathf.InverseLerp(1, 6, numberOfNodes));
-      //  Debug.Log(horzSpacing);
-
-    }
-
     public void RelocateCard(GameObject card)
     {
         Node cardNode  = card.GetComponent<Node>();
         nodeTmp = ConvertToNode2(cardNode); 
         if (cardNode != null && cardNode.parentNode!=null)
         {
-            leftController.GetComponent<LeftController>().AttachCard(initMindMapCardObj(cardNode.nodeName,cardNode));
+            leftController.GetComponent<LeftController>().AttachCard(CreateMindMapCardObj(cardNode.nodeName,cardNode));
             DeleteCard(cardNode.gameObject);
         }
-    }
-
-    public void DeleteCard(GameObject card)
-    {
-        Node child = card.GetComponent<Node>();
-        Node parent = child.parentNode;
-        SelectiveDeleteRec(child);
-        parent.children.Remove(child);
     }
     public void ReplaceCard(string str)
     {
@@ -349,6 +228,13 @@ public class CardSystem : MonoBehaviour
     {
         cardToReplace = GetNodeByName(null, str).gameObject;
     }
+    public void DeleteCard(GameObject card)
+    {
+        Node child = card.GetComponent<Node>();
+        Node parent = child.parentNode;
+        SelectiveDeleteRec(child);
+        parent.children.Remove(child);
+    }
     public void DestroyAll()
     {
         if (rootNode != null)
@@ -357,29 +243,120 @@ public class CardSystem : MonoBehaviour
             rootNode.DeleteHierarchy();
         }
     }
-}
-
-public class Node : MonoBehaviour
-{
-    public string nodeName;
-    public Node parentNode; 
-    public List<Node> children = new List<Node>();
-    public void DeleteHierarchy()
+    public void DestroyAICards()
     {
-        // Delete children first
-        foreach (var childNode in children)
+        cardsTmp.ForEach(gmo =>
         {
-            childNode.DeleteHierarchy();
+            Destroy(gmo);
+        });
+    }
+    private List<Vector3> CalculateChildNodePositions(Node parentNode, int numberOfNodes)
+    {
+        List<Vector3> positions = new List<Vector3>();
+        //Debug.Log(horzSpacing);
+        for (int i = 0; i < numberOfNodes; i++)
+        {
+            float yOffset = (i - (numberOfNodes - 1) * 0.5f) * horzSpacing;
+            ;
+
+            Vector3 childPosition = new Vector3(
+                // parentNode.transform.position.x - 1f,
+                // parentNode.transform.position.y  + yOffset,
+                parentNode.transform.position.x + yOffset,
+                parentNode.transform.position.y - 0.7f,
+                parentNode.transform.position.z);
+
+            positions.Add(childPosition);
         }
 
-        // Then delete the current node's GameObject
-        Destroy(gameObject);
+        return positions;
     }
-}
+    private Node CreateNode(Vector3 position, string subTxt = "Main")
+    {
+        GameObject nodeObject = Instantiate(cardsMindMapPrf, position, Quaternion.identity);
+        nodeObject.transform.Rotate(0f, -90f, 0f);
+        Node node = nodeObject.AddComponent<Node>();
+        nodeObject.layer = LayerMask.NameToLayer("CardsLayer");
+        nodeObject.GetComponent<CardScript>().ChangeSubTxt(subTxt);
+        node.nodeName = subTxt;
+        lastNode = node;
+        nodeObject.gameObject.name = "MindMap(NormalCard): " + subTxt;
+        // Debug.Log("Node Name: "+ node.nodeName);
+        return node;
+    }
+    private NodeStorage ConvertToNode2(Node node)
+    {
+        if (node == null)
+        {
+            return null;
+        }
 
-public class NodeStorage
-{
-    public string name;
-    public NodeStorage parentNode;
-    public List<NodeStorage> children = new List<NodeStorage>();
+        NodeStorage node2 = new NodeStorage();
+        node2.name = node.nodeName;
+
+        foreach (Node childNode in node.children)
+        {
+            NodeStorage childNode2 = ConvertToNode2(childNode);
+            childNode2.parentNode = node2;
+            node2.children.Add(childNode2);
+        }
+
+        return node2;
+    }
+    private void CalculateHorizontalSpacing(int numberOfNodes)
+    {
+        horzSpacing = Mathf.Lerp(4f, 0.6f, Mathf.InverseLerp(1, 6, numberOfNodes));
+    }
+    //private void ReconstructHierarchyStructure(NodeStorage currentNode, int depth = 0)
+    //{
+
+    //    if (currentNode == null)
+    //    {
+    //        return;
+    //    }
+    //    currentNode.children.ForEach(child => { child.parentNode = currentNode; });
+    //    foreach (var childNode in currentNode.children)
+    //    {
+    //        ReconstructHierarchy(childNode, depth + 1);
+    //    }
+    //}
+    private void ReconstructHierarchy(NodeStorage currentNode, int depth = 0)
+    {
+
+        if (currentNode == null)
+        {
+            return;
+        }
+
+
+        int count = 0;
+        if (currentNode.parentNode == null)
+        {
+            count = currentNode.children.Count;
+        }
+        else
+        {
+            foreach (NodeStorage n in currentNode.parentNode.children)
+            {
+                count = count + n.children.Count;
+            }
+        }
+        List<string> childrenList = new List<string>();
+        currentNode.children.ForEach(child => childrenList.Add(child.name));
+        CreateChildrenNodes(GetNodeByName(null, currentNode.name), childrenList.Count, childrenList, count);
+
+
+
+        string indentation = new string(' ', depth * 2);
+        //Debug.Log($"{indentation}Node: {currentNode.name}, Children Count: {currentNode.children.Count}");
+
+        //Debug.Log($"{indentation}Children: {string.Join(", ", currentNode.children.Select(child => child.name))}");
+
+        // Recursively print information for each child
+        foreach (var childNode in currentNode.children)
+        {
+            ReconstructHierarchy(childNode, depth + 1);
+        }
+    }
+
 }

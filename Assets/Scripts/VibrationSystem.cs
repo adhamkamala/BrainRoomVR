@@ -10,12 +10,12 @@ public class VibrationSystem : MonoBehaviour
     public float vibrationDuration = 0.2f;
     public float successAmplitude = 0.5f;
     public float failureAmplitude = 1f;
+
     public void HapticLeft()
     {
         leftController.SendHapticImpulse(successAmplitude, vibrationDuration);
 
     }
-
     public void HapticRight()
     {
         rightController.SendHapticImpulse(successAmplitude, vibrationDuration);

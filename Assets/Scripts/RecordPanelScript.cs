@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -11,7 +9,6 @@ public class RecordPanelScript : MonoBehaviour
     {
         hintTxt.text = txt;
     }
-
     public void ChangeMainTxt(string txt)
     {
         mainTxt.text = txt;

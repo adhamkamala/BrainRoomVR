@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BoardsSystem : MonoBehaviour
@@ -9,10 +7,8 @@ public class BoardsSystem : MonoBehaviour
     {
         return selectedBoard;
     }
-
     public void SetSelectedBoard(GameObject board)
     {
         selectedBoard = board;
     }
-
 }

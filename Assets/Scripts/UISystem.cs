@@ -12,18 +12,7 @@ public class UISystem : MonoBehaviour
     public GameObject recordSystem;
 
     private bool uiBool = false;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-    
     private void HideUI()
     {
         uiGameObject.SetActive(false);

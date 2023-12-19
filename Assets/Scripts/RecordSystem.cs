@@ -21,12 +21,13 @@ public class RecordSystem : MonoBehaviour
     public GameObject vibrationSystem;
 
     private GameObject tmp = null;
-    private readonly string fileName = "output.wav";
+    private GameObject gameObjectTmp;
     private AudioClip clip;
     private OpenAIApi openai = new OpenAIApi(JObject.Parse(File.ReadAllText(Path.Combine(Application.dataPath, "Resources/config.json")))["openai"]["api"].ToString());
+    private readonly string fileName = "output.wav";
     private string convertedAudio;
     private bool replaceOption = false;
-    private GameObject gameObjectTmp;
+
     public void SpawnRecordPanel() {
         vibrationSystem.GetComponent<VibrationSystem>().HapticRight();
         if (tmp != null) { 
@@ -38,13 +39,11 @@ public class RecordSystem : MonoBehaviour
        tmp.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
 
     }
-
     public void DestroyRecordPanel()
     {
         Destroy(tmp);
         tmp = null;
     }
-
     public void OnConfirmClick()
     {
         if (mainSystem.GetComponent <MainSystem>().WhatMode() ==0 && !replaceOption) {
@@ -55,7 +54,7 @@ public class RecordSystem : MonoBehaviour
         } else if (mainSystem.GetComponent<MainSystem>().WhatMode() == 1 && !replaceOption) {
             if (cardSystem.GetComponent<CardSystem>().IsRootNodeCreated())
             {
-                leftController.GetComponent<LeftController>().AttachCard(cardSystem.GetComponent<CardSystem>().initMindMapCardObj(convertedAudio));
+                leftController.GetComponent<LeftController>().AttachCard(cardSystem.GetComponent<CardSystem>().CreateMindMapCardObj(convertedAudio));
             } else
             {
                 aiSystem.GetComponent<OpenAIController>().ModeMindMapSendMessage(convertedAudio);
@@ -71,7 +70,6 @@ public class RecordSystem : MonoBehaviour
         }
        
     }
-
     public void OnCancelClick()
     {
         DestroyRecordPanel();
@@ -100,7 +98,6 @@ public class RecordSystem : MonoBehaviour
         }
         clip = Microphone.Start(micName, false, 10, 44100); // sekunden
     }
-
     public async void EndRecording()
     {
         tmp.GetComponent<RecordPanelScript>().ChangeHintTxt("Recorded");
@@ -116,7 +113,5 @@ public class RecordSystem : MonoBehaviour
         tmp.GetComponent<RecordPanelScript>().ChangeMainTxt(res.Text);
         convertedAudio = res.Text;
     }
-
-
 
 }

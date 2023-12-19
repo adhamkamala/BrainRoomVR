@@ -13,6 +13,51 @@ using System.IO;
 using System.Xml.Schema;
 using UnityEditor.Experimental.GraphView;
 
+class Card
+{
+    public string HeadLine { get; set; }
+    public string Text { get; set; }
+}
+class OpenAIResopnse
+{
+    public List<Card> Answers { get; set; }
+}
+public class QuestionAndAnswers
+{
+    public string question;
+    public List<Answer> answers;
+}
+public class Answer
+{
+    public string HeadLine;
+    public string Text;
+}
+public class QuestionsAndAnswers
+{
+    public List<QuestionAndAnswers> questions;
+}
+public class MyData
+{
+    public string[] alternativePunkte;
+}
+public class AnswerNode
+{
+    public string Wurzel;
+    public List<AnswerNode> Knoten;
+}
+public class AnswerClass
+{
+    public string question;
+    public List<AnswerNode> answers;
+}
+public class QuestionsContainer
+{
+    public List<AnswerClass> questions;
+}
+public class AnswersContainer
+{
+    public List<AnswerNode> answers;
+}
 public class OpenAIController : MonoBehaviour
 {
     public GameObject cardSystem;
@@ -25,11 +70,6 @@ public class OpenAIController : MonoBehaviour
     private Conversation chat;
     private string mindMapRespondTmp;
 
-    void Start()
-    {
-        chat = api.Chat.CreateConversation();
-        chat.Model = JObject.Parse(File.ReadAllText(Path.Combine(Application.dataPath, "Resources/config.json")))["openai"]["model_chat"].ToString();
-    }
 
     public Task ModeWhiteBoardSetupModel()
     {
@@ -47,7 +87,6 @@ public class OpenAIController : MonoBehaviour
 
         return Task.CompletedTask;
     }
-
     public async Task ModeWhiteBoardSendMessage(string str)
     {
         chat.AppendUserInput(str);
@@ -55,18 +94,6 @@ public class OpenAIController : MonoBehaviour
         audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
         Debug.Log(response);
         ModeWhiteBoardTranslator(response);
-    }
-    void ModeWhiteBoardTranslator(string str) { // translate answer from OPENAI to Cards on Board<<<<<<<
-        OpenAIResopnse openAIResponse = JsonConvert.DeserializeObject<OpenAIResopnse>(str);
-        List<Card> kartenList = openAIResponse.Answers;
-        foreach (Card card in kartenList)
-        {
-            cardSystem.GetComponent<CardSystem>().initCardObj(card.HeadLine, card.Text);
-        }
-
-        vibrationSystem.GetComponent<VibrationSystem>().HapticLeft();
-        vibrationSystem.GetComponent<VibrationSystem>().HapticRight();
-
     }
     async public Task ModeWhiteBoardExtend(string strQues, string strAnswer)  
     {
@@ -77,7 +104,6 @@ public class OpenAIController : MonoBehaviour
         audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
         ModeWhiteBoardTranslator(response);
     }
-
     public Task ModeMindMapSetupModel()
     {
         string filePath = Path.Combine(Application.dataPath, "Resources/questions_and_answers_mindmap.json");
@@ -96,7 +122,6 @@ public class OpenAIController : MonoBehaviour
         Debug.Log("Done Training");
         return Task.CompletedTask;
     }
-
     public async Task ModeMindMapSendMessage(string str)
     {
         chat.AppendUserInput(str);
@@ -107,35 +132,10 @@ public class OpenAIController : MonoBehaviour
         ModeMindMapTranslator(response);
 
     }
-
     public void SetCurrentJson(NodeStorage rootNode)
     {
         AnswersContainer reversedContainer = ConvertNodeToAnswersContainer(rootNode);
         mindMapRespondTmp = JsonUtility.ToJson(reversedContainer, true);
-    }
-    public async Task ModeMindMapTranslator(string str)
-    {  
-        cardSystem.GetComponent<CardSystem>().DestroyAll();
-        AnswersContainer answersContainer = JsonUtility.FromJson<AnswersContainer>(str);
-        foreach (var answer in answersContainer.answers)
-        {
-            NodeStorage rootNode = CreateNodeFromAnswerNode(answer, null);
-            cardSystem.GetComponent<CardSystem>().InitMindMap(rootNode);
-        }
-        vibrationSystem.GetComponent<VibrationSystem>().HapticLeft();
-        vibrationSystem.GetComponent<VibrationSystem>().HapticRight();
-    }
-    public async Task ModeMindMapReplaceTranslator(string str)
-    {
-        MyData myData = JsonUtility.FromJson<MyData>(str);
-        List<string> list = new List<string>();
-        foreach (string point in myData.alternativePunkte)
-        {
-            Debug.Log(point);
-            list.Add(point);
-        }
-        cardSystem.GetComponent<CardSystem>().CreateReplaceAICards(list);
-        vibrationSystem.GetComponent<VibrationSystem>().HapticLeft();
     }
     public async Task ModeMindMapExtend(string strQues)
     {
@@ -147,7 +147,6 @@ public class OpenAIController : MonoBehaviour
         Debug.Log(response);
         ModeMindMapTranslator(response);
     }
-
     public async Task ModeMindMapReplaceAI(string strQues)
     {
         // Question was... ur answer was... --> now give me more...
@@ -203,7 +202,6 @@ public class OpenAIController : MonoBehaviour
 
         return reversedContainer;
     }
-
     private List<AnswerNode> ConvertNodeToAnswerList(List<NodeStorage> nodes)
     {
         List<AnswerNode> answerNodes = new List<AnswerNode>();
@@ -221,63 +219,49 @@ public class OpenAIController : MonoBehaviour
 
         return answerNodes;
     }
+    private async Task ModeMindMapTranslator(string str)
+    {
+        cardSystem.GetComponent<CardSystem>().DestroyAll();
+        AnswersContainer answersContainer = JsonUtility.FromJson<AnswersContainer>(str);
+        foreach (var answer in answersContainer.answers)
+        {
+            NodeStorage rootNode = CreateNodeFromAnswerNode(answer, null);
+            cardSystem.GetComponent<CardSystem>().CreateMindMap(rootNode);
+        }
+        vibrationSystem.GetComponent<VibrationSystem>().HapticLeft();
+        vibrationSystem.GetComponent<VibrationSystem>().HapticRight();
+    }
+    private async Task ModeMindMapReplaceTranslator(string str)
+    {
+        MyData myData = JsonUtility.FromJson<MyData>(str);
+        List<string> list = new List<string>();
+        foreach (string point in myData.alternativePunkte)
+        {
+            Debug.Log(point);
+            list.Add(point);
+        }
+        cardSystem.GetComponent<CardSystem>().CreateReplaceAICards(list);
+        vibrationSystem.GetComponent<VibrationSystem>().HapticLeft();
+    }
+    private void ModeWhiteBoardTranslator(string str)
+    { // translate answer from OPENAI to Cards on Board<<<<<<<
+        OpenAIResopnse openAIResponse = JsonConvert.DeserializeObject<OpenAIResopnse>(str);
+        List<Card> kartenList = openAIResponse.Answers;
+        foreach (Card card in kartenList)
+        {
+            cardSystem.GetComponent<CardSystem>().CreateCardObj(card.HeadLine, card.Text);
+        }
+
+        vibrationSystem.GetComponent<VibrationSystem>().HapticLeft();
+        vibrationSystem.GetComponent<VibrationSystem>().HapticRight();
+
+    }
+    private void Start()
+    {
+        chat = api.Chat.CreateConversation();
+        chat.Model = JObject.Parse(File.ReadAllText(Path.Combine(Application.dataPath, "Resources/config.json")))["openai"]["model_chat"].ToString();
+    }
+
 }
 
-class Card {
-    public string HeadLine { get; set; }
-    public string Text { get; set; }
-}
 
-class OpenAIResopnse
-{
-    public List<Card> Answers { get; set; }
-}
-public class QuestionAndAnswers
-{
-    public string question;
-    public List<Answer> answers;
-}
-
-public class Answer
-{
-    public string HeadLine;
-    public string Text;
-}
-public class QuestionsAndAnswers
-{
-    public List<QuestionAndAnswers> questions;
-}
-
-public class MyData
-{
-    public string[] alternativePunkte;
-}
-
-
-
-///NEU
-[System.Serializable]
-public class AnswerNode
-{
-    public string Wurzel;
-    public List<AnswerNode> Knoten;
-}
-
-[System.Serializable]
-public class AnswerClass
-{
-    public string question;
-    public List<AnswerNode> answers;
-}
-
-[System.Serializable]
-public class QuestionsContainer
-{
-    public List<AnswerClass> questions;
-}
-
-[System.Serializable]
-public class AnswersContainer
-{
-    public List<AnswerNode> answers;
-}

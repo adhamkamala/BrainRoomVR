@@ -14,21 +14,6 @@ public class SpawnSystem : MonoBehaviour
     private List<Transform> occupiedSpawnLocations = new List<Transform>();
     private bool isLocationFree = false;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        isLocationFree = true;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Keyboard.current.rKey.wasPressedThisFrame) // for testing purposes
-        {
-            SpawnBoard();
-        }
-    }
-
     public void SpawnBoard()
     {
         if (boardPrefab != null && spawnLocations.Length > 0)
@@ -47,12 +32,10 @@ public class SpawnSystem : MonoBehaviour
             isLocationFree = false;
         }
     }
-
     public bool GetLocationBool()
     {
         return isLocationFree;
     }
-
     public void RemoveFromListPoints(Transform t)
     {
 
@@ -65,7 +48,6 @@ public class SpawnSystem : MonoBehaviour
             }
         }
     }
-
     public void DestoryAll()
     {
         GameObject[] objects = GameObject.FindObjectsOfType<GameObject>()
@@ -76,5 +58,17 @@ public class SpawnSystem : MonoBehaviour
         }
         occupiedSpawnLocations = new List<Transform>();
 
+    }
+
+    private void Start()
+    {
+        isLocationFree = true;
+    }
+    private void Update()
+    {
+        if (Keyboard.current.rKey.wasPressedThisFrame) // for testing purposes
+        {
+            SpawnBoard();
+        }
     }
 }

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BoardSystem : MonoBehaviour
@@ -27,8 +25,7 @@ public class BoardSystem : MonoBehaviour
             }
         }
     }
-
-    public bool CanCreate()
+    public bool CanCreateBoard()
     {
         foreach (GameObject g in boardLocations)
         {

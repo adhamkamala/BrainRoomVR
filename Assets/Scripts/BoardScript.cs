@@ -11,7 +11,6 @@ public class BoardScript : MonoBehaviour
     {
         topicTxt.text = txt;
     }
-
     public void ChangeAnswerTxt(string txt)
     {
         boardAnswer = txt;

@@ -7,37 +7,29 @@ public class CardScript : MonoBehaviour
 {
     public TextMeshPro mainTitleTxt;
     public TextMeshPro subTitleTxt;
+
     private GameObject locationHolding;
     private GameObject card;
     public void ChangeMainTxt(string txt)
     {
         mainTitleTxt.text = txt;
     }
-
-    private void Update()
-    {
-        if(card!= null)
-        {
-            DrawLineToCard(card);
-        }
-   
-    }
-
     public void ChangeSubTxt(string txt)
     {
         subTitleTxt.text = txt;
     }
-
     public void SetLocationHolding(GameObject tmp)
     {
         locationHolding = tmp;
     }
-
     public GameObject GetLocationHolding()
     {
         return locationHolding;
     }
-
+    public void SetCard(GameObject cardObj)
+    {
+        card = cardObj;
+    }
     private void DrawLineToCard(GameObject card)
     {
         LineRenderer lineRenderer = GetComponent<LineRenderer>();
@@ -53,8 +45,12 @@ public class CardScript : MonoBehaviour
         lineRenderer.positionCount = positions.Length;
         lineRenderer.SetPositions(positions);
     }
-    public void SetCard(GameObject cardObj)
+    private void Update()
     {
-        card = cardObj;
+        if (card != null)
+        {
+            DrawLineToCard(card);
+        }
+
     }
 }

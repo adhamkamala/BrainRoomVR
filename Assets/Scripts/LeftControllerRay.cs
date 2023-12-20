@@ -23,7 +23,7 @@ public class LeftControllerRay : MonoBehaviour
 
     public void StopBlinking()
     {
-        if (cardHitObj!=null) {
+        if (cardHitObj!=null && rendererObj != null) {
             isBlinking = false;
             StopCoroutine(Blink());
             rendererObj.material.SetFloat("_Metallic", originalMetallic);
@@ -72,10 +72,14 @@ public class LeftControllerRay : MonoBehaviour
         {
             try
             {
-                float newMetallic = Mathf.PingPong(Time.time, 1f);
-                rendererObj.material.SetFloat("_Metallic", newMetallic);
-                float newSmoothness = Mathf.PingPong(Time.time, 0.5f) + 0.5f;
-                rendererObj.material.SetFloat("_Smoothness", newSmoothness);
+                if (rendererObj != null)
+                {
+                    float newMetallic = Mathf.PingPong(Time.time, 1f);
+                    rendererObj.material.SetFloat("_Metallic", newMetallic);
+                    float newSmoothness = Mathf.PingPong(Time.time, 0.5f) + 0.5f;
+                    rendererObj.material.SetFloat("_Smoothness", newSmoothness);
+                }
+      
             }
             catch (System.Exception)
             {

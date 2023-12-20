@@ -88,7 +88,7 @@ public class LeftController : MonoBehaviour
     }
     private void Update()
     {
-        if (grabBool == true & !optionsPressed)
+        if (grabBool == true & !optionsPressed & cardTmp)
         {
             //  cardTmp.transform.position = holdPosition.transform.position;
             cardTmp.transform.SetParent(holdPosition.transform);
@@ -146,6 +146,8 @@ public class LeftController : MonoBehaviour
                             {
                                 Destroy(cardTmp.gameObject);
                             }
+                            optionsPressed = false;
+                            cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
 
 
                         }
@@ -169,6 +171,8 @@ public class LeftController : MonoBehaviour
                         recordSystem.GetComponent<RecordSystem>().EnableReplace();
                         recordSystem.GetComponent<RecordSystem>().SetGameObjectTmp(cardTmpMindMap); // obsulete since SetCardToReplace does same
                         recordSystem.GetComponent<RecordSystem>().StartRecording();
+                        optionsPressed = false;
+                        cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
                         break;
 
                     case "ReplaceAI":
@@ -182,6 +186,8 @@ public class LeftController : MonoBehaviour
                         leftPoke.GetComponent<LeftControllerRay>().StopBlinking();
                         cardSystem.GetComponent<CardSystem>().RelocateCard(cardTmpMindMap);
                         leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                        optionsPressed = false;
+                        cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
                         break;
                     case "AutoSort":
                         cardSystem.GetComponent<CardSystem>().NodeStorageToJson();
@@ -448,10 +454,10 @@ public class LeftController : MonoBehaviour
     private void OnRightMainPressed(InputAction.CallbackContext context)
     {
         audioSystem.GetComponent<AudioSystem>().PlayPrimaryClickSound();
-        var tmp = rightPoke.GetComponent<RightControllerRay>().IsRayHit();
-        if (tmp)
+        var tmpGameObjectHit = rightPoke.GetComponent<RightControllerRay>().IsRayHit();
+        if (tmpGameObjectHit)
         {
-            switch (tmp.gameObject.name)
+            switch (tmpGameObjectHit.gameObject.name)
             {
                 case "ConfirmBtn":
                     recordSystem.GetComponent<RecordSystem>().OnConfirmClick();

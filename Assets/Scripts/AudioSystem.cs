@@ -19,6 +19,11 @@ public class AudioSystem : MonoBehaviour
         soundSource.clip = GetSoundByTitel("info1");
         soundSource.Play();
     }
+    public void PlayPrimaryErrorSound()
+    {
+        soundSource.clip = GetSoundByTitel("error1");
+        soundSource.Play();
+    }
     private AudioClip GetSoundByTitel(string clipTitel)
     {
         foreach (var sound in soundClips)

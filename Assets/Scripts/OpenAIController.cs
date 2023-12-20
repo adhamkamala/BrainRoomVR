@@ -36,7 +36,7 @@ public class QuestionsAndAnswers
 {
     public List<QuestionAndAnswers> questions;
 }
-public class MyData
+public class AlternativeAnswers
 {
     public string[] alternativePunkte;
 }
@@ -73,18 +73,25 @@ public class OpenAIController : MonoBehaviour
 
     public void ModeWhiteBoardSetupModel()
     {
-        string filePath = Path.Combine(Application.dataPath, "Resources/questions_and_answers_whiteboard.json");
-        string json = File.ReadAllText(filePath);
-        QuestionsAndAnswers data = JsonConvert.DeserializeObject<QuestionsAndAnswers>(json);
-        chat.AppendSystemMessage("Du bist ein Brainstorming-Assistent. Wenn Benutzer dir einen Begriff oder eine Frage geben, antworte bitte mit einem HeadLine und einem text. Der HeadLine sollte ein wichtiges Wort oder einen Begriff darstellen, und der Text sollte eine kurze Erklärung dazu bieten. Antworte ausschließlich mit Haupttitel & Untertitel, und füge keine weiteren Informationen hinzu. Du kannst auch mehrere Antworte geben als Array d.h. mehrere Haupt und Untertiteln. ich will auch dass du am ende sagst wie viele Antworte du mir gegeben hast. Antwort bitte wie ein JSON respond. Mindstends 1 Antworte und Max 3 Antworte. Deine Antworte müssen Volständig generiert sein sonst klappt die Antwort nicht.");
-        foreach (var questionData in data.questions)
+        try
         {
-            string question = questionData.question;
-            chat.AppendUserInput(question);
-            string answersJson = JsonConvert.SerializeObject(new { questionData.answers });
-            chat.AppendExampleChatbotOutput(answersJson);
+            string filePath = Path.Combine(Application.dataPath, "Resources/questions_and_answers_whiteboard.json");
+            string json = File.ReadAllText(filePath);
+            QuestionsAndAnswers data = JsonConvert.DeserializeObject<QuestionsAndAnswers>(json);
+            chat.AppendSystemMessage("Du bist ein Brainstorming-Assistent. Wenn Benutzer dir einen Begriff oder eine Frage geben, antworte bitte mit einem HeadLine und einem text. Der HeadLine sollte ein wichtiges Wort oder einen Begriff darstellen, und der Text sollte eine kurze Erklärung dazu bieten. Antworte ausschließlich mit Haupttitel & Untertitel, und füge keine weiteren Informationen hinzu. Du kannst auch mehrere Antworte geben als Array d.h. mehrere Haupt und Untertiteln. ich will auch dass du am ende sagst wie viele Antworte du mir gegeben hast. Antwort bitte wie ein JSON respond. Mindstends 1 Antworte und Max 3 Antworte. Deine Antworte müssen Volständig generiert sein sonst klappt die Antwort nicht.");
+            foreach (var questionData in data.questions)
+            {
+                string question = questionData.question;
+                chat.AppendUserInput(question);
+                string answersJson = JsonConvert.SerializeObject(new { questionData.answers });
+                chat.AppendExampleChatbotOutput(answersJson);
+            }
         }
-
+        catch (Exception)
+        {
+            audioSystem.GetComponent<AudioSystem>().PlayPrimaryErrorSound();
+            //throw;
+        }
     }
     public async void ModeWhiteBoardSendMessage(string str)
     {
@@ -105,24 +112,29 @@ public class OpenAIController : MonoBehaviour
     }
     public void ModeMindMapSetupModel()
     {
-        string filePath = Path.Combine(Application.dataPath, "Resources/questions_and_answers_mindmap.json");
-        string json = File.ReadAllText(filePath);
-      
-       // QuestionsContainer questionsContainer = JsonUtility.FromJson<QuestionsContainer>(json);
-        QuestionsContainer questionsContainer = JsonConvert.DeserializeObject<QuestionsContainer>(json);
-        chat.AppendSystemMessage("Du bist ein Brainstorming-Assistent für MindMaps. Erste Wurzel soll ein wort oder begriff aus der frage beinhalten; Knoten sind die main begriffe und knoten beinhalten in wenigen worten mehr über Würzeln. Bei Knoten gibts wiederrum wurzeln die knoten haben usw usw. Benutze so wenige worte wie möglich. Antwort bitte wie ein JSON respond.");
-        foreach (var questionData in questionsContainer.questions)
+        try
         {
+            string filePath = Path.Combine(Application.dataPath, "Resources/questions_and_answers_mindmap.json");
+            string json = File.ReadAllText(filePath);
+            QuestionsContainer questionsContainer = JsonConvert.DeserializeObject<QuestionsContainer>(json);
+            chat.AppendSystemMessage("Du bist ein Brainstorming-Assistent für MindMaps. Erste Wurzel soll ein wort oder begriff aus der frage beinhalten; Knoten sind die main begriffe und knoten beinhalten in wenigen worten mehr über Würzeln. Bei Knoten gibts wiederrum wurzeln die knoten haben usw usw. Benutze so wenige worte wie möglich. Antwort bitte wie ein JSON respond.");
+            foreach (var questionData in questionsContainer.questions)
+            {
 
-            string question = questionData.question;
+                string question = questionData.question;
 
-            chat.AppendUserInput(question);
-            string answersJson = JsonConvert.SerializeObject(new { questionData.answers });
+                chat.AppendUserInput(question);
+                string answersJson = JsonConvert.SerializeObject(new { questionData.answers });
 
-            chat.AppendExampleChatbotOutput(answersJson);
+                chat.AppendExampleChatbotOutput(answersJson);
+            }
         }
-     
-      
+        catch (Exception)
+        {
+            audioSystem.GetComponent<AudioSystem>().PlayPrimaryErrorSound();
+           // throw;
+        }
+
     }
     public async void ModeMindMapSendMessage(string str)
     {
@@ -137,11 +149,10 @@ public class OpenAIController : MonoBehaviour
     public void SetCurrentJson(NodeStorage rootNode)
     {
         AnswersContainer reversedContainer = ConvertNodeToAnswersContainer(rootNode);
-        mindMapRespondTmp = JsonUtility.ToJson(reversedContainer, true);
+        mindMapRespondTmp = JsonConvert.SerializeObject(new { reversedContainer.answers });
     }
     public async void ModeMindMapExtend(string strQues)
     {
-        // Question was... ur answer was... --> now give me more...
         string str = "Kannst du bei der Vorherigen antwort von dir: " + mindMapRespondTmp + " ein paar punkte unter dem Punkt " + strQues + " sameln. also 2 oder 3 punkte dadrunter tun nix anderes? Ergänze deine antwort also";
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
@@ -151,7 +162,6 @@ public class OpenAIController : MonoBehaviour
     }
     public async void ModeMindMapReplaceAI(string strQues)
     {
-        // Question was... ur answer was... --> now give me more...
         string str = "Bei der vorherigen frage: "+ mindMapRespondTmp + ". habe ich jetzt den punkt: " + strQues + ". kannst du noch zu der frage exakt nur 3 alternative punkte geben nur und nix anderes? Die antwort soll folgendes aussehen: JSON format mit array namens alternativePunkte und dadrunter die 3 punkte";
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
@@ -171,42 +181,66 @@ public class OpenAIController : MonoBehaviour
     }
     private void ModeMindMapTranslator(string str)
     {
-        cardSystem.GetComponent<CardSystem>().DestroyAll();
-        //AnswersContainer answersContainer = JsonUtility.FromJson<AnswersContainer>(str);
-        AnswersContainer answersContainer = JsonConvert.DeserializeObject<AnswersContainer>(str);
-        foreach (var answer in answersContainer.answers)
+        try
         {
-            NodeStorage rootNode = CreateNodeFromAnswerNode(answer, null);
-            cardSystem.GetComponent<CardSystem>().CreateMindMap(rootNode);
+            AnswersContainer answersContainer = JsonConvert.DeserializeObject<AnswersContainer>(str);
+            cardSystem.GetComponent<CardSystem>().DestroyAll();
+            foreach (var answer in answersContainer.answers)
+            {
+                NodeStorage rootNode = CreateNodeFromAnswerNode(answer, null);
+                cardSystem.GetComponent<CardSystem>().CreateMindMap(rootNode);
+            }
+            audioSystem.GetComponent<AudioSystem>().PlayPrimaryInfoSound();
+            vibrationSystem.GetComponent<VibrationSystem>().HapticLeft();
+            vibrationSystem.GetComponent<VibrationSystem>().HapticRight();
         }
-        vibrationSystem.GetComponent<VibrationSystem>().HapticLeft();
-        vibrationSystem.GetComponent<VibrationSystem>().HapticRight();
+        catch (Exception)
+        {
+            audioSystem.GetComponent<AudioSystem>().PlayPrimaryErrorSound();
+           // throw;
+        }
+
     }
     private void ModeMindMapReplaceTranslator(string str)
     {
-       // MyData myData = JsonUtility.FromJson<MyData>(str);
-        MyData myData =  JsonConvert.DeserializeObject<MyData>(str);
-        List<string> list = new List<string>();
-        foreach (string point in myData.alternativePunkte)
+        try
         {
-     
-            list.Add(point);
+            AlternativeAnswers alternativeAnswer = JsonConvert.DeserializeObject<AlternativeAnswers>(str);
+            List<string> list = new List<string>();
+            foreach (string point in alternativeAnswer.alternativePunkte)
+            {
+
+                list.Add(point);
+            }
+            cardSystem.GetComponent<CardSystem>().CreateReplaceAICards(list);
+            vibrationSystem.GetComponent<VibrationSystem>().HapticLeft();
         }
-        cardSystem.GetComponent<CardSystem>().CreateReplaceAICards(list);
-        vibrationSystem.GetComponent<VibrationSystem>().HapticLeft();
+        catch (Exception)
+        {
+            audioSystem.GetComponent<AudioSystem>().PlayPrimaryErrorSound();
+            //throw;
+        }
+
     }
     private void ModeWhiteBoardTranslator(string str)
     { // translate answer from OPENAI to Cards on Board<<<<<<<
-        OpenAIResopnse openAIResponse = JsonConvert.DeserializeObject<OpenAIResopnse>(str);
-        List<Card> kartenList = openAIResponse.Answers;
-        foreach (Card card in kartenList)
+        try
         {
-            cardSystem.GetComponent<CardSystem>().CreateCardObj(card.HeadLine, card.Text);
+            OpenAIResopnse openAIResponse = JsonConvert.DeserializeObject<OpenAIResopnse>(str);
+            List<Card> kartenList = openAIResponse.Answers;
+            foreach (Card card in kartenList)
+            {
+                cardSystem.GetComponent<CardSystem>().CreateCardObj(card.HeadLine, card.Text);
+            }
+            audioSystem.GetComponent<AudioSystem>().PlayPrimaryInfoSound();
+            vibrationSystem.GetComponent<VibrationSystem>().HapticLeft();
+            vibrationSystem.GetComponent<VibrationSystem>().HapticRight();
         }
-
-        vibrationSystem.GetComponent<VibrationSystem>().HapticLeft();
-        vibrationSystem.GetComponent<VibrationSystem>().HapticRight();
-
+        catch (Exception)
+        {
+            audioSystem.GetComponent<AudioSystem>().PlayPrimaryErrorSound();
+            throw;
+        }
     }
     private void Start()
     {

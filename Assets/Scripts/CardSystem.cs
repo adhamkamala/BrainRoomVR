@@ -230,7 +230,6 @@ public class CardSystem : MonoBehaviour
     {
         if (rootNode != null)
         {
-            Debug.Log("Deleting...");
             rootNode.DeleteCompleteHierarchy();
         }
     }

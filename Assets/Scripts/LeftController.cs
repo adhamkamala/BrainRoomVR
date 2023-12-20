@@ -366,7 +366,6 @@ public class LeftController : MonoBehaviour
     }
     private void OnLeftXPressed(InputAction.CallbackContext context)
     {
-        Debug.Log("Left X button pressed!");
         audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
         if (cardTmp != null)
         {

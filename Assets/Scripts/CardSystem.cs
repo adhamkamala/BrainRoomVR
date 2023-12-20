@@ -207,9 +207,6 @@ public class CardSystem : MonoBehaviour
     {
         cardToReplace.GetComponent<Node>().nodeName= str;
         cardToReplace.GetComponent<Node>().gameObject.GetComponent<CardScript>().ChangeSubTxt(str);
-        // GetNodeByName(null,"c").name= str;
-        // GetNodeByName(null, str).gameObject.GetComponent<CardScript>().ChangeSubTxt(str);
-        // manual or gpt --> gpt 3 alternative cards
     }
     public void SetCardToReplace(GameObject card)
     {
@@ -312,41 +309,50 @@ public class CardSystem : MonoBehaviour
     //}
     private void ReconstructHierarchy(NodeStorage currentNode, int depth = 0)
     {
-
         if (currentNode == null)
         {
             return;
         }
 
+        int immediateChildrenCount = CountImmediateChildren(currentNode);
+        int nextLevelCount = CountNextLevelNodes(currentNode);
+        int totalCount = immediateChildrenCount + nextLevelCount;
 
-        int count = 0;
-        if (currentNode.parentNode == null)
-        {
-            count = currentNode.children.Count;
-        }
-        else
-        {
-            foreach (NodeStorage n in currentNode.parentNode.children)
-            {
-                count = count + n.children.Count;
-            }
-        }
         List<string> childrenList = new List<string>();
         currentNode.children.ForEach(child => childrenList.Add(child.nodeName));
-        CreateChildrenNodes(GetNodeByName(null, currentNode.nodeName), childrenList.Count, childrenList, count);
+        CreateChildrenNodes(GetNodeByName(null, currentNode.nodeName), childrenList.Count, childrenList, totalCount);
 
-
-
-        string indentation = new string(' ', depth * 2);
-        //Debug.Log($"{indentation}Node: {currentNode.name}, Children Count: {currentNode.children.Count}");
-
-        //Debug.Log($"{indentation}Children: {string.Join(", ", currentNode.children.Select(child => child.name))}");
-
-        // Recursively print information for each child
         foreach (var childNode in currentNode.children)
         {
             ReconstructHierarchy(childNode, depth + 1);
         }
     }
+    private int CountNextLevelNodes(NodeStorage currentNode)
+    {
+        if (currentNode == null || currentNode.parentNode == null)
+        {
+            return 0;
+        }
 
+        int nextLevelCount = 0;
+
+        foreach (NodeStorage siblingNode in currentNode.parentNode.children)
+        {
+            if (siblingNode != currentNode)
+            {
+                nextLevelCount += CountImmediateChildren(siblingNode);
+            }
+        }
+
+        return nextLevelCount;
+    }
+    private int CountImmediateChildren(NodeStorage node)
+    {
+        if (node == null || node.children == null)
+        {
+            return 0;
+        }
+
+        return node.children.Count;
+    }
 }

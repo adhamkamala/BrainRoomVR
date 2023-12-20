@@ -171,6 +171,7 @@ public class LeftController : MonoBehaviour
                         recordSystem.GetComponent<RecordSystem>().EnableReplace();
                         recordSystem.GetComponent<RecordSystem>().SetGameObjectTmp(cardTmpMindMap); // obsulete since SetCardToReplace does same
                         recordSystem.GetComponent<RecordSystem>().StartRecording();
+                        leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
                         optionsPressed = false;
                         cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
                         break;
@@ -178,9 +179,9 @@ public class LeftController : MonoBehaviour
                     case "ReplaceAI":
                         cardSystem.GetComponent<CardSystem>().SetCardToReplace(cardTmpMindMap);
                         aiSystem.GetComponent<OpenAIController>().ModeMindMapReplaceAI(cardTmpMindMap.gameObject.GetComponent<Node>().nodeName);
+                        leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
                         optionsPressed = false;
                         cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
-                        leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
                         break;
                     case "Relocate":
                         leftPoke.GetComponent<LeftControllerRay>().StopBlinking();
@@ -475,12 +476,19 @@ public class LeftController : MonoBehaviour
     }
     private void OnRightBPressed(InputAction.CallbackContext context)
     {
-        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
-        recordSystem.GetComponent<RecordSystem>().EndRecording();
+        //audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
+        //recordSystem.GetComponent<RecordSystem>().EndRecording();
     }
     private void OnRightAPressed(InputAction.CallbackContext context)
     {
         audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
-        recordSystem.GetComponent<RecordSystem>().StartRecording();
+     
+        if (!recordSystem.GetComponent<RecordSystem>().GetStateOfPanel())
+        {
+            recordSystem.GetComponent<RecordSystem>().StartRecording();
+        } else
+        {
+            recordSystem.GetComponent<RecordSystem>().EndRecording();
+        }
     }
 }

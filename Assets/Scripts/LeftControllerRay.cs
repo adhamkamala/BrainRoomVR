@@ -23,12 +23,14 @@ public class LeftControllerRay : MonoBehaviour
 
     public void StopBlinking()
     {
-        if (cardHitObj!=null && rendererObj != null) {
+        if (cardHitObj!=null) {
             isBlinking = false;
             StopCoroutine(Blink());
-            rendererObj.material.SetFloat("_Metallic", originalMetallic);
-            rendererObj.material.SetFloat("_Smoothness", 0.5f); 
-
+            if (rendererObj != null)
+            {
+                rendererObj.material.SetFloat("_Metallic", originalMetallic);
+                rendererObj.material.SetFloat("_Smoothness", 0.5f);
+            }
         }
 
     }

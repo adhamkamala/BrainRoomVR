@@ -24,6 +24,7 @@ public class RecordSystem : MonoBehaviour
     private readonly string fileName = "output.wav";
     private string convertedAudio;
     private bool replaceOption = false;
+    private bool state = false;
 
     public void SpawnRecordPanel() {
         vibrationSystem.GetComponent<VibrationSystem>().HapticRight();
@@ -80,8 +81,14 @@ public class RecordSystem : MonoBehaviour
     {
         gameObjectTmp=gmo;
     }
+
+    public bool GetStateOfPanel()
+    {
+        return state;
+    }
     public void StartRecording()
     {
+        state = true;
         SpawnRecordPanel();
         string micName = "";
         tmp.GetComponent<RecordPanelScript>().ChangeHintTxt("Recording...");
@@ -98,6 +105,7 @@ public class RecordSystem : MonoBehaviour
     }
     public async void EndRecording()
     {
+        state = false;
         tmp.GetComponent<RecordPanelScript>().ChangeHintTxt("Recorded");
         Microphone.End(null);
         byte[] data = SaveWav.Save(fileName, clip);

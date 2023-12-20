@@ -49,7 +49,7 @@ public class RecordSystem : MonoBehaviour
         if (mainSystem.GetComponent <MainSystem>().WhatMode() ==0 && !replaceOption) {
             spawnSystem.GetComponent<SpawnSystem>().SpawnBoard();
             boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().ChangeTopicTxt(convertedAudio);
-            aiSystem.GetComponent<OpenAIController>().ModeWhiteBoardSendMessage(convertedAudio);
+            aiSystem.GetComponent<OpenAIController>().ModeWhiteBoardSendMessage(convertedAudio).Wait();
             DestroyRecordPanel();
         } else if (mainSystem.GetComponent<MainSystem>().WhatMode() == 1 && !replaceOption) {
             if (cardSystem.GetComponent<CardSystem>().IsRootNodeCreated())
@@ -57,7 +57,7 @@ public class RecordSystem : MonoBehaviour
                 leftController.GetComponent<LeftController>().AttachCard(cardSystem.GetComponent<CardSystem>().CreateMindMapCardObj(convertedAudio));
             } else
             {
-                aiSystem.GetComponent<OpenAIController>().ModeMindMapSendMessage(convertedAudio);
+                aiSystem.GetComponent<OpenAIController>().ModeMindMapSendMessage(convertedAudio).Wait();
             }
             DestroyRecordPanel();
         } else if (replaceOption)

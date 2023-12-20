@@ -22,9 +22,9 @@ public class SpawnSystem : MonoBehaviour
             {
                 if (!occupiedSpawnLocations.Contains(spawnPoint))
                 {
-                    GameObject gmo = Instantiate(boardPrefab, spawnPoint.position, spawnPoint.rotation);
-                    gmo.name = "Whiteboard(NormalBoard)";
-                    boardsSystem.GetComponent<BoardsSystem>().SetSelectedBoard(gmo);
+                    GameObject gameObject = Instantiate(boardPrefab, spawnPoint.position, spawnPoint.rotation);
+                    gameObject.name = "Whiteboard(NormalBoard)";
+                    boardsSystem.GetComponent<BoardsSystem>().SetSelectedBoard(gameObject);
                     occupiedSpawnLocations.Add(spawnPoint);
                     return;
                 }
@@ -36,12 +36,12 @@ public class SpawnSystem : MonoBehaviour
     {
         return isLocationFree;
     }
-    public void RemoveFromListPoints(Transform t)
+    public void RemoveFromListPoints(Transform transform)
     {
 
         for (int i = 0; i < occupiedSpawnLocations.Count; i++)
         {
-            if (occupiedSpawnLocations[i].position == t.position)
+            if (occupiedSpawnLocations[i].position == transform.position)
             {
                 occupiedSpawnLocations.RemoveAt(i);
                 break;
@@ -51,7 +51,7 @@ public class SpawnSystem : MonoBehaviour
     public void DestoryAll()
     {
         GameObject[] objects = GameObject.FindObjectsOfType<GameObject>()
-            .Where(go => go.name == "Whiteboard(NormalBoard)").ToArray();
+            .Where(gameObject => gameObject.name == "Whiteboard(NormalBoard)").ToArray();
         foreach (GameObject obj in objects)
         {
             Destroy(obj);
@@ -63,12 +63,5 @@ public class SpawnSystem : MonoBehaviour
     private void Start()
     {
         isLocationFree = true;
-    }
-    private void Update()
-    {
-        if (Keyboard.current.rKey.wasPressedThisFrame) // for testing purposes
-        {
-            SpawnBoard();
-        }
     }
 }

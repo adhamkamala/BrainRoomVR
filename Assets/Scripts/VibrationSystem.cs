@@ -22,11 +22,11 @@ public class VibrationSystem : MonoBehaviour
 
     }
 
-    private IEnumerator Vibrate(float amplitude, float duration, ActionBasedController controller)
-    {
+    //private IEnumerator Vibrate(float amplitude, float duration, ActionBasedController controller)
+    //{
 
-        controller.SendHapticImpulse(amplitude, duration);
-        yield return new WaitForSeconds(duration + 0.1f);
-        controller.SendHapticImpulse(amplitude, duration);
-    }
+    //    controller.SendHapticImpulse(amplitude, duration);
+    //    yield return new WaitForSeconds(duration + 0.1f);
+    //    controller.SendHapticImpulse(amplitude, duration);
+    //}
 }

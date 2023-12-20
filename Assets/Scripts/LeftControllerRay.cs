@@ -105,8 +105,6 @@ public class LeftControllerRay : MonoBehaviour
         {
             cardHit = true;
             cardHitObj = hit.collider.gameObject;
-            //renderer = cardHitObj.GetComponent<Renderer>();
-            // renderer.material.color = UnityEngine.Color.green;
             if (!isBlinking)
             {
                 SetRenderer();
@@ -130,7 +128,6 @@ public class LeftControllerRay : MonoBehaviour
 
             cardHit = false;
             pokeMat.GetComponent<PokeScript>().ChangeColorToWhite();
-            //  leftController.GetComponent<LeftController>().SetRayPosition(hit.point);
         }
 
         if (Physics.Raycast(transform.position, transform.forward * distance, out hit, distance))

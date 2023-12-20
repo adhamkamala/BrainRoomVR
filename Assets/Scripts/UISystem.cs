@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class UISystem : MonoBehaviour
@@ -25,25 +23,27 @@ public class UISystem : MonoBehaviour
 
     public void ModeWhiteBoard()
     {
-        aiSystem.GetComponent<OpenAIController>().ModeWhiteBoardSetupModel();
+        aiSystem.GetComponent<OpenAIController>().ModeWhiteBoardSetupModel().Wait();
         mainSystem.GetComponent<MainSystem>().ChangeMode(0);
-        cardSystem.GetComponent<CardSystem>().DestroyAll();
-        spawnSystem.GetComponent<SpawnSystem>().DestoryAll();
-        recordSystem.GetComponent<RecordSystem>().StartRecording();
-        HideUI();
+        ClearStartUp();
     }
     public void ModeMindMap()
     {
-        aiSystem.GetComponent<OpenAIController>().ModeMindMapSetupModel();
+        aiSystem.GetComponent<OpenAIController>().ModeMindMapSetupModel().Wait();
         mainSystem.GetComponent<MainSystem>().ChangeMode(1);
-        cardSystem.GetComponent<CardSystem>().DestroyAll();
-        spawnSystem.GetComponent<SpawnSystem>().DestoryAll();
-        recordSystem.GetComponent<RecordSystem>().StartRecording();
-        HideUI();
+        ClearStartUp();
     }
     public void ToggleUI()
     {
         uiBool = !uiBool;
         uiGameObject.SetActive(uiBool);
+    }
+
+    private void ClearStartUp()
+    {
+        cardSystem.GetComponent<CardSystem>().DestroyAll();
+        spawnSystem.GetComponent<SpawnSystem>().DestoryAll();
+        recordSystem.GetComponent<RecordSystem>().StartRecording();
+        HideUI();
     }
 }

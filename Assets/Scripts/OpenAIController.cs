@@ -71,7 +71,7 @@ public class OpenAIController : MonoBehaviour
     private string mindMapRespondTmp;
 
 
-    public Task ModeWhiteBoardSetupModel()
+    public async Task ModeWhiteBoardSetupModel()
     {
         string filePath = Path.Combine(Application.dataPath, "Resources/questions_and_answers_whiteboard.json");
         string json = File.ReadAllText(filePath);
@@ -85,13 +85,12 @@ public class OpenAIController : MonoBehaviour
             chat.AppendExampleChatbotOutput(answersJson);
         }
 
-        return Task.CompletedTask;
     }
     public async Task ModeWhiteBoardSendMessage(string str)
     {
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
-        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
         Debug.Log(response);
         ModeWhiteBoardTranslator(response);
     }
@@ -101,32 +100,35 @@ public class OpenAIController : MonoBehaviour
         string str = "Die Frage wurde dir gestellt: " + strQues + ". und du hast so beantwortert: " + strAnswer + ". kannst du noch zu der frage andere antworte geben?";
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
-        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
         ModeWhiteBoardTranslator(response);
     }
-    public Task ModeMindMapSetupModel()
+    public async Task ModeMindMapSetupModel()
     {
         string filePath = Path.Combine(Application.dataPath, "Resources/questions_and_answers_mindmap.json");
         string json = File.ReadAllText(filePath);
-        QuestionsContainer questionsContainer = JsonUtility.FromJson<QuestionsContainer>(json);
+        Debug.Log(json);
+       // QuestionsContainer questionsContainer = JsonUtility.FromJson<QuestionsContainer>(json);
+        QuestionsContainer questionsContainer = JsonConvert.DeserializeObject<QuestionsContainer>(json);
         chat.AppendSystemMessage("Du bist ein Brainstorming-Assistent für MindMaps. Erste Wurzel soll ein wort oder begriff aus der frage beinhalten; Knoten sind die main begriffe und knoten beinhalten in wenigen worten mehr über Würzeln. Bei Knoten gibts wiederrum wurzeln die knoten haben usw usw. Benutze so wenige worte wie möglich. Antwort bitte wie ein JSON respond.");
         foreach (var questionData in questionsContainer.questions)
         {
+
             string question = questionData.question;
- 
+
             chat.AppendUserInput(question);
             string answersJson = JsonConvert.SerializeObject(new { questionData.answers });
-          
+
             chat.AppendExampleChatbotOutput(answersJson);
         }
         Debug.Log("Done Training");
-        return Task.CompletedTask;
+      
     }
     public async Task ModeMindMapSendMessage(string str)
     {
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
-        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
         Debug.Log(response);
         mindMapRespondTmp = response;
         ModeMindMapTranslator(response);
@@ -143,7 +145,7 @@ public class OpenAIController : MonoBehaviour
         string str = "Kannst du bei der Vorherigen antwort von dir: " + mindMapRespondTmp + " ein paar punkte unter dem Punkt " + strQues + " sameln. also 2 oder 3 punkte dadrunter tun nix anderes? Ergänze deine antwort also";
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
-        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
         Debug.Log(response);
         ModeMindMapTranslator(response);
     }
@@ -153,7 +155,7 @@ public class OpenAIController : MonoBehaviour
         string str = "Bei der vorherigen frage: "+ mindMapRespondTmp + ". habe ich jetzt den punkt: " + strQues + ". kannst du noch zu der frage exakt nur 3 alternative punkte geben nur und nix anderes? Die antwort soll folgendes aussehen: JSON format mit array namens alternativePunkte und dadrunter die 3 punkte";
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
-        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
         Debug.Log(response);
         ModeMindMapReplaceTranslator(response);
     }
@@ -163,7 +165,7 @@ public class OpenAIController : MonoBehaviour
         string str = "Bei der vorherigen frage: " + mindMapRespondTmp + ". habe ich jetzt den punkt: " + strQues + ". kannst du diesen punkt zuordnen? Die antwort soll folgendes aussehen: JSON format genau wie vorherige frage aber mit dem punkt drin zugeordnet";
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
-        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
         Debug.Log(response);
         ModeMindMapTranslator(response);
     }
@@ -171,7 +173,7 @@ public class OpenAIController : MonoBehaviour
     {
         NodeStorage newNode = new NodeStorage
         {
-            name = answerNode.Wurzel,
+            nodeName = answerNode.Wurzel,
             parentNode = parentNode
         };
 
@@ -194,7 +196,7 @@ public class OpenAIController : MonoBehaviour
             {
                 new AnswerNode
                 {
-                    Wurzel = rootNode.name,
+                    Wurzel = rootNode.nodeName,
                     Knoten = ConvertNodeToAnswerList(rootNode.children)
                 }
             }
@@ -210,7 +212,7 @@ public class OpenAIController : MonoBehaviour
         {
             AnswerNode answerNode = new AnswerNode
             {
-                Wurzel = node.name,
+                Wurzel = node.nodeName,
                 Knoten = ConvertNodeToAnswerList(node.children)
             };
 
@@ -222,7 +224,8 @@ public class OpenAIController : MonoBehaviour
     private async Task ModeMindMapTranslator(string str)
     {
         cardSystem.GetComponent<CardSystem>().DestroyAll();
-        AnswersContainer answersContainer = JsonUtility.FromJson<AnswersContainer>(str);
+        //AnswersContainer answersContainer = JsonUtility.FromJson<AnswersContainer>(str);
+        AnswersContainer answersContainer = JsonConvert.DeserializeObject<AnswersContainer>(str);
         foreach (var answer in answersContainer.answers)
         {
             NodeStorage rootNode = CreateNodeFromAnswerNode(answer, null);
@@ -233,7 +236,8 @@ public class OpenAIController : MonoBehaviour
     }
     private async Task ModeMindMapReplaceTranslator(string str)
     {
-        MyData myData = JsonUtility.FromJson<MyData>(str);
+       // MyData myData = JsonUtility.FromJson<MyData>(str);
+        MyData myData =  JsonConvert.DeserializeObject<MyData>(str);
         List<string> list = new List<string>();
         foreach (string point in myData.alternativePunkte)
         {

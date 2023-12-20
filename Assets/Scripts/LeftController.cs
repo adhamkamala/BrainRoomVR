@@ -109,7 +109,7 @@ public class LeftController : MonoBehaviour
     }
     private void OnLeftMainPressed(InputAction.CallbackContext context)
     {
-        audioSystem.GetComponent<AudioSystem>().PlayPrimaryClickAudio();
+        audioSystem.GetComponent<AudioSystem>().PlayPrimaryClickSound();
         GameObject tmp;
         if (leftPoke.GetComponent<LeftControllerRay>().IsLayerCardOption())
         {
@@ -252,7 +252,7 @@ public class LeftController : MonoBehaviour
                             {
                                 grabBool = false;
                             }
-                            mindMapMovement = !mindMapMovement;
+                            mindMapMovement = false;
                         }
                         break;
 
@@ -372,7 +372,7 @@ public class LeftController : MonoBehaviour
     private void OnLeftXPressed(InputAction.CallbackContext context)
     {
         Debug.Log("Left X button pressed!");
-        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
         if (cardTmp != null)
         {
             if (grabBool == true)
@@ -414,7 +414,7 @@ public class LeftController : MonoBehaviour
     }
     private void OnLeftYPressed(InputAction.CallbackContext context)
     {
-        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
         if (cardTmp != null & optionsPressed)
         {
             optionsPressed = false;
@@ -447,13 +447,13 @@ public class LeftController : MonoBehaviour
     }
     private void OnLeftMenuPressed(InputAction.CallbackContext context)
     {
-        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
         uiSystem.GetComponent<UISystem>().ToggleUI();
 
     }
     private void OnRightMainPressed(InputAction.CallbackContext context)
     {
-        audioSystem.GetComponent<AudioSystem>().PlayPrimaryClickAudio();
+        audioSystem.GetComponent<AudioSystem>().PlayPrimaryClickSound();
         var tmp = rightPoke.GetComponent<RightControllerRay>().IsRayHit();
         if (tmp)
         {
@@ -475,12 +475,12 @@ public class LeftController : MonoBehaviour
     }
     private void OnRightBPressed(InputAction.CallbackContext context)
     {
-        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
         recordSystem.GetComponent<RecordSystem>().EndRecording();
     }
     private void OnRightAPressed(InputAction.CallbackContext context)
     {
-        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
+        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
         recordSystem.GetComponent<RecordSystem>().StartRecording();
     }
 }

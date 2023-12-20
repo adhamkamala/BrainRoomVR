@@ -5,21 +5,21 @@ public class BoardSystem : MonoBehaviour
     public GameObject[] boardLocations;
     public void CardLocator(GameObject card) {
 
-        foreach (GameObject g in boardLocations)
+        foreach (GameObject gameObject in boardLocations)
         {
-            LocationHighlighter locHigh = g.GetComponent<LocationHighlighter>();
-            if (locHigh.isAvailable())
+            LocationHighlighter locHighlighter = gameObject.GetComponent<LocationHighlighter>();
+            if (locHighlighter.isAvailable())
             {
                 card.transform.position = new Vector3(0.1f,0f,0f);
-                Vector3 localPos = card.transform.localPosition;
-                Quaternion localRot = card.transform.localRotation;
-                locHigh.changeAvailable(false);
-                locHigh.SetCardHolding(card);
-                card.GetComponent<CardScript>().SetLocationHolding(g);
-                card.transform.position += new Vector3(0.1f, 0f, 0f);
-                card.transform.parent = g.transform;
-                card.transform.localPosition = localPos;
-                card.transform.localRotation = localRot;
+                Vector3 localPosition = card.transform.localPosition;
+                Quaternion localRotation = card.transform.localRotation;
+                locHighlighter.changeAvailable(false);
+                locHighlighter.SetCardHolding(card);
+                card.GetComponent<CardScript>().SetLocationHolding(gameObject);
+                //card.transform.position += new Vector3(0.1f, 0f, 0f);
+                card.transform.parent = gameObject.transform;
+                card.transform.localPosition = localPosition;
+                card.transform.localRotation = localRotation;
                 card.transform.localScale = new Vector3(1f, 1f, 1f);
                 break;
             }
@@ -27,10 +27,10 @@ public class BoardSystem : MonoBehaviour
     }
     public bool CanCreateBoard()
     {
-        foreach (GameObject g in boardLocations)
+        foreach (GameObject gameObject in boardLocations)
         {
-            LocationHighlighter locHigh = g.GetComponent<LocationHighlighter>();
-            if (locHigh.isAvailable())
+            LocationHighlighter locHighlighter = gameObject.GetComponent<LocationHighlighter>();
+            if (locHighlighter.isAvailable())
             {
                 return true;
             }

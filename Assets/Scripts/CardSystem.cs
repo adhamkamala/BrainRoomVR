@@ -1,12 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.HID;
-using UnityEngine.UIElements;
 
 
 public class Node : MonoBehaviour
@@ -14,21 +7,18 @@ public class Node : MonoBehaviour
     public string nodeName;
     public Node parentNode;
     public List<Node> children = new List<Node>();
-    public void DeleteHierarchy()
+    public void DeleteCompleteHierarchy()
     {
-        // Delete children first
         foreach (var childNode in children)
         {
-            childNode.DeleteHierarchy();
+            childNode.DeleteCompleteHierarchy();
         }
-
-        // Then delete the current node's GameObject
         Destroy(gameObject);
     }
 }
 public class NodeStorage
 {
-    public string name;
+    public string nodeName;
     public NodeStorage parentNode;
     public List<NodeStorage> children = new List<NodeStorage>();
 }
@@ -61,7 +51,7 @@ public class CardSystem : MonoBehaviour
             boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponentInChildren<BoardSystem>().CardLocator(cardTmp);
         }
     }
-    public void CreateMindMapCardObj(string subTxt, Node node=null)
+    public GameObject CreateMindMapCardObj(string subTxt, Node node=null)
     {
         GameObject cardTmp = Instantiate(cardsMindMapPrf);
         cardTmp.layer = LayerMask.NameToLayer("CardsLayer");
@@ -74,6 +64,7 @@ public class CardSystem : MonoBehaviour
             nodeCard.parentNode = node.parentNode;
             nodeCard.children= node.children;
         }
+        return cardTmp;
     }
     public void CreateReplaceAICards(List<string> strs)
     {
@@ -118,7 +109,7 @@ public class CardSystem : MonoBehaviour
     }
     public void CreateMindMap(NodeStorage node)
     {
-        CreateRootNode(node.name);
+        CreateRootNode(node.nodeName);
         ReconstructHierarchy(node);
 
     }
@@ -142,11 +133,11 @@ public class CardSystem : MonoBehaviour
         else {
             node2Tmp = new NodeStorage();
         }
-        node2Tmp.name = card.GetComponent<CardScript>().subTitleTxt.text;
+        node2Tmp.nodeName = card.GetComponent<CardScript>().subTitleTxt.text;
         node2Tmp.parentNode = GetNodeStorageByName(root2, str);
         node2Tmp.parentNode.children.Add(node2Tmp);
-        rootNode.DeleteHierarchy();
-        CreateRootNode(root2.name);
+        rootNode.DeleteCompleteHierarchy();
+        CreateRootNode(root2.nodeName);
         ReconstructHierarchy(root2);
     }
     public void NodeStorageToJson()
@@ -186,7 +177,7 @@ public class CardSystem : MonoBehaviour
     }
     public static NodeStorage GetNodeStorageByName(NodeStorage currentNode, string name)
     {
-        if (currentNode.name == name)
+        if (currentNode.nodeName == name)
         {
             return currentNode;
         }
@@ -240,7 +231,7 @@ public class CardSystem : MonoBehaviour
         if (rootNode != null)
         {
             Debug.Log("Deleting...");
-            rootNode.DeleteHierarchy();
+            rootNode.DeleteCompleteHierarchy();
         }
     }
     public void DestroyAICards()
@@ -292,7 +283,7 @@ public class CardSystem : MonoBehaviour
         }
 
         NodeStorage node2 = new NodeStorage();
-        node2.name = node.nodeName;
+        node2.nodeName = node.nodeName;
 
         foreach (Node childNode in node.children)
         {
@@ -342,8 +333,8 @@ public class CardSystem : MonoBehaviour
             }
         }
         List<string> childrenList = new List<string>();
-        currentNode.children.ForEach(child => childrenList.Add(child.name));
-        CreateChildrenNodes(GetNodeByName(null, currentNode.name), childrenList.Count, childrenList, count);
+        currentNode.children.ForEach(child => childrenList.Add(child.nodeName));
+        CreateChildrenNodes(GetNodeByName(null, currentNode.nodeName), childrenList.Count, childrenList, count);
 
 
 

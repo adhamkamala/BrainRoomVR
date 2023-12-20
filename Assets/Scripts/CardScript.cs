@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -18,17 +16,17 @@ public class CardScript : MonoBehaviour
     {
         subTitleTxt.text = txt;
     }
-    public void SetLocationHolding(GameObject tmp)
+    public void SetLocationHolding(GameObject tmpGameObject)
     {
-        locationHolding = tmp;
+        locationHolding = tmpGameObject;
     }
     public GameObject GetLocationHolding()
     {
         return locationHolding;
     }
-    public void SetCard(GameObject cardObj)
+    public void SetCard(GameObject cardObject)
     {
-        card = cardObj;
+        card = cardObject;
     }
     private void DrawLineToCard(GameObject card)
     {

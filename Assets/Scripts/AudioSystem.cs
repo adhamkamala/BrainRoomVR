@@ -2,37 +2,37 @@ using UnityEngine;
 
 public class AudioSystem : MonoBehaviour
 {
-    public AudioClip[] audioClips;
-    private AudioSource audioSource;
-    public void PlayPrimaryClickAudio()
+    public AudioClip[] soundClips;
+    private AudioSource soundSource;
+    public void PlayPrimaryClickSound()
     {
-        audioSource.clip = GetAudioClipByName("click1");
-        audioSource.Play();
+        soundSource.clip = GetSoundByTitel("click1");
+        soundSource.Play();
     }
-    public void PlaySecondaryClickAudio()
+    public void PlaySecondaryClickSound()
     {
-        audioSource.clip = GetAudioClipByName("click2");
-        audioSource.Play();
+        soundSource.clip = GetSoundByTitel("click2");
+        soundSource.Play();
     }
-    public void PlayPrimaryInfoAudio()
+    public void PlayPrimaryInfoSound()
     {
-        audioSource.clip = GetAudioClipByName("info1");
-        audioSource.Play();
+        soundSource.clip = GetSoundByTitel("info1");
+        soundSource.Play();
     }
-    private AudioClip GetAudioClipByName(string clipName)
+    private AudioClip GetSoundByTitel(string clipTitel)
     {
-        foreach (var clip in audioClips)
+        foreach (var sound in soundClips)
         {
-            if (clip.name == clipName)
+            if (sound.name == clipTitel)
             {
-                return clip;
+                return sound;
             }
         }
-        Debug.LogWarning($"Audio clip with name '{clipName}' not found.");
+        Debug.LogWarning($"Sound with name '{clipTitel}' not found.");
         return null;
     }
     private void Start()
     {
-        audioSource = GetComponent<AudioSource>();
+        soundSource = GetComponent<AudioSource>();
     }
 }

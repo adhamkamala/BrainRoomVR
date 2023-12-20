@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PokeScript : MonoBehaviour
 {
-    private Renderer renderer;
+    private Renderer rendererObj;
     private Material material;
 
     public void ChangeColorToGreen()
@@ -17,7 +17,7 @@ public class PokeScript : MonoBehaviour
     }
     private void Start()
     {
-        renderer = GetComponent<Renderer>();
-        material = renderer.material;
+        rendererObj = GetComponent<Renderer>();
+        material = rendererObj.material;
     }
 }

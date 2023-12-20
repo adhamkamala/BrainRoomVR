@@ -154,7 +154,7 @@ public class LeftController : MonoBehaviour
                     case "GreenExpandButton":
                         if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
                         {
-                            _ = aiSystem.GetComponent<OpenAIController>().ModeWhiteBoardExtend(boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().GetTopicTxt(), boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().GetAnswerTxt());
+                           aiSystem.GetComponent<OpenAIController>().ModeWhiteBoardExtend(boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().GetTopicTxt(), boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().GetAnswerTxt());
                         }
                         else
                         {
@@ -173,14 +173,10 @@ public class LeftController : MonoBehaviour
 
                     case "ReplaceAI":
                         cardSystem.GetComponent<CardSystem>().SetCardToReplace(cardTmpMindMap);
-                        Debug.Log(cardTmpMindMap);
-                        Debug.Log(cardTmpMindMap.name);
-                        Debug.Log(cardTmpMindMap.GetComponent<Node>().nodeName);
-                        _ = aiSystem.GetComponent<OpenAIController>().ModeMindMapReplaceAI(cardTmpMindMap.gameObject.GetComponent<Node>().nodeName);
+                        aiSystem.GetComponent<OpenAIController>().ModeMindMapReplaceAI(cardTmpMindMap.gameObject.GetComponent<Node>().nodeName);
                         optionsPressed = false;
                         cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
                         leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
-                        // gen 3 cards with title
                         break;
                     case "Relocate":
                         leftPoke.GetComponent<LeftControllerRay>().StopBlinking();
@@ -203,7 +199,6 @@ public class LeftController : MonoBehaviour
 
         if (leftPoke.GetComponent<LeftControllerRay>().IsLayerCard())
         {
-            Debug.Log(leftPoke.GetComponent<LeftControllerRay>().IsRayHit());
             tmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
             if (tmp != null)
             {
@@ -265,7 +260,7 @@ public class LeftController : MonoBehaviour
 
         if (leftPoke.GetComponent<LeftControllerRay>().IsLayerPosition())
         {
-            Debug.Log(leftPoke.GetComponent<LeftControllerRay>().IsRayHit());
+
             tmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
             if (tmp != null)
             {

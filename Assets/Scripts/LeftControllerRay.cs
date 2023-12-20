@@ -16,7 +16,7 @@ public class LeftControllerRay : MonoBehaviour
 
     private GameObject cardHitObj;
     private LayerMask layerSelected;
-    private Renderer renderer;
+    private Renderer rendererObj;
     private bool cardHit = false;
     private bool isBlinking = false;
     private float originalMetallic;
@@ -26,8 +26,8 @@ public class LeftControllerRay : MonoBehaviour
         if (cardHitObj!=null) {
             isBlinking = false;
             StopCoroutine(Blink());
-            renderer.material.SetFloat("_Metallic", originalMetallic);
-            renderer.material.SetFloat("_Smoothness", 0.5f); 
+            rendererObj.material.SetFloat("_Metallic", originalMetallic);
+            rendererObj.material.SetFloat("_Smoothness", 0.5f); 
 
         }
 
@@ -73,9 +73,9 @@ public class LeftControllerRay : MonoBehaviour
             try
             {
                 float newMetallic = Mathf.PingPong(Time.time, 1f);
-                renderer.material.SetFloat("_Metallic", newMetallic);
+                rendererObj.material.SetFloat("_Metallic", newMetallic);
                 float newSmoothness = Mathf.PingPong(Time.time, 0.5f) + 0.5f;
-                renderer.material.SetFloat("_Smoothness", newSmoothness);
+                rendererObj.material.SetFloat("_Smoothness", newSmoothness);
             }
             catch (System.Exception)
             {
@@ -89,8 +89,8 @@ public class LeftControllerRay : MonoBehaviour
     private void SetRenderer()
     {
 
-        renderer = cardHitObj.GetComponent<Renderer>();
-        originalMetallic = renderer.material.GetFloat("_Metallic");
+        rendererObj = cardHitObj.GetComponent<Renderer>();
+        originalMetallic = rendererObj.material.GetFloat("_Metallic");
     }
     private void Start()
     {

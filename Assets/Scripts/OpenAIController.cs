@@ -71,7 +71,7 @@ public class OpenAIController : MonoBehaviour
     private string mindMapRespondTmp;
 
 
-    public async Task ModeWhiteBoardSetupModel()
+    public void ModeWhiteBoardSetupModel()
     {
         string filePath = Path.Combine(Application.dataPath, "Resources/questions_and_answers_whiteboard.json");
         string json = File.ReadAllText(filePath);
@@ -86,7 +86,7 @@ public class OpenAIController : MonoBehaviour
         }
 
     }
-    public async Task ModeWhiteBoardSendMessage(string str)
+    public async void ModeWhiteBoardSendMessage(string str)
     {
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
@@ -94,7 +94,7 @@ public class OpenAIController : MonoBehaviour
         Debug.Log(response);
         ModeWhiteBoardTranslator(response);
     }
-    async public Task ModeWhiteBoardExtend(string strQues, string strAnswer)  
+    public async void ModeWhiteBoardExtend(string strQues, string strAnswer)  
     {
         // Question was... ur answer was... --> now give me more...
         string str = "Die Frage wurde dir gestellt: " + strQues + ". und du hast so beantwortert: " + strAnswer + ". kannst du noch zu der frage andere antworte geben?";
@@ -103,7 +103,7 @@ public class OpenAIController : MonoBehaviour
         audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
         ModeWhiteBoardTranslator(response);
     }
-    public async Task ModeMindMapSetupModel()
+    public void ModeMindMapSetupModel()
     {
         string filePath = Path.Combine(Application.dataPath, "Resources/questions_and_answers_mindmap.json");
         string json = File.ReadAllText(filePath);
@@ -124,7 +124,7 @@ public class OpenAIController : MonoBehaviour
         Debug.Log("Done Training");
       
     }
-    public async Task ModeMindMapSendMessage(string str)
+    public async void ModeMindMapSendMessage(string str)
     {
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
@@ -139,7 +139,7 @@ public class OpenAIController : MonoBehaviour
         AnswersContainer reversedContainer = ConvertNodeToAnswersContainer(rootNode);
         mindMapRespondTmp = JsonUtility.ToJson(reversedContainer, true);
     }
-    public async Task ModeMindMapExtend(string strQues)
+    public async void ModeMindMapExtend(string strQues)
     {
         // Question was... ur answer was... --> now give me more...
         string str = "Kannst du bei der Vorherigen antwort von dir: " + mindMapRespondTmp + " ein paar punkte unter dem Punkt " + strQues + " sameln. also 2 oder 3 punkte dadrunter tun nix anderes? Ergänze deine antwort also";
@@ -149,7 +149,7 @@ public class OpenAIController : MonoBehaviour
         Debug.Log(response);
         ModeMindMapTranslator(response);
     }
-    public async Task ModeMindMapReplaceAI(string strQues)
+    public async void ModeMindMapReplaceAI(string strQues)
     {
         // Question was... ur answer was... --> now give me more...
         string str = "Bei der vorherigen frage: "+ mindMapRespondTmp + ". habe ich jetzt den punkt: " + strQues + ". kannst du noch zu der frage exakt nur 3 alternative punkte geben nur und nix anderes? Die antwort soll folgendes aussehen: JSON format mit array namens alternativePunkte und dadrunter die 3 punkte";
@@ -159,7 +159,7 @@ public class OpenAIController : MonoBehaviour
         Debug.Log(response);
         ModeMindMapReplaceTranslator(response);
     }
-    public async Task ModeMindMapAutoSort(string strQues)
+    public async void ModeMindMapAutoSort(string strQues)
     {
         // Question was... ur answer was... --> now give me more...
         string str = "Bei der vorherigen frage: " + mindMapRespondTmp + ". habe ich jetzt den punkt: " + strQues + ". kannst du diesen punkt zuordnen? Die antwort soll folgendes aussehen: JSON format genau wie vorherige frage aber mit dem punkt drin zugeordnet";
@@ -221,7 +221,7 @@ public class OpenAIController : MonoBehaviour
 
         return answerNodes;
     }
-    private async Task ModeMindMapTranslator(string str)
+    private void ModeMindMapTranslator(string str)
     {
         cardSystem.GetComponent<CardSystem>().DestroyAll();
         //AnswersContainer answersContainer = JsonUtility.FromJson<AnswersContainer>(str);
@@ -234,7 +234,7 @@ public class OpenAIController : MonoBehaviour
         vibrationSystem.GetComponent<VibrationSystem>().HapticLeft();
         vibrationSystem.GetComponent<VibrationSystem>().HapticRight();
     }
-    private async Task ModeMindMapReplaceTranslator(string str)
+    private void ModeMindMapReplaceTranslator(string str)
     {
        // MyData myData = JsonUtility.FromJson<MyData>(str);
         MyData myData =  JsonConvert.DeserializeObject<MyData>(str);

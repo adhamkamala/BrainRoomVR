@@ -1,12 +1,8 @@
 using OpenAI;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using OpenAI;
-using System.Security.Cryptography;
 using Newtonsoft.Json.Linq;
 using System.IO;
+using System.Threading.Tasks;
 
 public class RecordSystem : MonoBehaviour
 {
@@ -19,6 +15,7 @@ public class RecordSystem : MonoBehaviour
     public GameObject leftController;
     public GameObject cardSystem;
     public GameObject vibrationSystem;
+    public GameObject rightControllerRay;
 
     private GameObject tmp = null;
     private GameObject gameObjectTmp;
@@ -49,7 +46,7 @@ public class RecordSystem : MonoBehaviour
         if (mainSystem.GetComponent <MainSystem>().WhatMode() ==0 && !replaceOption) {
             spawnSystem.GetComponent<SpawnSystem>().SpawnBoard();
             boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().ChangeTopicTxt(convertedAudio);
-            aiSystem.GetComponent<OpenAIController>().ModeWhiteBoardSendMessage(convertedAudio).Wait();
+            aiSystem.GetComponent<OpenAIController>().ModeWhiteBoardSendMessage(convertedAudio);
             DestroyRecordPanel();
         } else if (mainSystem.GetComponent<MainSystem>().WhatMode() == 1 && !replaceOption) {
             if (cardSystem.GetComponent<CardSystem>().IsRootNodeCreated())
@@ -57,7 +54,7 @@ public class RecordSystem : MonoBehaviour
                 leftController.GetComponent<LeftController>().AttachCard(cardSystem.GetComponent<CardSystem>().CreateMindMapCardObj(convertedAudio));
             } else
             {
-                aiSystem.GetComponent<OpenAIController>().ModeMindMapSendMessage(convertedAudio).Wait();
+                aiSystem.GetComponent<OpenAIController>().ModeMindMapSendMessage(convertedAudio);
             }
             DestroyRecordPanel();
         } else if (replaceOption)
@@ -68,10 +65,11 @@ public class RecordSystem : MonoBehaviour
             gameObjectTmp = null;
             DestroyRecordPanel();
         }
-       
+       rightControllerRay.GetComponent<RightControllerRay>().StopBlinking();
     }
     public void OnCancelClick()
     {
+        rightControllerRay.GetComponent<RightControllerRay>().StopBlinking();
         DestroyRecordPanel();
     }
     public void EnableReplace()

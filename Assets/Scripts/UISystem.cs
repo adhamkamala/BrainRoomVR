@@ -23,13 +23,13 @@ public class UISystem : MonoBehaviour
 
     public void ModeWhiteBoard()
     {
-        aiSystem.GetComponent<OpenAIController>().ModeWhiteBoardSetupModel().Wait();
+        aiSystem.GetComponent<OpenAIController>().ModeWhiteBoardSetupModel();
         mainSystem.GetComponent<MainSystem>().ChangeMode(0);
         ClearStartUp();
     }
     public void ModeMindMap()
     {
-        aiSystem.GetComponent<OpenAIController>().ModeMindMapSetupModel().Wait();
+        aiSystem.GetComponent<OpenAIController>().ModeMindMapSetupModel();
         mainSystem.GetComponent<MainSystem>().ChangeMode(1);
         ClearStartUp();
     }

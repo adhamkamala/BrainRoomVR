@@ -90,14 +90,12 @@ public class LeftController : MonoBehaviour
     {
         if (grabBool == true & !optionsPressed & cardTmp)
         {
-            //  cardTmp.transform.position = holdPosition.transform.position;
             cardTmp.transform.SetParent(holdPosition.transform);
             cardTmp.transform.localPosition = Vector3.zero;
             cardTmp.transform.localRotation = Quaternion.Euler(0f, 90f, 0f);
         }
         if (restBool == true)
         {
-            //cardTmp.transform.position = restPosition.transform.position;
             cardTmp.transform.SetParent(restPosition.transform);
             cardTmp.transform.localPosition = Vector3.zero;
             cardTmp.transform.localRotation = Quaternion.Euler(0f, -90f, 0f);
@@ -135,7 +133,6 @@ public class LeftController : MonoBehaviour
                         {
                             if (cardTmp != null)
                             {
-                                //  cardSystem.GetComponent<CardSystem>().DeleteCard(cardTmp);
                                 Destroy(cardTmp.gameObject);
                             }
                             else if (cardTmpMindMap != null)
@@ -331,45 +328,6 @@ public class LeftController : MonoBehaviour
     }
     private void OnLeftSecondaryPressed(InputAction.CallbackContext context)
     {
-        //audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickAudio();
-        //if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0) {
-        //    if (leftPoke.GetComponent<LeftControllerRay>().IsLayerCard())
-        //    {
-        //        cardTmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
-        //    }
-        //    else if (leftPoke.GetComponent<LeftControllerRay>().IsLayerPosition())
-        //    {
-        //        locationTmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
-        //    }
-        //    if (cardTmp != null && leftPoke.GetComponent<LeftControllerRay>().IsLayerCard())
-        //    {
-        //        grabBool = true;
-        //        cardTmp.GetComponent<CardScript>().GetLocationHolding().GetComponent<LocationHighlighter>().changeAvailable(true);
-
-        //    }
-        //    else
-        //    {
-        //        grabBool = false;
-        //    }
-
-        //    if (locationTmp != null && leftPoke.GetComponent<LeftControllerRay>().IsLayerPosition())
-        //    {
-
-        //        restBool = false;
-        //        cardTmp.transform.parent = null;
-        //        cardTmp.transform.parent = locationTmp.transform;
-        //        cardTmp.transform.localPosition = new Vector3(0.1f, 0f, 0f);
-        //        cardTmp.transform.localRotation = Quaternion.identity;
-        //        cardTmp.transform.localScale = new Vector3(1f, 1f, 1f);
-        //        leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
-        //    }
-        //} else
-        //{
-        //    mindMapMovement = !mindMapMovement;
-
-        //}
-
-
     }
     private void OnLeftXPressed(InputAction.CallbackContext context)
     {
@@ -476,8 +434,6 @@ public class LeftController : MonoBehaviour
     }
     private void OnRightBPressed(InputAction.CallbackContext context)
     {
-        //audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
-        //recordSystem.GetComponent<RecordSystem>().EndRecording();
     }
     private void OnRightAPressed(InputAction.CallbackContext context)
     {

@@ -68,7 +68,6 @@ public class CardSystem : MonoBehaviour
     }
     public void CreateReplaceAICards(List<string> strs)
     {
-        // Vector3 startPoint = spawnLocationReplaceAI.transform.position;
         Vector3 startPoint = Vector3.zero;
         cardsTmp = new List<GameObject>();
         strs.ForEach(str =>
@@ -240,15 +239,12 @@ public class CardSystem : MonoBehaviour
     private List<Vector3> CalculateChildNodePositions(Node parentNode, int numberOfNodes)
     {
         List<Vector3> positions = new List<Vector3>();
-        //Debug.Log(horzSpacing);
         for (int i = 0; i < numberOfNodes; i++)
         {
             float yOffset = (i - (numberOfNodes - 1) * 0.5f) * horzSpacing;
             ;
 
             Vector3 childPosition = new Vector3(
-                // parentNode.transform.position.x - 1f,
-                // parentNode.transform.position.y  + yOffset,
                 parentNode.transform.position.x + yOffset,
                 parentNode.transform.position.y - 0.7f,
                 parentNode.transform.position.z);
@@ -268,7 +264,6 @@ public class CardSystem : MonoBehaviour
         node.nodeName = subTxt;
         lastNode = node;
         nodeObject.gameObject.name = "MindMap(NormalCard): " + subTxt;
-        // Debug.Log("Node Name: "+ node.nodeName);
         return node;
     }
     private NodeStorage ConvertToNode2(Node node)
@@ -294,19 +289,6 @@ public class CardSystem : MonoBehaviour
     {
         horzSpacing = Mathf.Lerp(4f, 0.6f, Mathf.InverseLerp(1, 6, numberOfNodes));
     }
-    //private void ReconstructHierarchyStructure(NodeStorage currentNode, int depth = 0)
-    //{
-
-    //    if (currentNode == null)
-    //    {
-    //        return;
-    //    }
-    //    currentNode.children.ForEach(child => { child.parentNode = currentNode; });
-    //    foreach (var childNode in currentNode.children)
-    //    {
-    //        ReconstructHierarchy(childNode, depth + 1);
-    //    }
-    //}
     private void ReconstructHierarchy(NodeStorage currentNode, int depth = 0)
     {
         if (currentNode == null)

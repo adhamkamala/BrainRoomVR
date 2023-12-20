@@ -16,7 +16,6 @@ public class BoardSystem : MonoBehaviour
                 locHighlighter.changeAvailable(false);
                 locHighlighter.SetCardHolding(card);
                 card.GetComponent<CardScript>().SetLocationHolding(gameObject);
-                //card.transform.position += new Vector3(0.1f, 0f, 0f);
                 card.transform.parent = gameObject.transform;
                 card.transform.localPosition = localPosition;
                 card.transform.localRotation = localRotation;

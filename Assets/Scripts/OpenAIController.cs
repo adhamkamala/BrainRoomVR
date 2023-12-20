@@ -90,7 +90,7 @@ public class OpenAIController : MonoBehaviour
         catch (Exception)
         {
             audioSystem.GetComponent<AudioSystem>().PlayPrimaryErrorSound();
-            //throw;
+
         }
     }
     public async void ModeWhiteBoardSendMessage(string str)
@@ -103,7 +103,7 @@ public class OpenAIController : MonoBehaviour
     }
     public async void ModeWhiteBoardExtend(string strQues, string strAnswer)  
     {
-        // Question was... ur answer was... --> now give me more...
+
         string str = "Die Frage wurde dir gestellt: " + strQues + ". und du hast so beantwortert: " + strAnswer + ". kannst du noch zu der frage andere antworte geben?";
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
@@ -132,7 +132,7 @@ public class OpenAIController : MonoBehaviour
         catch (Exception)
         {
             audioSystem.GetComponent<AudioSystem>().PlayPrimaryErrorSound();
-           // throw;
+
         }
 
     }
@@ -171,7 +171,7 @@ public class OpenAIController : MonoBehaviour
     }
     public async void ModeMindMapAutoSort(string strQues)
     {
-        // Question was... ur answer was... --> now give me more...
+
         string str = "Bei der vorherigen frage: " + mindMapRespondTmp + ". habe ich jetzt den punkt: " + strQues + ". kannst du diesen punkt zuordnen? Die antwort soll folgendes aussehen: JSON format genau wie vorherige frage aber mit dem punkt drin zugeordnet";
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
@@ -197,7 +197,7 @@ public class OpenAIController : MonoBehaviour
         catch (Exception)
         {
             audioSystem.GetComponent<AudioSystem>().PlayPrimaryErrorSound();
-           // throw;
+      
         }
 
     }
@@ -218,12 +218,12 @@ public class OpenAIController : MonoBehaviour
         catch (Exception)
         {
             audioSystem.GetComponent<AudioSystem>().PlayPrimaryErrorSound();
-            //throw;
+   
         }
 
     }
     private void ModeWhiteBoardTranslator(string str)
-    { // translate answer from OPENAI to Cards on Board<<<<<<<
+    {
         try
         {
             OpenAIResopnse openAIResponse = JsonConvert.DeserializeObject<OpenAIResopnse>(str);

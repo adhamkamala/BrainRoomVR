@@ -295,11 +295,9 @@ public class CardSystem : MonoBehaviour
         {
             return;
         }
-
-        int immediateChildrenCount = CountImmediateChildren(currentNode);
-        int nextLevelCount = CountNextLevelNodes(currentNode);
-        int totalCount = immediateChildrenCount + nextLevelCount;
-
+        int siblingChildrenCount = CountSiblingChildren(currentNode);
+        int levelBelowCount = CountLevelBelowNodes(currentNode);
+        int totalCount = siblingChildrenCount + levelBelowCount;
         List<string> childrenList = new List<string>();
         currentNode.children.ForEach(child => childrenList.Add(child.nodeName));
         CreateChildrenNodes(GetNodeByName(null, currentNode.nodeName), childrenList.Count, childrenList, totalCount);
@@ -309,26 +307,26 @@ public class CardSystem : MonoBehaviour
             ReconstructHierarchy(childNode, depth + 1);
         }
     }
-    private int CountNextLevelNodes(NodeStorage currentNode)
+    private int CountLevelBelowNodes(NodeStorage currentNode)
     {
         if (currentNode == null || currentNode.parentNode == null)
         {
             return 0;
         }
 
-        int nextLevelCount = 0;
+        int belowLevelCount = 0;
 
         foreach (NodeStorage siblingNode in currentNode.parentNode.children)
         {
             if (siblingNode != currentNode)
             {
-                nextLevelCount += CountImmediateChildren(siblingNode);
+                belowLevelCount += CountSiblingChildren(siblingNode);
             }
         }
 
-        return nextLevelCount;
+        return belowLevelCount;
     }
-    private int CountImmediateChildren(NodeStorage node)
+    private int CountSiblingChildren(NodeStorage node)
     {
         if (node == null || node.children == null)
         {

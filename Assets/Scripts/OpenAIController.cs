@@ -157,7 +157,6 @@ public class OpenAIController : MonoBehaviour
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
         audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
-   
         ModeMindMapTranslator(response);
     }
     public async void ModeMindMapReplaceAI(string strQues)
@@ -166,7 +165,6 @@ public class OpenAIController : MonoBehaviour
         chat.AppendUserInput(str);
         string response = await chat.GetResponseFromChatbotAsync();
         audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
-    
         ModeMindMapReplaceTranslator(response);
     }
     public async void ModeMindMapAutoSort(string strQues)
@@ -244,8 +242,16 @@ public class OpenAIController : MonoBehaviour
     }
     private void Start()
     {
-        chat = api.Chat.CreateConversation();
-        chat.Model = JObject.Parse(File.ReadAllText(Path.Combine(Application.dataPath, "Resources/config.json")))["openai"]["model_chat"].ToString();
+        try
+        {
+            chat = api.Chat.CreateConversation();
+            chat.Model = JObject.Parse(File.ReadAllText(Path.Combine(Application.dataPath, "Resources/config.json")))["openai"]["model_chat"].ToString();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error in Start-OpenAI: {ex.Message}");
+        }
+
     }
     private NodeStorage CreateNodeFromAnswerNode(AnswerNode answerNode, NodeStorage parentNode)
     {

@@ -3,6 +3,7 @@ using UnityEngine;
 using Newtonsoft.Json.Linq;
 using System.IO;
 using System.Threading.Tasks;
+using System;
 
 public class RecordSystem : MonoBehaviour
 {
@@ -44,29 +45,43 @@ public class RecordSystem : MonoBehaviour
     }
     public void OnConfirmClick()
     {
-        if (mainSystem.GetComponent <MainSystem>().WhatMode() ==0 && !replaceOption) {
-            spawnSystem.GetComponent<SpawnSystem>().SpawnBoard();
-            boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().ChangeTopicTxt(convertedAudio);
-            aiSystem.GetComponent<OpenAIController>().ModeWhiteBoardSendMessage(convertedAudio);
-            DestroyRecordPanel();
-        } else if (mainSystem.GetComponent<MainSystem>().WhatMode() == 1 && !replaceOption) {
-            if (cardSystem.GetComponent<CardSystem>().IsRootNodeCreated())
-            {
-                leftController.GetComponent<LeftController>().AttachCard(cardSystem.GetComponent<CardSystem>().CreateMindMapCardObj(convertedAudio));
-            } else
-            {
-                aiSystem.GetComponent<OpenAIController>().ModeMindMapSendMessage(convertedAudio);
-            }
-            DestroyRecordPanel();
-        } else if (replaceOption)
+        try
         {
-            cardSystem.GetComponent<CardSystem>().SetCardToReplace(gameObjectTmp);
-            cardSystem.GetComponent<CardSystem>().ReplaceCard(convertedAudio);
-            replaceOption = false;
-            gameObjectTmp = null;
-            DestroyRecordPanel();
+            if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0 && !replaceOption)
+            {
+                spawnSystem.GetComponent<SpawnSystem>().SpawnBoard();
+                boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().ChangeTopicTxt(convertedAudio);
+                aiSystem.GetComponent<OpenAIController>().ModeWhiteBoardSendMessage(convertedAudio);
+                DestroyRecordPanel();
+            }
+            else if (mainSystem.GetComponent<MainSystem>().WhatMode() == 1 && !replaceOption)
+            {
+                if (cardSystem.GetComponent<CardSystem>().IsRootNodeCreated())
+                {
+                    leftController.GetComponent<LeftController>().AttachCard(cardSystem.GetComponent<CardSystem>().CreateMindMapCardObj(convertedAudio));
+                }
+                else
+                {
+                    aiSystem.GetComponent<OpenAIController>().ModeMindMapSendMessage(convertedAudio);
+                }
+                DestroyRecordPanel();
+            }
+            else if (replaceOption)
+            {
+                cardSystem.GetComponent<CardSystem>().SetCardToReplace(gameObjectTmp);
+                cardSystem.GetComponent<CardSystem>().ReplaceCard(convertedAudio);
+                replaceOption = false;
+                gameObjectTmp = null;
+                DestroyRecordPanel();
+            }
+            rightControllerRay.GetComponent<RightControllerRay>().StopBlinking();
         }
-       rightControllerRay.GetComponent<RightControllerRay>().StopBlinking();
+        catch (Exception ex)
+        {
+
+            Debug.LogError($"Error in OnConfirmClick: {ex.Message}");
+        }
+
     }
     public void OnCancelClick()
     {
@@ -88,36 +103,53 @@ public class RecordSystem : MonoBehaviour
     }
     public void StartRecording()
     {
-        state = true;
-        SpawnRecordPanel();
-        string micName = "";
-        tmp.GetComponent<RecordPanelScript>().ChangeHintTxt("Recording...");
-        tmp.GetComponent<RecordPanelScript>().ChangeMainTxt("");
-        for (int i = 0; i < Microphone.devices.Length; i++)
+        try
         {
-            if (Microphone.devices[i].Contains("Oculus")) // Oculus
-            { 
-                micName = Microphone.devices[i];
-            }
+            state = true;
+            SpawnRecordPanel();
+            string micName = "";
+            tmp.GetComponent<RecordPanelScript>().ChangeHintTxt("Recording...");
+            tmp.GetComponent<RecordPanelScript>().ChangeMainTxt("");
+            for (int i = 0; i < Microphone.devices.Length; i++)
+            {
+                if (Microphone.devices[i].Contains("Oculus")) // Oculus
+                {
+                    micName = Microphone.devices[i];
+                }
 
+            }
+            clip = Microphone.Start(micName, false, 10, 44100); // sekunden
         }
-        clip = Microphone.Start(micName, false, 10, 44100); // sekunden
+        catch (Exception ex)
+        {
+
+            Debug.LogError($"Error in StartRecording: {ex.Message}");
+        }
+
     }
     public async void EndRecording()
     {
-        state = false;
-        tmp.GetComponent<RecordPanelScript>().ChangeHintTxt("Recorded");
-        Microphone.End(null);
-        byte[] data = SaveWav.Save(fileName, clip);
-        var req = new CreateAudioTranscriptionsRequest
+        try
         {
-            FileData = new FileData() { Data = data, Name = "audio.wav" },
-            Model = JObject.Parse(File.ReadAllText(Path.Combine(Application.dataPath, "Resources/config.json")))["openai"]["model_voice"].ToString(),
-            Language = JObject.Parse(File.ReadAllText(Path.Combine(Application.dataPath, "Resources/config.json")))["openai"]["model_voice_language"].ToString()
-    };
-        var res = await openai.CreateAudioTranscription(req);
-        tmp.GetComponent<RecordPanelScript>().ChangeMainTxt(res.Text);
-        convertedAudio = res.Text;
+            state = false;
+            tmp.GetComponent<RecordPanelScript>().ChangeHintTxt("Recorded");
+            Microphone.End(null);
+            byte[] data = SaveWav.Save(fileName, clip);
+            var req = new CreateAudioTranscriptionsRequest
+            {
+                FileData = new FileData() { Data = data, Name = "audio.wav" },
+                Model = JObject.Parse(File.ReadAllText(Path.Combine(Application.dataPath, "Resources/config.json")))["openai"]["model_voice"].ToString(),
+                Language = JObject.Parse(File.ReadAllText(Path.Combine(Application.dataPath, "Resources/config.json")))["openai"]["model_voice_language"].ToString()
+            };
+            var res = await openai.CreateAudioTranscription(req);
+            tmp.GetComponent<RecordPanelScript>().ChangeMainTxt(res.Text);
+            convertedAudio = res.Text;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error in EndRecording: {ex.Message}");
+        }
+
     }
 
 }

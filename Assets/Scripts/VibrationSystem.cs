@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
@@ -9,17 +8,30 @@ public class VibrationSystem : MonoBehaviour
     public ActionBasedController rightController;
     public float vibrationDuration = 0.2f;
     public float successAmplitude = 0.5f;
-    public float failureAmplitude = 1f;
-
     public void HapticLeft()
     {
-        leftController.SendHapticImpulse(successAmplitude, vibrationDuration);
+        try
+        {
+            leftController.SendHapticImpulse(successAmplitude, vibrationDuration);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error in HapticLeft: {ex.Message}");
+        }
+
 
     }
     public void HapticRight()
     {
-        rightController.SendHapticImpulse(successAmplitude, vibrationDuration);
 
+        try
+        {
+            rightController.SendHapticImpulse(successAmplitude, vibrationDuration);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error in HapticRight: {ex.Message}");
+        }
     }
 
 }

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 public class LeftController : MonoBehaviour
@@ -36,30 +37,38 @@ public class LeftController : MonoBehaviour
 
     public void AttachCard(GameObject card)
     {
-        vibrationSystem.GetComponent<VibrationSystem>().HapticLeft();
-        cardTmp = card;
-        grabBool = true;
-        optionsPressed = false;
-        Transform upperbar = card.transform.Find("UpperBar");
-        if (upperbar != null)
+        try
         {
-            foreach (Transform child in upperbar)
+            vibrationSystem.GetComponent<VibrationSystem>().HapticLeft();
+            cardTmp = card;
+            grabBool = true;
+            optionsPressed = false;
+            Transform upperbar = card.transform.Find("UpperBar");
+            if (upperbar != null)
             {
-                GameObject childObject = child.gameObject;
-                if (childObject.name == "RedDeleteButton" || childObject.name == "AutoSort")
+                foreach (Transform child in upperbar)
                 {
-                    childObject.SetActive(true);
-                }
-                else
-                {
-                    childObject.SetActive(false);
+                    GameObject childObject = child.gameObject;
+                    if (childObject.name == "RedDeleteButton" || childObject.name == "AutoSort")
+                    {
+                        childObject.SetActive(true);
+                    }
+                    else
+                    {
+                        childObject.SetActive(false);
+                    }
                 }
             }
+            else
+            {
+                Debug.LogError("Upperbar not found among the children of the parent GameObject.");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            Debug.LogError("Upperbar not found among the children of the parent GameObject.");
+            Debug.LogError($"Error in AttachCard: {ex.Message}");
         }
+
     }
     public void SetCardTmpMindMap(GameObject gmo)
     {
@@ -107,302 +116,326 @@ public class LeftController : MonoBehaviour
     }
     private void OnLeftMainPressed(InputAction.CallbackContext context)
     {
-        audioSystem.GetComponent<AudioSystem>().PlayPrimaryClickSound();
-        GameObject tmp;
-        if (leftPoke.GetComponent<LeftControllerRay>().IsLayerCardOption())
+        try
         {
-            tmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
-            if (tmp != null)
+            audioSystem.GetComponent<AudioSystem>().PlayPrimaryClickSound();
+            GameObject tmp;
+            if (leftPoke.GetComponent<LeftControllerRay>().IsLayerCardOption())
             {
-                switch (tmp.gameObject.name)
+                tmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
+                if (tmp != null)
                 {
-                    case "RedDeleteButton":
-                        if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
-                        {
-                            if (cardTmp != null)
+                    switch (tmp.gameObject.name)
+                    {
+                        case "RedDeleteButton":
+                            if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
                             {
-                                Destroy(cardTmp.gameObject);
-                                grabBool = false;
-                                restBool = false;
+                                if (cardTmp != null)
+                                {
+                                    Destroy(cardTmp.gameObject);
+                                    grabBool = false;
+                                    restBool = false;
+                                    optionsPressed = false;
+
+                                }
+
+                            }
+                            else
+                            {
+                                if (cardTmp != null)
+                                {
+                                    Destroy(cardTmp.gameObject);
+                                }
+                                else if (cardTmpMindMap != null)
+                                {
+                                    cardSystem.GetComponent<CardSystem>().DeleteCard(cardTmpMindMap);
+                                }
+                                else if (cardTmp == cardTmpMindMap)
+                                {
+                                    Destroy(cardTmp.gameObject);
+                                }
                                 optionsPressed = false;
+                                cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
+
 
                             }
-
-                        }
-                        else
-                        {
-                            if (cardTmp != null)
+                            leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                            break;
+                        case "GreenExpandButton":
+                            if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
                             {
-                                Destroy(cardTmp.gameObject);
+                                aiSystem.GetComponent<OpenAIController>().ModeWhiteBoardExtend(boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().GetTopicTxt(), boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().GetAnswerTxt());
                             }
-                            else if (cardTmpMindMap != null)
+                            else
                             {
-                                cardSystem.GetComponent<CardSystem>().DeleteCard(cardTmpMindMap);
+                                cardSystem.GetComponent<CardSystem>().NodeStorageToJson();
+                                aiSystem.GetComponent<OpenAIController>().ModeMindMapExtend(cardTmpMindMap.GetComponent<Node>().nodeName);
+                                leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                                optionsPressed = false;
+                                cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
                             }
-                            else if (cardTmp == cardTmpMindMap)
-                            {
-                                Destroy(cardTmp.gameObject);
-                            }
-                            optionsPressed = false;
-                            cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
-
-
-                        }
-                        leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
-                        break;
-                    case "GreenExpandButton":
-                        if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
-                        {
-                           aiSystem.GetComponent<OpenAIController>().ModeWhiteBoardExtend(boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().GetTopicTxt(), boardsSystem.GetComponent<BoardsSystem>().GetSelectedBoard().GetComponent<BoardScript>().GetAnswerTxt());
-                        }
-                        else
-                        {
-                            cardSystem.GetComponent<CardSystem>().NodeStorageToJson();
-                            aiSystem.GetComponent<OpenAIController>().ModeMindMapExtend(cardTmpMindMap.GetComponent<Node>().nodeName);
+                            break;
+                        case "Replace":
+                            recordSystem.GetComponent<RecordSystem>().EnableReplace();
+                            recordSystem.GetComponent<RecordSystem>().SetGameObjectTmp(cardTmpMindMap); // obsulete since SetCardToReplace does same
+                            recordSystem.GetComponent<RecordSystem>().StartRecording();
                             leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
                             optionsPressed = false;
                             cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
-                        }
-                        break;
-                    case "Replace":
-                        recordSystem.GetComponent<RecordSystem>().EnableReplace();
-                        recordSystem.GetComponent<RecordSystem>().SetGameObjectTmp(cardTmpMindMap); // obsulete since SetCardToReplace does same
-                        recordSystem.GetComponent<RecordSystem>().StartRecording();
-                        leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
-                        optionsPressed = false;
-                        cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
-                        break;
+                            break;
 
-                    case "ReplaceAI":
-                        cardSystem.GetComponent<CardSystem>().SetCardToReplace(cardTmpMindMap);
-                        aiSystem.GetComponent<OpenAIController>().ModeMindMapReplaceAI(cardTmpMindMap.gameObject.GetComponent<Node>().nodeName);
-                        leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
-                        optionsPressed = false;
-                        cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
-                        break;
-                    case "Relocate":
-                        leftPoke.GetComponent<LeftControllerRay>().StopBlinking();
-                        cardSystem.GetComponent<CardSystem>().RelocateCard(cardTmpMindMap);
-                        leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
-                        optionsPressed = false;
-                        cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
-                        break;
-                    case "AutoSort":
-                        cardSystem.GetComponent<CardSystem>().NodeStorageToJson();
-                        aiSystem.GetComponent<OpenAIController>().ModeMindMapAutoSort(cardTmp.GetComponent<CardScript>().subTitleTxt.text);
-                        leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
-                        optionsPressed = false;
-                        cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
-                        Destroy(cardTmp);
-                        break;
-                }
-            }
-
-
-        }
-
-        if (leftPoke.GetComponent<LeftControllerRay>().IsLayerCard())
-        {
-            tmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
-            if (tmp != null)
-            {
-                switch (tmp.gameObject.name)
-                {
-                    case "DeleteBoardBtn":
-                        spawnSystem.GetComponent<SpawnSystem>().RemoveFromListPoints(tmp.gameObject.transform.parent.gameObject.transform);
-                        Destroy(tmp.gameObject.transform.parent.gameObject);
-                        break;
-                    case "ButtonMindMap":
-                        uiSystem.GetComponent<UISystem>().ModeMindMap();
-                        break;
-                    case "ButtonWhiteBoard":
-                        uiSystem.GetComponent<UISystem>().ModeWhiteBoard();
-                        break;
-                    case var str when str.Contains("MindMap(ReplaceAICard)"):
-                        cardSystem.GetComponent<CardSystem>().ReplaceCard(tmp.gameObject.GetComponent<CardScript>().subTitleTxt.text);
-                        cardSystem.GetComponent<CardSystem>().DestroyAICards();
-                        break;
-                    case var str when str.Contains("MindMap(NormalCard)"):
-                        if (cardTmp != null)
-                        {
+                        case "ReplaceAI":
+                            cardSystem.GetComponent<CardSystem>().SetCardToReplace(cardTmpMindMap);
+                            aiSystem.GetComponent<OpenAIController>().ModeMindMapReplaceAI(cardTmpMindMap.gameObject.GetComponent<Node>().nodeName);
+                            leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                            optionsPressed = false;
+                            cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
+                            break;
+                        case "Relocate":
                             leftPoke.GetComponent<LeftControllerRay>().StopBlinking();
-                            cardSystem.GetComponent<CardSystem>().UserAttachCardNode(tmp.gameObject.GetComponent<Node>().nodeName, cardTmp);
+                            cardSystem.GetComponent<CardSystem>().RelocateCard(cardTmpMindMap);
+                            leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                            optionsPressed = false;
+                            cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
+                            break;
+                        case "AutoSort":
+                            cardSystem.GetComponent<CardSystem>().NodeStorageToJson();
+                            aiSystem.GetComponent<OpenAIController>().ModeMindMapAutoSort(cardTmp.GetComponent<CardScript>().subTitleTxt.text);
+                            leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                            optionsPressed = false;
+                            cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
                             Destroy(cardTmp);
-                            grabBool = false;
-                            restBool = false;
-
-                        }
-                        else
-                        {
-                            mindMapMovement = !mindMapMovement;
-                        }
-                        break;
-                    case var str when str.Contains("Whiteboard(NormalCard)"):
-                        if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
-                        {
-                            cardTmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
-                            if (cardTmp != null)
-                            {
-                                grabBool = true;
-                                cardTmp.GetComponent<CardScript>().GetLocationHolding().GetComponent<LocationHighlighter>().changeAvailable(true);
-
-                            }
-                            else
-                            {
-                                grabBool = false;
-                            }
-                            mindMapMovement = false;
-                        }
-                        break;
-
-                    default:
-                        break;
+                            break;
+                    }
                 }
+
+
             }
 
-        }
-
-        if (leftPoke.GetComponent<LeftControllerRay>().IsLayerPosition())
-        {
-
-            tmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
-            if (tmp != null)
+            if (leftPoke.GetComponent<LeftControllerRay>().IsLayerCard())
             {
-                switch (tmp.gameObject.name)
+                tmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
+                if (tmp != null)
                 {
-                    case var str when str.Contains("Whiteboard(NormalCard)"):
-                        if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
-                        {
-
-                            locationTmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
+                    switch (tmp.gameObject.name)
+                    {
+                        case "DeleteBoardBtn":
+                            spawnSystem.GetComponent<SpawnSystem>().RemoveFromListPoints(tmp.gameObject.transform.parent.gameObject.transform);
+                            Destroy(tmp.gameObject.transform.parent.gameObject);
+                            break;
+                        case "ButtonMindMap":
+                            uiSystem.GetComponent<UISystem>().ModeMindMap();
+                            break;
+                        case "ButtonWhiteBoard":
+                            uiSystem.GetComponent<UISystem>().ModeWhiteBoard();
+                            break;
+                        case var str when str.Contains("MindMap(ReplaceAICard)"):
+                            cardSystem.GetComponent<CardSystem>().ReplaceCard(tmp.gameObject.GetComponent<CardScript>().subTitleTxt.text);
+                            cardSystem.GetComponent<CardSystem>().DestroyAICards();
+                            break;
+                        case var str when str.Contains("MindMap(NormalCard)"):
                             if (cardTmp != null)
                             {
-                                grabBool = true;
-                                cardTmp.GetComponent<CardScript>().GetLocationHolding().GetComponent<LocationHighlighter>().changeAvailable(true);
+                                leftPoke.GetComponent<LeftControllerRay>().StopBlinking();
+                                cardSystem.GetComponent<CardSystem>().UserAttachCardNode(tmp.gameObject.GetComponent<Node>().nodeName, cardTmp);
+                                Destroy(cardTmp);
+                                grabBool = false;
+                                restBool = false;
 
                             }
                             else
                             {
-                                grabBool = false;
+                                mindMapMovement = !mindMapMovement;
                             }
-
-                            if (locationTmp != null && leftPoke.GetComponent<LeftControllerRay>().IsLayerPosition())
+                            break;
+                        case var str when str.Contains("Whiteboard(NormalCard)"):
+                            if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
                             {
+                                cardTmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
+                                if (cardTmp != null)
+                                {
+                                    grabBool = true;
+                                    cardTmp.GetComponent<CardScript>().GetLocationHolding().GetComponent<LocationHighlighter>().changeAvailable(true);
 
-                                restBool = false;
-                                cardTmp.transform.parent = null;
-                                cardTmp.transform.parent = locationTmp.transform;
-                                cardTmp.transform.localPosition = new Vector3(0.1f, 0f, 0f);
-                                cardTmp.transform.localRotation = Quaternion.identity;
-                                cardTmp.transform.localScale = new Vector3(1f, 1f, 1f);
-                                leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                                }
+                                else
+                                {
+                                    grabBool = false;
+                                }
+                                mindMapMovement = false;
                             }
-                        }
-                        break;
-                    case var str when str.Contains("OnBoardLocations"):
+                            break;
 
-                        if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
-                        {
-
-                            locationTmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
-                            if (locationTmp != null && leftPoke.GetComponent<LeftControllerRay>().IsLayerPosition())
-                            {
-
-                                restBool = false;
-                                cardTmp.transform.parent = null;
-                                cardTmp.transform.parent = locationTmp.transform;
-                                cardTmp.transform.localPosition = new Vector3(0.1f, 0f, 0f);
-                                cardTmp.transform.localRotation = Quaternion.identity;
-                                cardTmp.transform.localScale = new Vector3(1f, 1f, 1f);
-                                leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
-                                cardTmp = null;
-                            }
-                        }
-                        break;
-                    default:
-                        break;
+                        default:
+                            break;
+                    }
                 }
+
             }
 
+            if (leftPoke.GetComponent<LeftControllerRay>().IsLayerPosition())
+            {
+
+                tmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
+                if (tmp != null)
+                {
+                    switch (tmp.gameObject.name)
+                    {
+                        case var str when str.Contains("Whiteboard(NormalCard)"):
+                            if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
+                            {
+
+                                locationTmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
+                                if (cardTmp != null)
+                                {
+                                    grabBool = true;
+                                    cardTmp.GetComponent<CardScript>().GetLocationHolding().GetComponent<LocationHighlighter>().changeAvailable(true);
+
+                                }
+                                else
+                                {
+                                    grabBool = false;
+                                }
+
+                                if (locationTmp != null && leftPoke.GetComponent<LeftControllerRay>().IsLayerPosition())
+                                {
+
+                                    restBool = false;
+                                    cardTmp.transform.parent = null;
+                                    cardTmp.transform.parent = locationTmp.transform;
+                                    cardTmp.transform.localPosition = new Vector3(0.1f, 0f, 0f);
+                                    cardTmp.transform.localRotation = Quaternion.identity;
+                                    cardTmp.transform.localScale = new Vector3(1f, 1f, 1f);
+                                    leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                                }
+                            }
+                            break;
+                        case var str when str.Contains("OnBoardLocations"):
+
+                            if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
+                            {
+
+                                locationTmp = leftPoke.GetComponent<LeftControllerRay>().IsRayHit();
+                                if (locationTmp != null && leftPoke.GetComponent<LeftControllerRay>().IsLayerPosition())
+                                {
+
+                                    restBool = false;
+                                    cardTmp.transform.parent = null;
+                                    cardTmp.transform.parent = locationTmp.transform;
+                                    cardTmp.transform.localPosition = new Vector3(0.1f, 0f, 0f);
+                                    cardTmp.transform.localRotation = Quaternion.identity;
+                                    cardTmp.transform.localScale = new Vector3(1f, 1f, 1f);
+                                    leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                                    cardTmp = null;
+                                }
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+            }
         }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error in OnLeftMainPressed: {ex.Message}");
+        }
+
     }
     private void OnLeftSecondaryPressed(InputAction.CallbackContext context)
     {
     }
     private void OnLeftXPressed(InputAction.CallbackContext context)
     {
-        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
-        if (cardTmp != null)
+        try
         {
-            if (grabBool == true)
+            audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
+            if (cardTmp != null)
             {
-                Transform parentObject = cardTmp.transform.parent;
-                cardTmp.transform.parent = null;
-                cardTmp.transform.Rotate(Vector3.up, -90f);
-                cardTmp.transform.parent = parentObject;
-                if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
-                {
-                    leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToPostion();
-
-                }
-                else
-                {
-                    leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
-                }
-
-                grabBool = false;
-                restBool = true;
-            }
-            else
-            {
-                if (cardTmp.transform.rotation.y != 0f)
+                if (grabBool == true)
                 {
                     Transform parentObject = cardTmp.transform.parent;
                     cardTmp.transform.parent = null;
-                    cardTmp.transform.Rotate(Vector3.up, 90f);
+                    cardTmp.transform.Rotate(Vector3.up, -90f);
                     cardTmp.transform.parent = parentObject;
+                    if (mainSystem.GetComponent<MainSystem>().WhatMode() == 0)
+                    {
+                        leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToPostion();
 
+                    }
+                    else
+                    {
+                        leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                    }
+
+                    grabBool = false;
+                    restBool = true;
                 }
+                else
+                {
+                    if (cardTmp.transform.rotation.y != 0f)
+                    {
+                        Transform parentObject = cardTmp.transform.parent;
+                        cardTmp.transform.parent = null;
+                        cardTmp.transform.Rotate(Vector3.up, 90f);
+                        cardTmp.transform.parent = parentObject;
 
-                leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
-                grabBool = true;
-                restBool = false;
+                    }
+
+                    leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+                    grabBool = true;
+                    restBool = false;
+                }
             }
+
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error in OnLeftXPressed: {ex.Message}");
         }
 
     }
     private void OnLeftYPressed(InputAction.CallbackContext context)
     {
-        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
-        if (cardTmp != null & optionsPressed)
+        try
         {
-            optionsPressed = false;
-            cardTmp.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
-            leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+            audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
+            if (cardTmp != null & optionsPressed)
+            {
+                optionsPressed = false;
+                cardTmp.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
+                leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+            }
+            else if (cardTmp != null & !optionsPressed)
+            {
+                optionsPressed = true;
+                cardTmp.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
+                cardTmp.transform.SetParent(null);
+                cardTmp.transform.position = holdPosition.transform.position;
+                leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCardOptions();
+            }
+            else if (cardTmpMindMap != null & !optionsPressed)
+            {
+                optionsPressed = true;
+                cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
+                Transform upperBar = cardTmpMindMap.transform.Find("UpperBar");
+                Transform autoSort = upperBar.Find("AutoSort");
+                autoSort.gameObject.SetActive(!optionsPressed);
+                leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCardOptions();
+            }
+            else if (cardTmpMindMap != null & optionsPressed)
+            {
+                optionsPressed = false;
+                cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
+                leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
+            }
         }
-        else if (cardTmp != null & !optionsPressed)
+        catch (Exception ex)
         {
-            optionsPressed = true;
-            cardTmp.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
-            cardTmp.transform.SetParent(null);
-            cardTmp.transform.position = holdPosition.transform.position;
-            leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCardOptions();
+            Debug.LogError($"Error in OnLeftYPressed: {ex.Message}");
         }
-        else if (cardTmpMindMap != null & !optionsPressed)
-        {
-            optionsPressed = true;
-            cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
-            Transform upperBar = cardTmpMindMap.transform.Find("UpperBar");
-            Transform autoSort = upperBar.Find("AutoSort");
-            autoSort.gameObject.SetActive(!optionsPressed);
-            leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCardOptions();
-        }
-        else if (cardTmpMindMap != null & optionsPressed)
-        {
-            optionsPressed = false;
-            cardTmpMindMap.transform.Find("UpperBar").gameObject.SetActive(optionsPressed);
-            leftPoke.GetComponent<LeftControllerRay>().ChangeLayerToCards();
-        }
+
     }
     private void OnLeftMenuPressed(InputAction.CallbackContext context)
     {
@@ -412,20 +445,28 @@ public class LeftController : MonoBehaviour
     }
     private void OnRightMainPressed(InputAction.CallbackContext context)
     {
-        audioSystem.GetComponent<AudioSystem>().PlayPrimaryClickSound();
-        var tmpGameObjectHit = rightPoke.GetComponent<RightControllerRay>().IsRayHit();
-        if (tmpGameObjectHit)
+        try
         {
-            switch (tmpGameObjectHit.gameObject.name)
+            audioSystem.GetComponent<AudioSystem>().PlayPrimaryClickSound();
+            var tmpGameObjectHit = rightPoke.GetComponent<RightControllerRay>().IsRayHit();
+            if (tmpGameObjectHit)
             {
-                case "ConfirmBtn":
-                    recordSystem.GetComponent<RecordSystem>().OnConfirmClick();
-                    break;
-                case "CancelBtn":
-                    recordSystem.GetComponent<RecordSystem>().OnCancelClick();
-                    break;
+                switch (tmpGameObjectHit.gameObject.name)
+                {
+                    case "ConfirmBtn":
+                        recordSystem.GetComponent<RecordSystem>().OnConfirmClick();
+                        break;
+                    case "CancelBtn":
+                        recordSystem.GetComponent<RecordSystem>().OnCancelClick();
+                        break;
+                }
             }
         }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error in OnRightMainPressed: {ex.Message}");
+        }
+
 
     }
     private void OnRightSecondaryPressed(InputAction.CallbackContext context)
@@ -437,14 +478,23 @@ public class LeftController : MonoBehaviour
     }
     private void OnRightAPressed(InputAction.CallbackContext context)
     {
-        audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
-     
-        if (!recordSystem.GetComponent<RecordSystem>().GetStateOfPanel())
+        try
         {
-            recordSystem.GetComponent<RecordSystem>().StartRecording();
-        } else
-        {
-            recordSystem.GetComponent<RecordSystem>().EndRecording();
+            audioSystem.GetComponent<AudioSystem>().PlaySecondaryClickSound();
+
+            if (!recordSystem.GetComponent<RecordSystem>().GetStateOfPanel())
+            {
+                recordSystem.GetComponent<RecordSystem>().StartRecording();
+            }
+            else
+            {
+                recordSystem.GetComponent<RecordSystem>().EndRecording();
+            }
         }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error in OnRightAPressed: {ex.Message}");
+        }
+
     }
 }

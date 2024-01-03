@@ -16,4 +16,4 @@ In order to operate it correctly, you need to remove the "_tmp" in the config_tm
 
 ### Right Controller
 - **Main Button:** Confirms actions and controls the record panel.
-- **A Button:** Initiates the recording process. (shows record panel)
+- **A Button:** Initiates/Ends the recording process. (shows record panel)

@@ -1,0 +1,8 @@
+{
+    "openai": {
+      "api": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+      "model_chat":"gpt-3.5-turbo-1106",
+      "model_voice":"whisper-1",
+      "model_voice_language":"de"
+    }
+  }

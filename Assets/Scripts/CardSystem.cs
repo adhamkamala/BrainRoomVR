@@ -291,48 +291,45 @@ public class CardSystem : MonoBehaviour
     }
     private void ReconstructHierarchy(NodeStorage currentNode, int depth = 0)
     {
-        if (currentNode == null)
-        {
-            return;
-        }
-        int siblingChildrenCount = CountSiblingChildren(currentNode);
-        int levelBelowCount = CountLevelBelowNodes(currentNode);
+        if (currentNode == null){return;}
+        int siblingChildrenCount = SiblingCounter(currentNode);
+        int levelBelowCount = LevelBelowNodesCounter(currentNode);
         int totalCount = siblingChildrenCount + levelBelowCount;
         List<string> childrenList = new List<string>();
         currentNode.children.ForEach(child => childrenList.Add(child.nodeName));
         CreateChildrenNodes(GetNodeByName(null, currentNode.nodeName), childrenList.Count, childrenList, totalCount);
-
         foreach (var childNode in currentNode.children)
         {
             ReconstructHierarchy(childNode, depth + 1);
         }
     }
-    private int CountLevelBelowNodes(NodeStorage currentNode)
+    private int LevelBelowNodesCounter(NodeStorage currentNode)
     {
         if (currentNode == null || currentNode.parentNode == null)
         {
             return 0;
         }
-
+        NodeStorage precursor = currentNode.parentNode;
         int belowLevelCount = 0;
-
-        foreach (NodeStorage siblingNode in currentNode.parentNode.children)
+        while (precursor != null)
         {
-            if (siblingNode != currentNode)
+            foreach (NodeStorage siblingNode in precursor.children)
             {
-                belowLevelCount += CountSiblingChildren(siblingNode);
+                if (siblingNode != currentNode)
+                {
+                    belowLevelCount += SiblingCounter(siblingNode);
+                }
             }
+            precursor = precursor.parentNode;
         }
-
         return belowLevelCount;
     }
-    private int CountSiblingChildren(NodeStorage node)
-    {
-        if (node == null || node.children == null)
-        {
-            return 0;
-        }
 
-        return node.children.Count;
+    private int SiblingCounter(NodeStorage nodeToCount)
+    {
+        try
+        {return nodeToCount.children.Count;}
+        catch (System.Exception)
+        {return 0;}
     }
 }
